@@ -1,0 +1,6 @@
+{
+  "name": "Vigya Paurush Milestone",
+  "description": "Real Estate & Investment Platform for Vigya Paurush Milestone Private Limited",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

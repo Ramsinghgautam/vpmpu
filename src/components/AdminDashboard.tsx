@@ -1,0 +1,1553 @@
+import React, { useState } from 'react';
+import { Project, Booking, InvestmentRecord, GalleryItem } from '../types';
+import { 
+  Users, 
+  Award, 
+  TrendingUp, 
+  UserCheck, 
+  Receipt, 
+  Building2, 
+  Wallet, 
+  ArrowDownLeft, 
+  ArrowUpRight, 
+  Grid, 
+  FileSpreadsheet, 
+  CreditCard, 
+  BarChart3, 
+  Image as ImageIcon, 
+  Bell, 
+  Settings, 
+  LogOut, 
+  Plus, 
+  Download, 
+  FileText, 
+  Search, 
+  Eye, 
+  CheckCircle2, 
+  XCircle, 
+  AlertTriangle, 
+  ShieldCheck, 
+  Upload, 
+  Trash2, 
+  Share2, 
+  Calculator, 
+  PieChart as PieIcon, 
+  FileCheck, 
+  Lock, 
+  Database, 
+  Key, 
+  Activity,
+  UserPlus
+} from 'lucide-react';
+import { formatINR } from '../utils/calculators';
+import { AdminHeader } from './admin/AdminHeader';
+import { AdminSidebar, AdminTabType } from './admin/AdminSidebar';
+import { InflowOutflowAnalytics } from './admin/InflowOutflowAnalytics';
+import { AdminModals } from './admin/AdminModals';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
+
+interface AdminDashboardProps {
+  projects: Project[];
+  bookings: Booking[];
+  investments: InvestmentRecord[];
+  onUpdateProject?: (updatedProjects: Project[]) => void;
+  onNavigate?: (section: string) => void;
+  onLogout?: () => void;
+}
+
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({
+  projects,
+  bookings,
+  investments,
+  onUpdateProject,
+  onNavigate,
+  onLogout
+}) => {
+  // Theme & Search State
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<AdminTabType>('dashboard');
+
+  // Modal State
+  const [activeModal, setActiveModal] = useState<'addCustomer' | 'addAgent' | 'addInvestor' | 'addEmployee' | 'addExpense' | 'addLoan' | 'uploadGallery' | 'defaultersList' | null>(null);
+
+  // Dynamic Data Lists (seeded with mock data & expandable)
+  const [customersList, setCustomersList] = useState([
+    { id: 'CUST-101', name: 'Rajesh Sharma', phone: '9876543210', email: 'rajesh@example.com', plotNo: 'A-12', projectName: 'Milestone City Prayagraj', totalPaid: 1500000, payoutReceived: 120000, growthPercent: 18.4, status: 'Active' },
+    { id: 'CUST-102', name: 'Sunita Mishra', phone: '9935123456', email: 'sunita@example.com', plotNo: 'B-04', projectName: 'Prayag Royal Enclave', totalPaid: 2100000, payoutReceived: 180000, growthPercent: 22.1, status: 'Active' },
+    { id: 'CUST-103', name: 'Vikram Singh', phone: '9415987654', email: 'vikram@example.com', plotNo: 'C-09', projectName: 'Milestone City Prayagraj', totalPaid: 1250000, payoutReceived: 95000, growthPercent: 15.0, status: 'Active' },
+    { id: 'CUST-104', name: 'Anil Agarwal', phone: '9839000111', email: 'anil@example.com', plotNo: 'P-15', projectName: 'Sangam Vista Naini', totalPaid: 1800000, payoutReceived: 140000, growthPercent: 19.2, status: 'Active' },
+  ]);
+
+  const [agentsList, setAgentsList] = useState([
+    { id: 'AGT-201', name: 'Amit Verma', phone: '9889001122', region: 'Jhunsi Sector A', activeBookings: 8, commissionPayout: 840000, status: 'Active' },
+    { id: 'AGT-202', name: 'Pooja Tiwari', phone: '9450112233', region: 'Naini Bypass', activeBookings: 6, commissionPayout: 620000, status: 'Active' },
+    { id: 'AGT-203', name: 'Sanjay Yadav', phone: '9838776655', region: 'Phaphamau Extension', activeBookings: 5, commissionPayout: 480000, status: 'Active' },
+    { id: 'AGT-204', name: 'Rajendra Prasad', phone: '9918223344', region: 'Civil Lines Office', activeBookings: 0, commissionPayout: 0, status: 'Inactive' },
+  ]);
+
+  const [investorsList, setInvestorsList] = useState([
+    { id: 'INV-301', name: 'Sanjay Gupta', phone: '9988776655', capital: 2900000, roiPercent: 22.5, totalPayout: 652500, tenure: '24 Months', status: 'Active' },
+    { id: 'INV-302', name: 'Dr. Ramesh Chandra', phone: '9415223344', capital: 5000000, roiPercent: 32.0, totalPayout: 1600000, tenure: '36 Months', status: 'Active' },
+    { id: 'INV-303', name: 'Sunil Malhotra', phone: '9839445566', capital: 1500000, roiPercent: 28.0, totalPayout: 420000, tenure: '12 Months', status: 'Active' },
+  ]);
+
+  const [employeesList, setEmployeesList] = useState([
+    { id: 'EMP-401', name: 'Suresh Kumar', role: 'Chief Site Engineer', dept: 'Engineering', salary: 65000, attendance: '96%', status: 'Present' },
+    { id: 'EMP-402', name: 'Meena Saxena', role: 'Head Accounts Officer', dept: 'Finance', salary: 55000, attendance: '98%', status: 'Present' },
+    { id: 'EMP-403', name: 'Rohan Srivastava', role: 'Senior RERA Legal Counsel', dept: 'Legal', salary: 70000, attendance: '94%', status: 'Present' },
+    { id: 'EMP-404', name: 'Deepak Maurya', role: 'Site Surveyor & Plot Manager', dept: 'Operations', salary: 40000, attendance: '92%', status: 'Present' },
+  ]);
+
+  const [expensesList, setExpensesList] = useState([
+    { id: 'EXP-501', title: 'Roads & Drainage Layout Construction', category: 'Property Development', amount: 3240000, date: '2026-07-25', vendor: 'Jhunsi Infra Contractors' },
+    { id: 'EXP-502', title: 'Hoarding Banners & Newspaper Ads', category: 'Marketing', amount: 1480000, date: '2026-07-20', vendor: 'Prayag Media Corp' },
+    { id: 'EXP-503', title: 'Staff Monthly Payroll Salaries', category: 'Salary', amount: 1860000, date: '2026-07-31', vendor: 'Internal Bank Transfer' },
+    { id: 'EXP-504', title: 'RERA Registration & Legal Filings', category: 'Property Development', amount: 1200000, date: '2026-07-15', vendor: 'UP RERA Authority' },
+    { id: 'EXP-505', title: 'Civil Lines Head Office Rent & Ops', category: 'Office', amount: 600000, date: '2026-07-05', vendor: 'Civil Lines Complex' },
+  ]);
+
+  const [loansList, setLoansList] = useState([
+    { id: 'LOAN-601', bank: 'SBI Commercial Bank Prayagraj', principal: 12000000, outstanding: 8820000, emi: 345000, interestRate: 9.25, status: 'Active' },
+    { id: 'LOAN-602', bank: 'HDFC Land Infrastructure Loan', principal: 8000000, outstanding: 4500000, emi: 210000, interestRate: 9.50, status: 'Active' },
+  ]);
+
+  const [defaultersList, setDefaultersList] = useState([
+    { name: 'Karan Mehra', phone: '9792001122', plotNo: 'B-14', projectName: 'Milestone City', emiAmount: 14500, dueDate: '2026-07-15', overdueDays: 20 },
+    { name: 'Pankaj Dubey', phone: '9451889900', plotNo: 'C-02', projectName: 'Sangam Vista', emiAmount: 18000, dueDate: '2026-07-20', overdueDays: 15 },
+  ]);
+
+  const [galleryItems, setGalleryItems] = useState([
+    { id: 'GAL-1', title: 'Milestone City Main Entrance Gate Construction', type: 'photo', url: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=800&q=80', date: '2026-07-28' },
+    { id: 'GAL-2', title: 'Phase 1 Plot Laying Aerial Drone Survey Video', type: 'video', url: 'https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&w=800&q=80', date: '2026-07-22' },
+    { id: 'GAL-3', title: 'Approved Section 143 Non-Agricultural Registry Doc', type: 'document', url: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80', date: '2026-07-18' },
+  ]);
+
+  // Handle PDF Export helper
+  const handleExportPDF = (title: string, docId = 'VPM-REP-9021') => {
+    const doc = new jsPDF();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("VIGYA PAURUSH MILESTONE PRIVATE LIMITED", 15, 20);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Official Executive Statement: ${title}`, 15, 30);
+    doc.text(`Document Reference ID: ${docId}`, 15, 38);
+    doc.text(`Generated On: ${new Date().toLocaleString()}`, 15, 46);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("Financial Ledger Highlights:", 15, 60);
+    doc.setFont("helvetica", "normal");
+    doc.text(`1. Total Customer Payouts Disbursed: Rs. 12,50,000`, 20, 70);
+    doc.text(`2. Total Agent Commissions Disbursed: Rs. 28,40,000`, 20, 80);
+    doc.text(`3. Total Investor ROI Capital Disbursed: Rs. 42,80,000`, 20, 90);
+    doc.text(`4. Total Employee Salary Outlay: Rs. 18,60,000`, 20, 100);
+    doc.text(`5. Total Infrastructure Expenditures: Rs. 65,20,000`, 20, 110);
+    doc.text(`6. Total Net Liquid Reserve Cashflow: Rs. 84,50,000`, 20, 120);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("Verified by Director: Prabhat Gautam", 15, 140);
+    doc.save(`${title.replace(/\s+/g, '_')}_${docId}.pdf`);
+  };
+
+  // Handle Excel/CSV Export helper
+  const handleExportExcel = (title: string) => {
+    const headers = "Category,Metric Title,Amount (INR),Status,Reference Date\n";
+    const dataRows = [
+      `Customers,Total Customer Payout,1250000,Verified,2026-07-31`,
+      `Agents,Total Agent Commission,2840000,Verified,2026-07-31`,
+      `Investors,Total Investor ROI,4280000,Verified,2026-07-31`,
+      `Employees,Total Salary Payroll,1860000,Verified,2026-07-31`,
+      `Expenditures,Total Company Outflow,6520000,Verified,2026-07-31`,
+      `Loans & EMI,Total Bank Loan Principal,12000000,Active,2026-07-31`,
+      `Cashflow,Net Liquid Operating Cash,8450000,Positive,2026-07-31`
+    ].join("\n");
+
+    const blob = new Blob([headers + dataRows], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `VPM_${title.replace(/\s+/g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Calculations
+  const totalCustomerPayout = customersList.reduce((acc, c) => acc + c.payoutReceived, 0);
+  const totalAgentCommission = agentsList.reduce((acc, a) => acc + a.commissionPayout, 0);
+  const totalInvestorPayout = investorsList.reduce((acc, i) => acc + i.totalPayout, 0);
+  const totalInvestedCapital = investments.reduce((acc, i) => acc + i.totalInvestedAmount, 0) || 13400000;
+  const totalEmployeeSalary = employeesList.reduce((acc, e) => acc + e.salary, 0) * 12;
+  const totalExpensesAmount = expensesList.reduce((acc, e) => acc + e.amount, 0);
+  const totalLoanAmount = loansList.reduce((acc, l) => acc + l.principal, 0);
+  const activeLoansCount = loansList.filter(l => l.status === 'Active').length;
+  const totalEmiCollection = loansList.reduce((acc, l) => acc + l.emi, 0);
+
+  // Cashflow Trend Data for Recharts
+  const cashflowTrendData = [
+    { month: 'Apr', incoming: 4800000, outgoing: 3200000, cashAvailable: 6500000 },
+    { month: 'May', incoming: 5900000, outgoing: 3800000, cashAvailable: 7200000 },
+    { month: 'Jun', incoming: 6400000, outgoing: 4100000, cashAvailable: 7800000 },
+    { month: 'Jul', incoming: 7800000, outgoing: 4500000, cashAvailable: 8450000 },
+  ];
+
+  return (
+    <div className={`min-h-screen font-sans transition-colors ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-900'}`}>
+      
+      {/* 1. DASHBOARD HEADER */}
+      <AdminHeader
+        isDarkMode={isDarkMode}
+        onToggleTheme={() => setIsDarkMode(!isDarkMode)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onNavigateTab={(tab) => setActiveTab(tab as AdminTabType)}
+        onLogout={() => onLogout ? onLogout() : (onNavigate && onNavigate('home'))}
+        unreadNotificationsCount={4}
+      />
+
+      {/* BODY LAYOUT: LEFT SIDEBAR + MAIN CONTENT AREA */}
+      <div className="flex flex-col lg:flex-row max-w-7xl mx-auto min-h-[calc(100vh-65px)]">
+        
+        {/* 3. LEFT SIDEBAR MENU */}
+        <AdminSidebar
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
+          onLogout={() => onLogout ? onLogout() : (onNavigate && onNavigate('home'))}
+          isDarkMode={isDarkMode}
+          counts={{
+            customersCount: customersList.length,
+            agentsCount: agentsList.length,
+            investorsCount: investorsList.length,
+            employeesCount: employeesList.length,
+            pendingBookingsCount: bookings.filter(b => b.status === 'Pending').length,
+            defaultersCount: defaultersList.length
+          }}
+        />
+
+        {/* MAIN DISPLAY AREA */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-8 overflow-x-hidden">
+          
+          {/* ========================================================================= */}
+          {/* TAB 1: MAIN DASHBOARD CARDS & SUMMARY */}
+          {/* ========================================================================= */}
+          {activeTab === 'dashboard' && (
+            <div className="space-y-8">
+              
+              {/* Executive Welcome Banner */}
+              <div className={`rounded-3xl p-6 md:p-8 border shadow-xl relative overflow-hidden ${
+                isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+              }`}>
+                <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="bg-amber-500 text-slate-950 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full tracking-wider">
+                        Master Director Command Center
+                      </span>
+                      <span className="text-emerald-400 text-xs font-mono font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        RERA & Section 143 Compliant
+                      </span>
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-black tracking-tight text-amber-400">
+                      VIGYA PAURUSH MILESTONE — Executive Admin Dashboard
+                    </h2>
+                    <p className="text-slate-400 text-xs mt-1 max-w-2xl">
+                      Real-time enterprise overview across Prayagraj Site Projects (Milestone City Jhunsi & Prayag Royal Enclave Naini).
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleExportPDF('VPM Executive Master Financial Audit')}
+                      className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg cursor-pointer transition-transform active:scale-95"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Download Audit PDF</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExportExcel('VPM Master Financial Audit')}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-lg cursor-pointer transition-transform active:scale-95"
+                    >
+                      <FileSpreadsheet className="w-4 h-4" />
+                      <span>Export Excel</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. MAIN DASHBOARD CARDS (GRID OF 7 CORE METRIC CARDS) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                {/* CARD 1: TOTAL CUSTOMERS */}
+                <div className={`rounded-3xl p-6 border transition-all space-y-4 shadow-lg ${
+                  isDarkMode ? 'bg-slate-900 border-amber-500/40 hover:border-amber-400' : 'bg-white border-slate-200 hover:shadow-xl'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-2xl">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm">Total Customers</h3>
+                        <span className="text-[10px] text-slate-400">Plot Buyers & Registry Clients</span>
+                      </div>
+                    </div>
+                    <span className="bg-amber-500/20 text-amber-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-amber-500/30">
+                      +18.4% MoM
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-3xl font-black text-white">{customersList.length} Clients</div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Total Customer Payout:</span>
+                      <strong className="text-amber-400 font-extrabold">{formatINR(totalCustomerPayout)}</strong>
+                    </div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Monthly Growth Rate:</span>
+                      <strong className="text-emerald-400 font-extrabold">+18.4% Increase</strong>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('customers')}
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer text-center"
+                    >
+                      View Customers
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('addCustomer')}
+                      className="bg-amber-500 hover:bg-amber-400 text-slate-950 p-2 rounded-xl font-bold text-xs transition-transform active:scale-95 cursor-pointer"
+                      title="Add Customer"
+                    >
+                      <UserPlus className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExportPDF('Customer Payout Report')}
+                      className="bg-slate-800 hover:bg-slate-700 text-amber-400 p-2 rounded-xl font-bold text-xs transition-colors cursor-pointer"
+                      title="Customer Reports"
+                    >
+                      <FileText className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* CARD 2: TOTAL AGENTS */}
+                <div className={`rounded-3xl p-6 border transition-all space-y-4 shadow-lg ${
+                  isDarkMode ? 'bg-slate-900 border-indigo-500/40 hover:border-indigo-400' : 'bg-white border-slate-200 hover:shadow-xl'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2.5 bg-indigo-500/20 text-indigo-400 rounded-2xl">
+                        <Award className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm">Total Agents</h3>
+                        <span className="text-[10px] text-slate-400">Channel Partners & Field Team</span>
+                      </div>
+                    </div>
+                    <span className="bg-indigo-500/20 text-indigo-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-indigo-500/30">
+                      38 Partners
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-3xl font-black text-white">{agentsList.length} Agents</div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Agent Commission Payout:</span>
+                      <strong className="text-indigo-400 font-extrabold">{formatINR(totalAgentCommission)}</strong>
+                    </div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Active / Inactive Agents:</span>
+                      <strong className="text-emerald-400 font-extrabold">3 Active / 1 Inactive</strong>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('agents')}
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer text-center"
+                    >
+                      View Agents
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('addAgent')}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl font-bold text-xs transition-transform active:scale-95 cursor-pointer"
+                      title="Add Agent"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExportPDF('Agent Commission Report')}
+                      className="bg-slate-800 hover:bg-slate-700 text-indigo-400 p-2 rounded-xl font-bold text-xs transition-colors cursor-pointer"
+                      title="Agent Commission Report"
+                    >
+                      <FileText className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* CARD 3: TOTAL INVESTORS */}
+                <div className={`rounded-3xl p-6 border transition-all space-y-4 shadow-lg ${
+                  isDarkMode ? 'bg-slate-900 border-emerald-500/40 hover:border-emerald-400' : 'bg-white border-slate-200 hover:shadow-xl'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-2xl">
+                        <TrendingUp className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm">Total Investors</h3>
+                        <span className="text-[10px] text-slate-400">Fixed ROI Capital Partners</span>
+                      </div>
+                    </div>
+                    <span className="bg-emerald-500/20 text-emerald-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                      Up to 32% ROI
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-3xl font-black text-white">{investorsList.length} Investors</div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Total Investor Payout:</span>
+                      <strong className="text-emerald-400 font-extrabold">{formatINR(totalInvestorPayout)}</strong>
+                    </div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Total Invested Capital:</span>
+                      <strong className="text-sky-400 font-extrabold">{formatINR(totalInvestedCapital)}</strong>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('investors')}
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer text-center"
+                    >
+                      View Investors
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('addInvestor')}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white p-2 rounded-xl font-bold text-xs transition-transform active:scale-95 cursor-pointer"
+                      title="Add Investor"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExportPDF('Investment ROI Report')}
+                      className="bg-slate-800 hover:bg-slate-700 text-emerald-400 p-2 rounded-xl font-bold text-xs transition-colors cursor-pointer"
+                      title="Investment Reports"
+                    >
+                      <FileText className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* CARD 4: TOTAL EMPLOYEES */}
+                <div className={`rounded-3xl p-6 border transition-all space-y-4 shadow-lg ${
+                  isDarkMode ? 'bg-slate-900 border-sky-500/40 hover:border-sky-400' : 'bg-white border-slate-200 hover:shadow-xl'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2.5 bg-sky-500/20 text-sky-400 rounded-2xl">
+                        <UserCheck className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm">Total Employees</h3>
+                        <span className="text-[10px] text-slate-400">Payroll Staff & Engineers</span>
+                      </div>
+                    </div>
+                    <span className="bg-sky-500/20 text-sky-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-sky-500/30">
+                      95.8% Attendance
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-3xl font-black text-white">{employeesList.length} Employees</div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Annual Salary Payout:</span>
+                      <strong className="text-sky-400 font-extrabold">{formatINR(totalEmployeeSalary)}</strong>
+                    </div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Attendance Summary:</span>
+                      <strong className="text-emerald-400 font-extrabold">95.8% Staff Present</strong>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('employees')}
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer text-center"
+                    >
+                      View Employees
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('addEmployee')}
+                      className="bg-sky-600 hover:bg-sky-500 text-white p-2 rounded-xl font-bold text-xs transition-transform active:scale-95 cursor-pointer"
+                      title="Add Employee"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExportPDF('Payroll Summary Report')}
+                      className="bg-slate-800 hover:bg-slate-700 text-sky-400 p-2 rounded-xl font-bold text-xs transition-colors cursor-pointer"
+                      title="Payroll Report"
+                    >
+                      <FileText className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* CARD 5: TOTAL EXPENDITURES */}
+                <div className={`rounded-3xl p-6 border transition-all space-y-4 shadow-lg ${
+                  isDarkMode ? 'bg-slate-900 border-rose-500/40 hover:border-rose-400' : 'bg-white border-slate-200 hover:shadow-xl'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2.5 bg-rose-500/20 text-rose-400 rounded-2xl">
+                        <Receipt className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm">Total Expenditures</h3>
+                        <span className="text-[10px] text-slate-400">Development & Ops Cost</span>
+                      </div>
+                    </div>
+                    <span className="bg-rose-500/20 text-rose-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-rose-500/30">
+                      5 Categories
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-3xl font-black text-rose-400">{formatINR(totalExpensesAmount)}</div>
+                    <div className="text-[10px] text-slate-400 space-y-0.5 bg-slate-950/80 p-2 rounded-xl border border-slate-800">
+                      <div className="flex justify-between"><span>Property Dev:</span><strong className="text-slate-200">₹32.4L</strong></div>
+                      <div className="flex justify-between"><span>Salary:</span><strong className="text-slate-200">₹18.6L</strong></div>
+                      <div className="flex justify-between"><span>Marketing:</span><strong className="text-slate-200">₹14.8L</strong></div>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('addExpense')}
+                      className="flex-1 bg-rose-600 hover:bg-rose-500 text-white py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer text-center"
+                    >
+                      + Add Expense
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('expenses')}
+                      className="bg-slate-800 hover:bg-slate-700 text-white p-2 rounded-xl font-bold text-xs transition-colors cursor-pointer"
+                      title="Expense Reports"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExportExcel('Expense Data')}
+                      className="bg-slate-800 hover:bg-slate-700 text-emerald-400 p-2 rounded-xl font-bold text-xs transition-colors cursor-pointer"
+                      title="Export Expense Data"
+                    >
+                      <FileSpreadsheet className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* CARD 6: TOTAL LOANS & EMI */}
+                <div className={`rounded-3xl p-6 border transition-all space-y-4 shadow-lg ${
+                  isDarkMode ? 'bg-slate-900 border-purple-500/40 hover:border-purple-400' : 'bg-white border-slate-200 hover:shadow-xl'
+                }`}>
+                  <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2.5 bg-purple-500/20 text-purple-400 rounded-2xl">
+                        <Building2 className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-sm">Total Loans & EMI</h3>
+                        <span className="text-[10px] text-slate-400">Bank Project Liabilities</span>
+                      </div>
+                    </div>
+                    <span className="bg-rose-500/20 text-rose-400 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full border border-rose-500/30 animate-pulse">
+                      {defaultersList.length} Overdue
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-3xl font-black text-purple-400">{formatINR(totalLoanAmount)}</div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Active Facilities:</span>
+                      <strong className="text-white font-extrabold">{activeLoansCount} Bank Loans</strong>
+                    </div>
+                    <div className="text-xs text-slate-400 flex justify-between">
+                      <span>Monthly EMI Servicing:</span>
+                      <strong className="text-amber-400 font-extrabold">{formatINR(totalEmiCollection)} / mo</strong>
+                    </div>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('addLoan')}
+                      className="bg-purple-600 hover:bg-purple-500 text-white py-2 px-3 rounded-xl font-bold text-xs transition-colors cursor-pointer shrink-0"
+                    >
+                      + Add Loan
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('emi')}
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-xl font-bold text-xs transition-colors cursor-pointer text-center"
+                    >
+                      EMI Collection
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveModal('defaultersList')}
+                      className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 p-2 rounded-xl font-bold text-xs transition-colors cursor-pointer border border-rose-500/30"
+                      title="Defaulters List"
+                    >
+                      <AlertTriangle className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* CARD 7: TOTAL CASH FLOW WITH RECHARTS AREA CHART */}
+              <div className={`rounded-3xl p-6 md:p-8 border shadow-xl transition-all space-y-6 ${
+                isDarkMode ? 'bg-slate-900 border-emerald-500/40' : 'bg-white border-slate-200'
+              }`}>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="bg-emerald-500 text-slate-950 text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full">
+                        7. Total Cash Flow
+                      </span>
+                      <span className="text-slate-400 text-xs font-mono">Real-time Liquidity</span>
+                    </div>
+                    <h3 className="text-xl font-black tracking-tight flex items-center gap-2">
+                      <Wallet className="w-5 h-5 text-emerald-400" />
+                      <span>Liquid Operating Cash Reserves & Net Liquidity</span>
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleExportPDF('Cash Flow Report')}
+                      className="bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <FileText className="w-4 h-4" />
+                      <span>Cash Flow Report</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleExportExcel('Cash Flow Summary')}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Download Excel</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <span className="text-slate-400 font-bold">Total Cash Available</span>
+                    <div className="text-2xl font-black text-emerald-400 mt-1">+₹84,50,000</div>
+                    <span className="text-[10px] text-emerald-300">Reserve Ratio: 1.62x</span>
+                  </div>
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <span className="text-slate-400 font-bold">Incoming Cash (This Month)</span>
+                    <div className="text-2xl font-black text-sky-400 mt-1">₹32,50,000</div>
+                    <span className="text-[10px] text-sky-300">Plots + Investor Capital</span>
+                  </div>
+                  <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                    <span className="text-slate-400 font-bold">Outgoing Cash (This Month)</span>
+                    <div className="text-2xl font-black text-rose-400 mt-1">₹18,20,000</div>
+                    <span className="text-[10px] text-rose-300">Payroll + Site Construction</span>
+                  </div>
+                </div>
+
+                {/* Cash Flow Area Chart */}
+                <div className="h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={cashflowTrendData}>
+                      <defs>
+                        <linearGradient id="colorIncoming" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                        </linearGradient>
+                        <linearGradient id="colorOutgoing" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.5} />
+                      <XAxis dataKey="month" stroke="#94a3b8" fontSize={11} />
+                      <YAxis stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `₹${v / 100000}L`} />
+                      <Tooltip contentStyle={{ backgroundColor: '#090d16', borderColor: '#334155', borderRadius: '12px', fontSize: '11px', color: '#fff' }} formatter={(v: any) => formatINR(Number(v))} />
+                      <Area type="monotone" dataKey="incoming" name="Incoming Cash" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorIncoming)" strokeWidth={2} />
+                      <Area type="monotone" dataKey="outgoing" name="Outgoing Cash" stroke="#f43f5e" fillOpacity={1} fill="url(#colorOutgoing)" strokeWidth={2} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* CARDS 8 & 9: TOTAL INFLOW & TOTAL OUTFLOW ANALYTICS WITH MULTI-PERIODS & CHART TOGGLES */}
+              <InflowOutflowAnalytics
+                isDarkMode={isDarkMode}
+                onExportPDF={handleExportPDF}
+                onExportExcel={handleExportExcel}
+              />
+
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 2: CUSTOMERS TAB */}
+          {/* ========================================================================= */}
+          {activeTab === 'customers' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <Users className="w-5 h-5 text-amber-400" />
+                    <span>Customer Plot Allocations & Payout Directory</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Total 142 Registered Buyers across Milestone City Jhunsi & Prayag Royal Enclave Naini.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('addCustomer')}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  <span>+ Add Customer</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Customer ID</th>
+                      <th className="p-3">Customer Name</th>
+                      <th className="p-3">Contact</th>
+                      <th className="p-3">Allocated Plot</th>
+                      <th className="p-3">Total Paid</th>
+                      <th className="p-3">Payout / Cashback</th>
+                      <th className="p-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium">
+                    {customersList.map((c) => (
+                      <tr key={c.id} className="hover:bg-slate-800/40">
+                        <td className="p-3 font-mono text-amber-400 font-bold">{c.id}</td>
+                        <td className="p-3 font-bold text-white">{c.name}</td>
+                        <td className="p-3 text-slate-300">{c.phone}<br/><span className="text-[10px] text-slate-500">{c.email}</span></td>
+                        <td className="p-3 text-emerald-400 font-bold">{c.plotNo} ({c.projectName})</td>
+                        <td className="p-3 font-black text-white">{formatINR(c.totalPaid)}</td>
+                        <td className="p-3 font-bold text-amber-400">{formatINR(c.payoutReceived)}</td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleExportPDF(`Customer Ledger - ${c.name}`, c.id)}
+                            className="bg-slate-800 hover:bg-slate-700 text-amber-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
+                          >
+                            PDF Receipt
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 3: AGENTS & COMMISSION MANAGEMENT TAB */}
+          {/* ========================================================================= */}
+          {activeTab === 'agents' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-indigo-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <Award className="w-5 h-5 text-indigo-400" />
+                    <span>Channel Partner Commission Ledger & Team Hierarchy</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Track 8% Direct Sales Commission, Downline Team Overrides & Payout History.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('addAgent')}
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Add Agent</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Agent ID</th>
+                      <th className="p-3">Channel Partner</th>
+                      <th className="p-3">Assigned Region</th>
+                      <th className="p-3">Active Bookings</th>
+                      <th className="p-3">Total Commission Payout</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium">
+                    {agentsList.map((a) => (
+                      <tr key={a.id} className="hover:bg-slate-800/40">
+                        <td className="p-3 font-mono text-indigo-400 font-bold">{a.id}</td>
+                        <td className="p-3 font-bold text-white">{a.name}<br/><span className="text-[10px] text-slate-400">{a.phone}</span></td>
+                        <td className="p-3 text-slate-300">{a.region}</td>
+                        <td className="p-3 font-bold text-sky-400">{a.activeBookings} Plots Sold</td>
+                        <td className="p-3 font-black text-emerald-400">{formatINR(a.commissionPayout)}</td>
+                        <td className="p-3">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            a.status === 'Active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'
+                          }`}>
+                            {a.status}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleExportPDF(`Agent Commission Voucher - ${a.name}`, a.id)}
+                            className="bg-slate-800 hover:bg-slate-700 text-indigo-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
+                          >
+                            Voucher PDF
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 4: INVESTOR MANAGEMENT TAB */}
+          {/* ========================================================================= */}
+          {activeTab === 'investors' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-emerald-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    <span>Fixed ROI Investor Capital & Yield Statements</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Manage Guaranteed 22.5% - 32% ROI Slabs and Profit Sharing Certificates.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('addInvestor')}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Add Investor</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Investor ID</th>
+                      <th className="p-3">Investor Name</th>
+                      <th className="p-3">Invested Capital</th>
+                      <th className="p-3">Guaranteed ROI %</th>
+                      <th className="p-3">Calculated ROI Payout</th>
+                      <th className="p-3">Lock-in Tenure</th>
+                      <th className="p-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium">
+                    {investorsList.map((i) => (
+                      <tr key={i.id} className="hover:bg-slate-800/40">
+                        <td className="p-3 font-mono text-emerald-400 font-bold">{i.id}</td>
+                        <td className="p-3 font-bold text-white">{i.name}<br/><span className="text-[10px] text-slate-400">{i.phone}</span></td>
+                        <td className="p-3 font-black text-white">{formatINR(i.capital)}</td>
+                        <td className="p-3 font-bold text-amber-400">{i.roiPercent}% p.a.</td>
+                        <td className="p-3 font-black text-emerald-400">{formatINR(i.totalPayout)}</td>
+                        <td className="p-3 text-slate-300">{i.tenure}</td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleExportPDF(`Investor ROI Bond Certificate - ${i.name}`, i.id)}
+                            className="bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
+                          >
+                            ROI Certificate
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 5: EMPLOYEES & PAYROLL TAB */}
+          {/* ========================================================================= */}
+          {activeTab === 'employees' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-sky-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <UserCheck className="w-5 h-5 text-sky-400" />
+                    <span>Employee Directory, Attendance Logs & Monthly Payroll</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">24 Full-Time Engineers, Surveyors & Account Officers on Company Payroll.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('addEmployee')}
+                  className="bg-sky-600 hover:bg-sky-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Add Employee</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Staff ID</th>
+                      <th className="p-3">Employee Name</th>
+                      <th className="p-3">Designation & Dept</th>
+                      <th className="p-3">Monthly Base Salary</th>
+                      <th className="p-3">Attendance Ratio</th>
+                      <th className="p-3 text-right">Salary Slip</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium">
+                    {employeesList.map((e) => (
+                      <tr key={e.id} className="hover:bg-slate-800/40">
+                        <td className="p-3 font-mono text-sky-400 font-bold">{e.id}</td>
+                        <td className="p-3 font-bold text-white">{e.name}</td>
+                        <td className="p-3 text-slate-300">{e.role}<br/><span className="text-[10px] text-slate-500">{e.dept}</span></td>
+                        <td className="p-3 font-black text-white">{formatINR(e.salary)}</td>
+                        <td className="p-3 font-bold text-emerald-400">{e.attendance} Present</td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleExportPDF(`Employee Salary Slip - ${e.name}`, e.id)}
+                            className="bg-slate-800 hover:bg-slate-700 text-sky-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
+                          >
+                            Payslip PDF
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 6: PLOTS INVENTORY & REAL ESTATE MANAGEMENT */}
+          {/* ========================================================================= */}
+          {activeTab === 'plots' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <Grid className="w-5 h-5 text-amber-400" />
+                    <span>Real Estate Plot Inventory & Section 143 Status</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Live Plot Grid Allocation Matrix for Milestone City Jhunsi and Prayag Royal Enclave Naini.</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {projects.map((proj) => (
+                  <div key={proj.id} className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-extrabold text-white text-sm">{proj.name}</h4>
+                        <span className="text-[10px] text-slate-400 block">{proj.location}</span>
+                      </div>
+                      <span className="bg-amber-500/20 text-amber-400 font-bold text-[10px] px-2 py-0.5 rounded">
+                        {proj.availablePlots} Plots Left
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-1.5 text-center">
+                      {proj.plotsGrid.map((plot) => (
+                        <div
+                          key={plot.id}
+                          className={`p-1.5 rounded-lg text-[10px] font-bold border ${
+                            plot.status === 'available'
+                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                              : plot.status === 'booked'
+                                ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+                                : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+                          }`}
+                        >
+                          {plot.plotNo}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-800 flex justify-between text-[11px] text-slate-400">
+                      <span>Rate: ₹{proj.ratePerSqft}/sq.ft</span>
+                      <strong className="text-amber-400">Section 143 Approved</strong>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 7: BOOKINGS APPROVAL LEDGER */}
+          {/* ========================================================================= */}
+          {activeTab === 'bookings' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <FileSpreadsheet className="w-5 h-5 text-amber-400" />
+                    <span>Customer Plot Booking Verification Ledger</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Review Razorpay/UPI Payment Receipts and Issue Plot Allotment Letters.</p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Booking ID</th>
+                      <th className="p-3">Customer Name</th>
+                      <th className="p-3">Project & Plot</th>
+                      <th className="p-3">Total Land Price</th>
+                      <th className="p-3">Deposit Paid</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 text-right">Allotment Certificate</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium">
+                    {bookings.map((b) => (
+                      <tr key={b.id} className="hover:bg-slate-800/40">
+                        <td className="p-3 font-mono text-amber-400 font-bold">{b.id}</td>
+                        <td className="p-3 font-bold text-white">{b.customerName}<br/><span className="text-[10px] text-slate-400">{b.customerPhone}</span></td>
+                        <td className="p-3 text-emerald-400 font-bold">{b.plotNo} ({b.projectName})</td>
+                        <td className="p-3 font-black text-white">{formatINR(b.totalPrice)}</td>
+                        <td className="p-3 font-bold text-sky-400">{formatINR(b.bookingAmountPaid)}</td>
+                        <td className="p-3">
+                          <span className="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded text-[10px]">
+                            {b.status}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => handleExportPDF(`Plot Allotment Certificate - ${b.customerName}`, b.id)}
+                            className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1.5 rounded-lg text-[11px] font-black"
+                          >
+                            Allotment PDF
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 8: LOANS & BANK LIABILITIES */}
+          {/* ========================================================================= */}
+          {activeTab === 'loans' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-purple-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <Building2 className="w-5 h-5 text-purple-400" />
+                    <span>Bank Infrastructure Loans & EMI Obligations</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Commercial Bank Credit Facilities for Site Land Acquisition & Development.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('addLoan')}
+                  className="bg-purple-600 hover:bg-purple-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>+ Add Loan</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {loansList.map((l) => (
+                  <div key={l.id} className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-4">
+                    <div className="flex justify-between items-start border-b border-slate-800 pb-3">
+                      <div>
+                        <h4 className="font-extrabold text-white text-sm">{l.bank}</h4>
+                        <span className="text-[10px] text-slate-400">Sanctioned Principal: {formatINR(l.principal)}</span>
+                      </div>
+                      <span className="bg-purple-500/20 text-purple-300 font-bold text-[10px] px-2.5 py-0.5 rounded">
+                        {l.interestRate}% Interest p.a.
+                      </span>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Monthly EMI Servicing:</span>
+                        <strong className="text-purple-400 font-black">{formatINR(l.emi)} / mo</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Principal Outstanding:</span>
+                        <strong className="text-white font-extrabold">{formatINR(l.outstanding)}</strong>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-800 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleExportPDF(`Loan Statement - ${l.bank}`, l.id)}
+                        className="bg-slate-800 hover:bg-slate-700 text-purple-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
+                      >
+                        Loan Audit PDF
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 9: EMI MANAGEMENT & DEFAULTERS */}
+          {/* ========================================================================= */}
+          {activeTab === 'emi' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-rose-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-rose-400" />
+                    <span>Customer Plot EMI Schedule & Overdue Tracking</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Track monthly customer installment collections & trigger automated legal reminder notices.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('defaultersList')}
+                  className="bg-rose-600 hover:bg-rose-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                >
+                  <AlertTriangle className="w-4 h-4" />
+                  <span>View Defaulters List ({defaultersList.length})</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Customer Name</th>
+                      <th className="p-3">Plot No</th>
+                      <th className="p-3">Monthly EMI</th>
+                      <th className="p-3">Due Date</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium">
+                    {defaultersList.map((def, idx) => (
+                      <tr key={idx} className="hover:bg-slate-800/40">
+                        <td className="p-3 font-bold text-white">{def.name}<br/><span className="text-[10px] text-slate-400">{def.phone}</span></td>
+                        <td className="p-3 text-amber-400 font-bold">{def.plotNo} ({def.projectName})</td>
+                        <td className="p-3 font-black text-rose-400">{formatINR(def.emiAmount)}</td>
+                        <td className="p-3 text-slate-300">{def.dueDate}</td>
+                        <td className="p-3">
+                          <span className="bg-rose-500/20 text-rose-300 font-bold px-2 py-0.5 rounded text-[10px] animate-pulse">
+                            {def.overdueDays} Days Overdue
+                          </span>
+                        </td>
+                        <td className="p-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => alert(`Notice dispatched to ${def.name}`)}
+                            className="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold"
+                          >
+                            Send Notice
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 10 & 11: INCOME, EXPENSES & CASH FLOW */}
+          {/* ========================================================================= */}
+          {(activeTab === 'income' || activeTab === 'expenses' || activeTab === 'cashflow') && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <Receipt className="w-5 h-5 text-amber-400" />
+                    <span>Company Financial Expenditures & Expense Log</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Categorized outlays across Site Development, Marketing, Salary & Admin Office.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal('addExpense')}
+                    className="bg-rose-600 hover:bg-rose-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>+ Add Expense</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleExportExcel('Company Expenses Data')}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                  >
+                    <FileSpreadsheet className="w-4 h-4" />
+                    <span>Export Excel</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Expense ID</th>
+                      <th className="p-3">Expense Title</th>
+                      <th className="p-3">Category</th>
+                      <th className="p-3">Vendor / Recipient</th>
+                      <th className="p-3">Date</th>
+                      <th className="p-3">Amount Spent</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium">
+                    {expensesList.map((exp) => (
+                      <tr key={exp.id} className="hover:bg-slate-800/40">
+                        <td className="p-3 font-mono text-rose-400 font-bold">{exp.id}</td>
+                        <td className="p-3 font-bold text-white">{exp.title}</td>
+                        <td className="p-3">
+                          <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] font-bold">
+                            {exp.category}
+                          </span>
+                        </td>
+                        <td className="p-3 text-slate-300">{exp.vendor}</td>
+                        <td className="p-3 text-slate-400">{exp.date}</td>
+                        <td className="p-3 font-black text-rose-400">{formatINR(exp.amount)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 12: REPORTS SECTION */}
+          {/* ========================================================================= */}
+          {activeTab === 'reports' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="border-b border-slate-800 pb-4">
+                <h3 className="text-xl font-black flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-amber-400" />
+                  <span>Automated Financial & Operations Report Generator</span>
+                </h3>
+                <p className="text-slate-400 text-xs mt-1">Export instantly formatted audit statements in PDF, Excel, and CSV formats.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { name: 'Customer Report', desc: 'Complete 142 plot buyers ledger & allotment history' },
+                  { name: 'Agent Report', desc: 'Channel partner commissions, sales & downline payouts' },
+                  { name: 'Investor Report', desc: 'Guaranteed ROI yields & capital lock-in bonds' },
+                  { name: 'Employee Report', desc: 'Staff attendance summaries & monthly payroll receipts' },
+                  { name: 'Loan & EMI Report', desc: 'Commercial bank facilities & overdue EMI alerts' },
+                  { name: 'Cash Flow & Income Report', desc: 'Live liquidity reserves, inflows & project costs' },
+                ].map((rep, idx) => (
+                  <div key={idx} className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+                    <h4 className="font-extrabold text-white text-sm">{rep.name}</h4>
+                    <p className="text-slate-400 text-[11px]">{rep.desc}</p>
+                    <div className="pt-2 border-t border-slate-800 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleExportPDF(rep.name)}
+                        className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-1.5 rounded-xl text-xs transition-colors cursor-pointer text-center"
+                      >
+                        PDF
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleExportExcel(rep.name)}
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-xl text-xs transition-colors cursor-pointer text-center"
+                      >
+                        Excel / CSV
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 13: GALLERY MANAGEMENT */}
+          {/* ========================================================================= */}
+          {activeTab === 'gallery' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div>
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <ImageIcon className="w-5 h-5 text-amber-400" />
+                    <span>Project Media Gallery & Document Vault</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-1">Multi-role uploads for Photos, Videos, Audio Files, and RERA Documents.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('uploadGallery')}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
+                >
+                  <Upload className="w-4 h-4" />
+                  <span>+ Upload Media</span>
+                </button>
+              </div>
+
+              {/* Action Buttons: Upload Photo, Upload Video, Upload Audio, Upload Document */}
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('uploadGallery')}
+                  className="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-amber-500/30"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload Photo</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('uploadGallery')}
+                  className="bg-slate-800 hover:bg-slate-700 text-indigo-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-indigo-500/30"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload Video</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('uploadGallery')}
+                  className="bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-emerald-500/30"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload Audio</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal('uploadGallery')}
+                  className="bg-slate-800 hover:bg-slate-700 text-sky-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-sky-500/30"
+                >
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Upload Document</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {galleryItems.map((item) => (
+                  <div key={item.id} className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden space-y-3 p-4">
+                    <img src={item.url} alt={item.title} className="w-full h-40 object-cover rounded-xl" />
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="bg-amber-500/20 text-amber-300 font-bold uppercase text-[10px] px-2 py-0.5 rounded">
+                          {item.type}
+                        </span>
+                        <span className="text-[10px] text-slate-500">{item.date}</span>
+                      </div>
+                      <h4 className="font-bold text-white text-xs">{item.title}</h4>
+                    </div>
+                    <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+                      <button
+                        type="button"
+                        onClick={() => alert(`Downloading ${item.title}`)}
+                        className="text-emerald-400 hover:underline flex items-center gap-1 font-bold"
+                      >
+                        <Download className="w-3.5 h-3.5" /> Download
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => alert(`Share link generated!`)}
+                        className="text-sky-400 hover:underline flex items-center gap-1 font-bold"
+                      >
+                        <Share2 className="w-3.5 h-3.5" /> Share
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setGalleryItems(prev => prev.filter(g => g.id !== item.id))}
+                        className="text-rose-400 hover:underline flex items-center gap-1 font-bold"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 14: NOTIFICATIONS & AUDIT TRAIL */}
+          {/* ========================================================================= */}
+          {activeTab === 'notifications' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="border-b border-slate-800 pb-4">
+                <h3 className="text-xl font-black flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-amber-400" />
+                  <span>Real-Time Audit Trail & System Alerts Log</span>
+                </h3>
+                <p className="text-slate-400 text-xs mt-1">Live tracking of plot reservations, payouts, legal filings, and EMI reminders.</p>
+              </div>
+
+              <div className="space-y-3">
+                {[
+                  { title: 'Customer Booking Verified', desc: 'Rajesh Sharma deposited ₹10,000 for Plot A-12', time: '10 mins ago', type: 'success' },
+                  { title: 'EMI Overdue Notice Dispatched', desc: 'Plot P-08 EMI of ₹14,500 overdue notice sent', time: '1 hour ago', type: 'warning' },
+                  { title: 'Agent Commission Released', desc: '₹22,400 released to Channel Partner Amit V.', time: '3 hours ago', type: 'info' },
+                  { title: 'Section 143 Document Uploaded', desc: 'Phase 1 Registry Paper uploaded by Legal Dept', time: 'Yesterday', type: 'info' },
+                ].map((n, idx) => (
+                  <div key={idx} className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+                    <div>
+                      <h4 className="font-bold text-white text-xs">{n.title}</h4>
+                      <p className="text-slate-400 text-[11px] mt-0.5">{n.desc}</p>
+                    </div>
+                    <span className="text-slate-500 text-[10px] font-mono">{n.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 15: SETTINGS, DATABASE & SECURITY */}
+          {/* ========================================================================= */}
+          {activeTab === 'settings' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="border-b border-slate-800 pb-4">
+                <h3 className="text-xl font-black flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-amber-400" />
+                  <span>System Security, Role-Based Access (RBAC) & MongoDB Overview</span>
+                </h3>
+                <p className="text-slate-400 text-xs mt-1">Configure JWT Authentication, Encryption & MongoDB Collections Schema.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                  <h4 className="font-extrabold text-white text-sm flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-emerald-400" />
+                    <span>Security & Authentication Engines</span>
+                  </h4>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between p-2 bg-slate-900 rounded-xl"><span>JWT Token Auth:</span><strong className="text-emerald-400">Active (HS256)</strong></div>
+                    <div className="flex justify-between p-2 bg-slate-900 rounded-xl"><span>Role-Based Access (RBAC):</span><strong className="text-amber-400">Master Admin Level</strong></div>
+                    <div className="flex justify-between p-2 bg-slate-900 rounded-xl"><span>Password Encryption:</span><strong className="text-sky-400">BCrypt (Salt 12)</strong></div>
+                    <div className="flex justify-between p-2 bg-slate-900 rounded-xl"><span>OTP Verification:</span><strong className="text-emerald-400">SMS / WhatsApp Gateway</strong></div>
+                  </div>
+                </div>
+
+                <div className="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                  <h4 className="font-extrabold text-white text-sm flex items-center gap-2">
+                    <Database className="w-4 h-4 text-sky-400" />
+                    <span>MongoDB Database Collections</span>
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-[11px]">
+                    {['Customers', 'Agents', 'Investors', 'Employees', 'Plots', 'Bookings', 'Loans', 'EMI', 'Income', 'Expenses', 'Gallery'].map((col, i) => (
+                      <div key={i} className="p-2 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between">
+                        <span className="text-slate-300 font-bold">{col}</span>
+                        <span className="text-emerald-400 font-mono text-[10px]">Connected</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </main>
+      </div>
+
+      {/* POPUP MODALS ENGINE */}
+      <AdminModals
+        activeModal={activeModal}
+        onClose={() => setActiveModal(null)}
+        onSaveCustomer={(data) => setCustomersList(prev => [{ id: `CUST-${Math.floor(100+Math.random()*900)}`, payoutReceived: 0, growthPercent: 12.0, status: 'Active', ...data }, ...prev])}
+        onSaveAgent={(data) => setAgentsList(prev => [{ id: `AGT-${Math.floor(100+Math.random()*900)}`, activeBookings: 1, commissionPayout: 45000, status: 'Active', ...data }, ...prev])}
+        onSaveInvestor={(data) => setInvestorsList(prev => [{ id: `INV-${Math.floor(100+Math.random()*900)}`, totalPayout: (data.amount * (data.roi || 22.5)) / 100, status: 'Active', ...data }, ...prev])}
+        onSaveEmployee={(data) => setEmployeesList(prev => [{ id: `EMP-${Math.floor(100+Math.random()*900)}`, attendance: '100%', status: 'Present', ...data }, ...prev])}
+        onSaveExpense={(data) => setExpensesList(prev => [{ id: `EXP-${Math.floor(100+Math.random()*900)}`, date: new Date().toISOString().split('T')[0], ...data }, ...prev])}
+        onSaveLoan={(data) => setLoansList(prev => [{ id: `LOAN-${Math.floor(100+Math.random()*900)}`, outstanding: data.principal, status: 'Active', ...data }, ...prev])}
+        onUploadMedia={(data) => setGalleryItems(prev => [{ id: `GAL-${Math.floor(100+Math.random()*900)}`, date: new Date().toISOString().split('T')[0], url: data.url || 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=800&q=80', ...data }, ...prev])}
+        defaultersList={defaultersList}
+        isDarkMode={isDarkMode}
+      />
+
+    </div>
+  );
+};
