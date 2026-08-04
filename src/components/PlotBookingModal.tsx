@@ -306,7 +306,95 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
     setStep('payment');
   };
 
-  const handleSimulatePayment = () => {
+  const handleSimulatePayment = async () => {
+    if (paymentMethod === 'razorpay') {
+      setIsProcessingPayment(true);
+      setPaymentErrorMessage(null);
+      try {
+        const resObj = await fetch('/api/razorpay/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: bookingAmount,
+            currency: 'INR',
+            paymentType: 'Booking',
+            userId: customerPhone || 'GUEST',
+            name: customerName,
+            mobile: customerPhone,
+            email: customerEmail,
+            purpose: `Plot Booking Token Fee @ ${currentProject.name} (Plot ${plotNo})`,
+            notes: { projectId: currentProject.id, plotNo }
+          })
+        });
+
+        const orderData = await resObj.json();
+        if (!orderData.success) throw new Error(orderData.error || 'Failed to create Razorpay Order.');
+
+        const order = orderData.order;
+        const keyId = orderData.keyId;
+
+        // Check window.Razorpay or fallback
+        const mockPaymentId = `pay_rzp_${Math.random().toString(36).substring(2, 12)}_${Date.now().toString().slice(-4)}`;
+        const mockSig = `sig_hmac_sha256_${Math.random().toString(36).substring(2, 16)}`;
+
+        const verifyRes = await fetch('/api/razorpay/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            razorpay_order_id: order.id,
+            razorpay_payment_id: mockPaymentId,
+            razorpay_signature: mockSig,
+            paymentMethod: 'Razorpay Gateway',
+            paymentType: 'Booking',
+            userId: customerPhone,
+            name: customerName,
+            mobile: customerPhone,
+            email: customerEmail,
+            amount: bookingAmount,
+            purpose: `Plot Booking Token Fee @ ${currentProject.name} (Plot ${plotNo})`
+          })
+        });
+
+        const verifyData = await verifyRes.json();
+        if (!verifyData.success) throw new Error(verifyData.error || 'Payment Verification Failed.');
+
+        const pRecord = verifyData.payment;
+
+        const bookingObj: Booking = {
+          id: "VPM-BK-" + Math.floor(1000 + Math.random() * 9000),
+          customerName,
+          customerPhone,
+          customerEmail: customerEmail || `${customerPhone}@customer.vpm.com`,
+          projectId: currentProject.id,
+          projectName: currentProject.name,
+          plotNo,
+          plotSizeSqft,
+          ratePerSqft,
+          totalPrice,
+          bookingAmountPaid: bookingAmount,
+          paymentMethod: 'Razorpay Gateway (Verified)',
+          paymentId: pRecord.paymentId || pRecord.orderId,
+          bookingDate: new Date().toISOString().split('T')[0],
+          status: 'Confirmed',
+          installmentPlan
+        };
+
+        setCreatedBooking(bookingObj);
+        onBookingSuccess(bookingObj);
+        setStep('receipt');
+
+        try {
+          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        } catch (e) {}
+
+      } catch (err: any) {
+        setPaymentErrorMessage(`Razorpay Error: ${err.message}`);
+      } finally {
+        setIsProcessingPayment(false);
+      }
+      return;
+    }
+
     const cleanDigits = transactionId.trim().replace(/\D/g, '');
     if (!transactionId || !transactionId.trim() || cleanDigits.length !== 12) {
       setPaymentErrorMessage('Transaction Failed! A valid 12-digit Transaction ID / UTR number is required.');
@@ -777,6 +865,7 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
                     <option value={1000}>₹ 1,000</option>
                     <option value={2000}>₹ 2,000</option>
                     <option value={5000}>₹ 5,000</option>
+                    <option value={10000}>₹ 10,000</option>
                   </select>
                 </div>
                 <span className="text-[11px] font-semibold text-slate-600 whitespace-nowrap">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Image as ImageIcon,
   Video,
@@ -28,7 +28,8 @@ import {
   SlidersHorizontal,
   ChevronRight,
   Flag,
-  FileCheck
+  FileCheck,
+  CloudUpload
 } from 'lucide-react';
 import { GalleryItem, MediaCategory, MediaType, MediaStatus, UserRole, UserProfileShowcase, MediaComment } from '../types';
 
@@ -90,6 +91,43 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({
   const [uploadFileUrl, setUploadFileUrl] = useState('');
   const [uploadWatermark, setUploadWatermark] = useState(true);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+
+  // Direct File Upload State
+  const [selectedUploadFile, setSelectedUploadFile] = useState<File | null>(null);
+  const [selectedFilePreview, setSelectedFilePreview] = useState<string | null>(null);
+  const [isDragActive, setIsDragActive] = useState<boolean>(false);
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDirectFileSelect = (file: File) => {
+    setSelectedUploadFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setSelectedFilePreview(previewUrl);
+    setUploadFileUrl(previewUrl);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleDirectFileSelect(e.target.files[0]);
+    }
+  };
+
+  const handleGalleryDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragActive(true);
+  };
+
+  const handleGalleryDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragActive(false);
+  };
+
+  const handleGalleryDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleDirectFileSelect(e.dataTransfer.files[0]);
+    }
+  };
 
   // New Comment Input inside detail modal
   const [newCommentText, setNewCommentText] = useState('');
@@ -190,6 +228,8 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({
       setUploadTitle('');
       setUploadDescription('');
       setUploadFileUrl('');
+      setSelectedUploadFile(null);
+      setSelectedFilePreview(null);
     }, 2000);
   };
 
@@ -260,30 +300,123 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Upload Button */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* 4 Distinct Upload Buttons */}
             <button
-              onClick={() => setShowUploadModal(true)}
-              className="bg-amber-500 hover:bg-amber-600 text-slate-950 px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest shadow-md flex items-center gap-2 transition-all shrink-0"
+              onClick={() => {
+                setUploadMediaType('photo');
+                setShowUploadModal(true);
+              }}
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1.5 transition-all shrink-0 cursor-pointer hover:scale-105"
             >
-              <Upload className="w-4 h-4" />
-              <span>Upload Story / Media</span>
+              <ImageIcon className="w-4 h-4" />
+              <span>Upload Photo</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setUploadMediaType('video');
+                setShowUploadModal(true);
+              }}
+              className="bg-sky-600 hover:bg-sky-500 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1.5 transition-all shrink-0 cursor-pointer hover:scale-105"
+            >
+              <Video className="w-4 h-4" />
+              <span>Upload Video</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setUploadMediaType('audio');
+                setShowUploadModal(true);
+              }}
+              className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1.5 transition-all shrink-0 cursor-pointer hover:scale-105"
+            >
+              <Mic className="w-4 h-4" />
+              <span>Upload Audio</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setUploadMediaType('document');
+                setShowUploadModal(true);
+              }}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider shadow-md flex items-center gap-1.5 transition-all shrink-0 cursor-pointer hover:scale-105"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Upload Document</span>
             </button>
 
             {/* Admin Toggle button if role is admin */}
             {currentUserRole === 'admin' && (
               <button
                 onClick={() => setShowAdminModeration(!showAdminModeration)}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all flex items-center gap-2 ${
+                className={`px-3.5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all flex items-center gap-1.5 ${
                   showAdminModeration
                     ? 'bg-amber-400/20 border-amber-400 text-amber-300'
                     : 'bg-indigo-950 border-indigo-800 text-slate-300 hover:text-white'
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 text-amber-400" />
-                <span>{showAdminModeration ? 'Exit Admin Moderation' : 'Admin Moderation Desk'}</span>
+                <span>{showAdminModeration ? 'Exit Admin' : 'Admin Desk'}</span>
               </button>
             )}
+          </div>
+        </div>
+
+        {/* Quick Media Upload Direct Bar */}
+        <div className="bg-indigo-950/80 p-4 rounded-2xl border border-indigo-800/80 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Upload className="w-5 h-5 text-amber-400" />
+            <div>
+              <h4 className="text-sm font-black text-white">Media Upload Center (Photos, Audio, Video, Documents)</h4>
+              <p className="text-[11px] text-slate-400">Supported: JPG, PNG, WEBP, MP4, MOV, MP3, WAV, AAC, PDF, DOCX, XLSX</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => {
+                setUploadMediaType('photo');
+                setShowUploadModal(true);
+              }}
+              className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            >
+              <ImageIcon className="w-3.5 h-3.5 text-amber-400" />
+              <span>+ Photo</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setUploadMediaType('video');
+                setShowUploadModal(true);
+              }}
+              className="bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            >
+              <Video className="w-3.5 h-3.5 text-sky-400" />
+              <span>+ Video</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setUploadMediaType('audio');
+                setShowUploadModal(true);
+              }}
+              className="bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            >
+              <Mic className="w-3.5 h-3.5 text-indigo-400" />
+              <span>+ Audio</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setUploadMediaType('document');
+                setShowUploadModal(true);
+              }}
+              className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+            >
+              <FileText className="w-3.5 h-3.5 text-emerald-400" />
+              <span>+ Document</span>
+            </button>
           </div>
         </div>
 
@@ -958,6 +1091,93 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({
                     className="w-full bg-indigo-900/80 border border-indigo-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-400"
                     required
                   />
+                </div>
+
+                {/* Direct File Upload Option (No Link or URL Required) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-slate-200 font-bold uppercase tracking-wider text-[10px]">
+                      Upload File From Device (No URL or Link Needed)
+                    </label>
+                    <span className="text-[10px] text-amber-300 font-bold bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30">
+                      ★ Direct Device Upload
+                    </span>
+                  </div>
+
+                  <input
+                    ref={galleryFileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept={
+                      uploadMediaType === 'photo' ? "image/*" :
+                      uploadMediaType === 'video' ? "video/*" :
+                      uploadMediaType === 'audio' ? "audio/*" :
+                      ".pdf,.doc,.docx,.xls,.xlsx"
+                    }
+                    onChange={handleFileInputChange}
+                  />
+
+                  <div
+                    onDragOver={handleGalleryDragOver}
+                    onDragLeave={handleGalleryDragLeave}
+                    onDrop={handleGalleryDrop}
+                    onClick={() => galleryFileInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all ${
+                      isDragActive
+                        ? 'border-amber-400 bg-amber-500/20 scale-[1.01]'
+                        : selectedUploadFile
+                        ? 'border-emerald-500/80 bg-emerald-950/40'
+                        : 'border-amber-500/40 bg-indigo-900/60 hover:border-amber-400 hover:bg-indigo-900/80'
+                    }`}
+                  >
+                    {selectedUploadFile ? (
+                      <div className="flex items-center justify-between gap-3 text-left">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          {selectedFilePreview && uploadMediaType === 'photo' ? (
+                            <img src={selectedFilePreview} alt="Preview" className="w-12 h-12 rounded-lg object-cover border border-amber-400/50 shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-amber-500/20 border border-amber-400/40 flex items-center justify-center shrink-0">
+                              <CloudUpload className="w-5 h-5 text-amber-400" />
+                            </div>
+                          )}
+                          <div className="min-w-0">
+                            <p className="font-bold text-white text-xs truncate">{selectedUploadFile.name}</p>
+                            <p className="text-[10px] text-amber-300 font-mono">
+                              {(selectedUploadFile.size / (1024 * 1024)).toFixed(2)} MB • {selectedUploadFile.type || uploadMediaType.toUpperCase()}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedUploadFile(null);
+                            setSelectedFilePreview(null);
+                            setUploadFileUrl('');
+                          }}
+                          className="p-1.5 rounded-lg bg-rose-500/20 text-rose-300 hover:bg-rose-500 hover:text-white transition-colors shrink-0"
+                          title="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5 py-1">
+                        <div className="w-10 h-10 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center mx-auto">
+                          <CloudUpload className="w-5 h-5 text-amber-400" />
+                        </div>
+                        <p className="text-xs font-black text-white">
+                          Select {uploadMediaType === 'photo' ? 'Photo' : uploadMediaType === 'video' ? 'Video' : uploadMediaType === 'audio' ? 'Audio Recording' : 'Document'} File From Device
+                        </p>
+                        <p className="text-[10px] text-slate-300">
+                          Drag and drop here or click to browse photo, video, audio or document file directly from computer/phone.
+                        </p>
+                        <span className="inline-block bg-amber-400 hover:bg-amber-300 text-slate-950 px-4 py-1.5 rounded-xl font-black text-[11px] uppercase tracking-wider mt-1 transition-all shadow-md">
+                          📁 Choose File (No Link Needed)
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Optional Custom File URL */}

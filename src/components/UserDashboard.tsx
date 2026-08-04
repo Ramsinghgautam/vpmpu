@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { User, Booking, InvestmentRecord, TeamMember } from '../types';
 import { MOCK_TEAM_TREE } from '../data/mockData';
-import { User as UserIcon, ShieldCheck, CreditCard, TrendingUp, Users, FileText, Download, Printer, Copy, Award, CheckCircle2, ChevronRight, ChevronDown, LogOut, X, Loader2, Camera, Upload, XCircle, GitFork, UserPlus, Search, Phone, Share2, MapPin, Grid, FileSpreadsheet, Eye, Layers, Compass, FileCheck, UserCheck, Receipt, Building2, Wallet, ArrowDownLeft, ArrowUpRight, PieChart, BarChart3 } from 'lucide-react';
+import { User as UserIcon, ShieldCheck, CreditCard, TrendingUp, Users, FileText, Download, Printer, Copy, Award, CheckCircle2, ChevronRight, ChevronDown, LogOut, X, Loader2, Camera, Upload, XCircle, GitFork, UserPlus, Search, Phone, Share2, MapPin, Grid, FileSpreadsheet, Eye, Layers, Compass, FileCheck, UserCheck, Receipt, Building2, Wallet, ArrowDownLeft, ArrowUpRight, PieChart, BarChart3, CloudUpload } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { formatINR } from '../utils/calculators';
+import { MediaUploadManager } from './MediaUploadManager';
+import { CustomerPaymentHistory } from './CustomerPaymentHistory';
 
 interface UserDashboardProps {
   currentUser: User | null;
@@ -21,7 +23,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   onLogout,
   onNavigate
 }) => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial' | 'media'>('profile');
   const [financialTimeframe, setFinancialTimeframe] = useState<'monthly' | 'quarterly' | 'sixMonthly' | 'annually'>('monthly');
   const [copiedRef, setCopiedRef] = useState(false);
   const [showICardModal, setShowICardModal] = useState(false);
@@ -1448,13 +1450,46 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
           </button>
 
           <button
+            onClick={() => setActiveTab('payments')}
+            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'payments' ? 'bg-sky-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}`}
+          >
+            <Receipt className="w-4 h-4 text-emerald-400" />
+            <span>Payment History</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('docs')}
             className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'docs' ? 'bg-sky-900 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100'}`}
           >
             <FileText className="w-4 h-4" />
             <span>Documents & Receipts</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('media')}
+            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'media' ? 'bg-sky-900 text-white shadow-xs font-black' : 'text-slate-600 hover:bg-slate-100'}`}
+          >
+            <CloudUpload className="w-4 h-4 text-amber-500" />
+            <span>Media Vault & Uploads</span>
+          </button>
         </div>
+
+        {/* Tab: Media Upload Manager */}
+        {activeTab === 'media' && (
+          <MediaUploadManager
+            currentUserRole={role === 'buyer' ? 'customer' : (role as any)}
+            currentUserId={currentUser?.id}
+            currentUserName={currentUser?.name || userName}
+            isDarkMode={true}
+          />
+        )}
+
+        {/* Tab: Customer Payment History */}
+        {activeTab === 'payments' && (
+          <CustomerPaymentHistory
+            currentUser={currentUser}
+          />
+        )}
 
         {/* Tab 1: Profile */}
         {activeTab === 'profile' && (

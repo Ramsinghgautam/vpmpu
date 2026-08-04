@@ -43,7 +43,11 @@ import { formatINR } from '../utils/calculators';
 import { AdminHeader } from './admin/AdminHeader';
 import { AdminSidebar, AdminTabType } from './admin/AdminSidebar';
 import { InflowOutflowAnalytics } from './admin/InflowOutflowAnalytics';
+import { MediaUploadManager } from './MediaUploadManager';
 import { AdminModals } from './admin/AdminModals';
+import { AdminTranslationManager } from './admin/AdminTranslationManager';
+import { AdminPaymentManager } from './admin/AdminPaymentManager';
+import { AdminHostingerSqlManager } from './admin/AdminHostingerSqlManager';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
@@ -1230,6 +1234,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
 
           {/* ========================================================================= */}
+          {/* TAB: RAZORPAY PAYMENT GATEWAY MANAGEMENT */}
+          {/* ========================================================================= */}
+          {activeTab === 'payments' && (
+            <AdminPaymentManager />
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB: HOSTINGER MYSQL DATABASE MANAGEMENT */}
+          {/* ========================================================================= */}
+          {activeTab === 'hostinger_sql' && (
+            <AdminHostingerSqlManager />
+          )}
+
+          {/* ========================================================================= */}
           {/* TAB 10 & 11: INCOME, EXPENSES & CASH FLOW */}
           {/* ========================================================================= */}
           {(activeTab === 'income' || activeTab === 'expenses' || activeTab === 'cashflow') && (
@@ -1350,103 +1368,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* TAB 13: GALLERY MANAGEMENT */}
           {/* ========================================================================= */}
           {activeTab === 'gallery' && (
-            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
-              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
-            }`}>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div>
-                  <h3 className="text-xl font-black flex items-center gap-2">
-                    <ImageIcon className="w-5 h-5 text-amber-400" />
-                    <span>Project Media Gallery & Document Vault</span>
-                  </h3>
-                  <p className="text-slate-400 text-xs mt-1">Multi-role uploads for Photos, Videos, Audio Files, and RERA Documents.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('uploadGallery')}
-                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
-                >
-                  <Upload className="w-4 h-4" />
-                  <span>+ Upload Media</span>
-                </button>
-              </div>
-
-              {/* Action Buttons: Upload Photo, Upload Video, Upload Audio, Upload Document */}
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('uploadGallery')}
-                  className="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-amber-500/30"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Upload Photo</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('uploadGallery')}
-                  className="bg-slate-800 hover:bg-slate-700 text-indigo-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-indigo-500/30"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Upload Video</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('uploadGallery')}
-                  className="bg-slate-800 hover:bg-slate-700 text-emerald-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-emerald-500/30"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Upload Audio</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('uploadGallery')}
-                  className="bg-slate-800 hover:bg-slate-700 text-sky-400 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer border border-sky-500/30"
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Upload Document</span>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {galleryItems.map((item) => (
-                  <div key={item.id} className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden space-y-3 p-4">
-                    <img src={item.url} alt={item.title} className="w-full h-40 object-cover rounded-xl" />
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="bg-amber-500/20 text-amber-300 font-bold uppercase text-[10px] px-2 py-0.5 rounded">
-                          {item.type}
-                        </span>
-                        <span className="text-[10px] text-slate-500">{item.date}</span>
-                      </div>
-                      <h4 className="font-bold text-white text-xs">{item.title}</h4>
-                    </div>
-                    <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
-                      <button
-                        type="button"
-                        onClick={() => alert(`Downloading ${item.title}`)}
-                        className="text-emerald-400 hover:underline flex items-center gap-1 font-bold"
-                      >
-                        <Download className="w-3.5 h-3.5" /> Download
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => alert(`Share link generated!`)}
-                        className="text-sky-400 hover:underline flex items-center gap-1 font-bold"
-                      >
-                        <Share2 className="w-3.5 h-3.5" /> Share
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setGalleryItems(prev => prev.filter(g => g.id !== item.id))}
-                        className="text-rose-400 hover:underline flex items-center gap-1 font-bold"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" /> Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <MediaUploadManager currentUserRole="admin" isDarkMode={isDarkMode} />
           )}
 
           {/* ========================================================================= */}
@@ -1484,7 +1406,195 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 15: SETTINGS, DATABASE & SECURITY */}
+          {/* TAB: MOBILE OTP VERIFICATION & SMS GATEWAY AUDIT */}
+          {/* ========================================================================= */}
+          {activeTab === 'otp' && (
+            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
+              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
+            }`}>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-amber-500 text-slate-950 font-black text-[10px] uppercase px-2 py-0.5 rounded">
+                      Fast2SMS / MSG91 / Twilio SMS Gateway
+                    </span>
+                    <span className="bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/30 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                      DLT Gateway Active
+                    </span>
+                  </div>
+                  <h3 className="text-2xl font-black text-white mt-1.5 flex items-center gap-2.5">
+                    <ShieldCheck className="w-6 h-6 text-amber-400" />
+                    <span>Mobile Number Verification & OTP Management Center</span>
+                  </h3>
+                  <p className="text-slate-400 text-xs mt-0.5">
+                    Live tracking of 6-digit verification codes, SMS delivery statuses, rate-limiting, and registration security.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleExportPDF('OTP_Verification_Audit_Report')}
+                    className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export PDF Report</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleExportExcel('OTP_Activity_Logs')}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer shadow"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5" />
+                    <span>Export Excel</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Metric Cards Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Total OTP Sent</span>
+                  <span className="text-2xl font-black text-amber-400 font-mono">148</span>
+                  <span className="text-[9px] text-emerald-400 font-medium block">100% Unique 6-Digit</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Verified Users</span>
+                  <span className="text-2xl font-black text-emerald-400 font-mono">132</span>
+                  <span className="text-[9px] text-slate-400 block">89.2% Conversion</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Failed Attempts</span>
+                  <span className="text-2xl font-black text-rose-400 font-mono">9</span>
+                  <span className="text-[9px] text-rose-400 block">Max 5 Tries Lock</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Expired OTPs</span>
+                  <span className="text-2xl font-black text-amber-500 font-mono">7</span>
+                  <span className="text-[9px] text-slate-400 block">5 Min Validity</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">Resend Requests</span>
+                  <span className="text-2xl font-black text-sky-400 font-mono">31</span>
+                  <span className="text-[9px] text-sky-400 block">30s Cooldown</span>
+                </div>
+
+                <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-1">
+                  <span className="text-[10px] font-bold text-slate-400 block uppercase">SMS Gateway</span>
+                  <span className="text-xs font-black text-emerald-400 block mt-1">Fast2SMS</span>
+                  <span className="text-[9px] text-slate-400 block">Backup: MSG91</span>
+                </div>
+              </div>
+
+              {/* Search and Filter Controls */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search User Mobile History, Name, OTP Code..."
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-medium"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => alert("Verification History Report generated!")}
+                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer border border-slate-700"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-amber-400" />
+                    <span>View Reports</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => alert("Simulating Test SMS dispatch via Fast2SMS DLT Gateway...")}
+                    className="bg-sky-600 hover:bg-sky-500 text-white px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer shadow"
+                  >
+                    <Activity className="w-3.5 h-3.5" />
+                    <span>Test Gateway</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* OTP Audit Logs Table */}
+              <div className="overflow-x-auto rounded-2xl border border-slate-800">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
+                      <th className="p-3">Log ID</th>
+                      <th className="p-3">Mobile Number</th>
+                      <th className="p-3">User Role / Purpose</th>
+                      <th className="p-3">SMS Gateway</th>
+                      <th className="p-3 text-center">6-Digit OTP</th>
+                      <th className="p-3 text-center">Attempts</th>
+                      <th className="p-3">Verification Status</th>
+                      <th className="p-3 text-right">Time Log</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/80 font-medium bg-slate-900">
+                    {[
+                      { id: 'OTP-LOG-9001', phone: '+91 9876543210', role: 'Buyer (Rajesh Sharma)', gateway: 'Fast2SMS', otp: '482761', attempts: '1/5', status: 'VERIFIED', time: '5 mins ago' },
+                      { id: 'OTP-LOG-9002', phone: '+91 9812345678', role: 'Agent (Amit Verma)', gateway: 'MSG91', otp: '157394', attempts: '1/5', status: 'VERIFIED', time: '12 mins ago' },
+                      { id: 'OTP-LOG-9003', phone: '+91 9988776655', role: 'Investor Portal Login', gateway: 'Fast2SMS', otp: '839251', attempts: '2/5', status: 'VERIFIED', time: '35 mins ago' },
+                      { id: 'OTP-LOG-9004', phone: '+91 9415000001', role: 'Registration Signup', gateway: 'Twilio', otp: '610293', attempts: '0/5', status: 'EXPIRED', time: '1 hour ago' },
+                      { id: 'OTP-LOG-9005', phone: '+91 9988112233', role: 'Customer Portal Login', gateway: 'Fast2SMS', otp: '204918', attempts: '5/5 (Max)', status: 'FAILED', time: '2 hours ago' },
+                    ]
+                    .filter(log => !searchQuery || log.phone.includes(searchQuery) || log.role.toLowerCase().includes(searchQuery.toLowerCase()) || log.otp.includes(searchQuery))
+                    .map((log) => (
+                      <tr key={log.id} className="hover:bg-slate-800/50 transition-colors">
+                        <td className="p-3 font-mono text-slate-400 font-bold">{log.id}</td>
+                        <td className="p-3 font-bold text-white font-mono">{log.phone}</td>
+                        <td className="p-3 text-slate-300 font-medium">{log.role}</td>
+                        <td className="p-3">
+                          <span className="bg-slate-800 text-sky-300 px-2 py-0.5 rounded text-[10px] font-bold border border-sky-500/20">
+                            {log.gateway}
+                          </span>
+                        </td>
+                        <td className="p-3 text-center">
+                          <span className="bg-amber-400/10 text-amber-400 font-mono font-black px-2 py-1 rounded text-xs tracking-widest border border-amber-400/20">
+                            {log.otp}
+                          </span>
+                        </td>
+                        <td className="p-3 text-center font-mono text-slate-300 font-bold">{log.attempts}</td>
+                        <td className="p-3">
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-wide uppercase ${
+                            log.status === 'VERIFIED'
+                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                              : log.status === 'EXPIRED'
+                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          }`}>
+                            {log.status === 'VERIFIED' ? '✓ Verified' : log.status === 'EXPIRED' ? '⏱ Expired (5m)' : '✕ Failed (Max Tries)'}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right text-slate-400 font-mono text-[11px]">{log.time}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 15: MULTI-LANGUAGE TRANSLATION MANAGER (i18n) */}
+          {/* ========================================================================= */}
+          {activeTab === 'translations' && (
+            <AdminTranslationManager />
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 16: SETTINGS, DATABASE & SECURITY */}
           {/* ========================================================================= */}
           {activeTab === 'settings' && (
             <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${

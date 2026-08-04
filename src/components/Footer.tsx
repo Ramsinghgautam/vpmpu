@@ -2,6 +2,7 @@ import React from 'react';
 import { Landmark, Phone, MapPin, Mail, Award, ShieldCheck } from 'lucide-react';
 import { Language } from '../types';
 import { TRANSLATIONS } from '../utils/translations';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 interface FooterProps {
   currentLang: Language;
@@ -70,8 +71,8 @@ export const Footer: React.FC<FooterProps> = ({ currentLang, onNavigate, onOpenL
           </ul>
         </div>
 
-        {/* Direct Contact Info */}
-        <div className="space-y-3">
+        {/* Direct Contact Info & Language Switcher */}
+        <div className="space-y-4">
           <h4 className="text-sm font-serif font-bold text-white border-b border-indigo-900 pb-2 uppercase tracking-widest text-amber-400">
             Corporate Office
           </h4>
@@ -94,6 +95,11 @@ export const Footer: React.FC<FooterProps> = ({ currentLang, onNavigate, onOpenL
               </p>
             </div>
           </div>
+
+          {/* Footer Multi-Language Selector in Native Scripts */}
+          <div className="pt-3 border-t border-indigo-900/80">
+            <LanguageSwitcher variant="footer" />
+          </div>
         </div>
 
       </div>
@@ -102,7 +108,7 @@ export const Footer: React.FC<FooterProps> = ({ currentLang, onNavigate, onOpenL
       <div className="bg-indigo-950 py-4 border-t border-indigo-900 text-center text-slate-400 text-[11px] font-sans">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p>© {new Date().getFullYear()} VIGYA PAURUSH MILESTONE PRIVATE LIMITED. All Rights Reserved.</p>
-          <p className="text-slate-400 font-medium">Designed with Editorial Excellence</p>
+          <p className="text-slate-400 font-medium">Multi-Language i18n Powered (EN | HI | MR | BN | GU)</p>
         </div>
       </div>
 

@@ -18,7 +18,9 @@ import {
   Settings, 
   LogOut,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  Globe,
+  Database
 } from 'lucide-react';
 
 export type AdminTabType = 
@@ -33,11 +35,15 @@ export type AdminTabType =
   | 'emi'
   | 'income'
   | 'expenses'
+  | 'payments'
   | 'cashflow'
   | 'reports'
   | 'gallery'
   | 'notifications'
-  | 'settings';
+  | 'settings'
+  | 'otp'
+  | 'translations'
+  | 'hostinger_sql';
 
 interface AdminSidebarProps {
   activeTab: AdminTabType;
@@ -84,6 +90,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     {
       title: 'FINANCE & AUDIT',
       items: [
+        { id: 'payments' as AdminTabType, label: 'Razorpay Payments', icon: CreditCard, badge: 'Gateway' },
         { id: 'income' as AdminTabType, label: 'Income & Inflow', icon: ArrowDownLeft, badge: null },
         { id: 'expenses' as AdminTabType, label: 'Expenses & Outflow', icon: Receipt, badge: null },
         { id: 'cashflow' as AdminTabType, label: 'Cash Flow', icon: Wallet, badge: 'Live' },
@@ -91,8 +98,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       ]
     },
     {
-      title: 'SYSTEM & MEDIA',
+      title: 'SYSTEM & SECURITY',
       items: [
+        { id: 'hostinger_sql' as AdminTabType, label: 'Hostinger MySQL Database', icon: Database, badge: '.SQL' },
+        { id: 'translations' as AdminTabType, label: 'i18n Multi-Language', icon: Globe, badge: '5 Langs' },
+        { id: 'otp' as AdminTabType, label: 'Mobile OTP Verification', icon: ShieldCheck, badge: 'SMS Gateway' },
         { id: 'gallery' as AdminTabType, label: 'Gallery', icon: Image, badge: 'Media' },
         { id: 'notifications' as AdminTabType, label: 'Notifications', icon: Bell, badge: 'Alerts' },
         { id: 'settings' as AdminTabType, label: 'Settings & Security', icon: Settings, badge: 'RBAC' },

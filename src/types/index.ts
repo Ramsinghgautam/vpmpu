@@ -214,6 +214,65 @@ export interface GalleryItem {
   fileSizeMb?: number;
 }
 
+// Razorpay Payment Gateway & Transaction Types
+export type PaymentStatus = 'created' | 'paid' | 'failed' | 'refunded' | 'pending';
+export type PaymentType = 'Booking' | 'EMI' | 'Subscription' | 'Advance' | 'Partial' | 'One-Time';
+export type PaymentMethod = 'UPI' | 'Credit Card' | 'Debit Card' | 'Net Banking' | 'Wallet' | 'EMI' | 'Other';
+
+export interface PaymentRecord {
+  id: string; // Database internal or payment_... ID
+  userId: string;
+  name: string;
+  mobile: string;
+  email: string;
+  orderId: string; // Razorpay Order ID
+  paymentId?: string; // Razorpay Payment ID
+  signature?: string; // Razorpay Signature
+  amount: number; // in INR
+  currency: string; // "INR"
+  status: PaymentStatus;
+  paymentMethod: PaymentMethod;
+  paymentType: PaymentType;
+  dateTime: string; // ISO string
+  receipt: string;
+  purpose: string;
+  notes?: Record<string, any>;
+  refundDetails?: {
+    refundId?: string;
+    refundAmount?: number;
+    refundDate?: string;
+    reason?: string;
+  };
+  failureReason?: string;
+}
+
+export interface RazorpayCheckoutOptions {
+  key: string;
+  amount: number; // in paise (e.g., 1000000 = ₹10,000)
+  currency: string; // "INR"
+  name: string;
+  description: string;
+  image?: string;
+  order_id: string;
+  handler: (response: {
+    razorpay_payment_id: string;
+    razorpay_order_id: string;
+    razorpay_signature: string;
+  }) => void;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+  notes?: Record<string, string>;
+  theme?: {
+    color?: string;
+  };
+  modal?: {
+    ondismiss?: () => void;
+  };
+}
+
 export interface UserProfileShowcase {
   userId: string;
   userName: string;

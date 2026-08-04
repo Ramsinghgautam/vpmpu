@@ -27,6 +27,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
   const [emiBookingId, setEmiBookingId] = useState('VPM-BK-1001');
   const [emiCustomerName, setEmiCustomerName] = useState('');
   const [emiPhone, setEmiPhone] = useState('');
+  const [emiEmail, setEmiEmail] = useState('');
   const [emiAmount, setEmiAmount] = useState<number>(10000);
   const [emiPaymentMethod, setEmiPaymentMethod] = useState<'upi' | 'razorpay' | 'card' | 'netbanking'>('upi');
   const [emiReceiptData, setEmiReceiptData] = useState<any | null>(null);
@@ -304,13 +305,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     }}
                     className="w-full bg-indigo-950 border border-indigo-800 rounded-lg px-3 py-2.5 text-slate-100 font-bold focus:outline-none focus:border-amber-400 cursor-pointer text-xs"
                   >
-                    <option value={800}>₹800 / sq.ft</option>
                     <option value={1000}>₹1,000 / sq.ft (Base Rate)</option>
-                    <option value={1200}>₹1,200 / sq.ft</option>
-                    <option value={1450}>₹1,450 / sq.ft</option>
-                    <option value={1650}>₹1,650 / sq.ft</option>
-                    <option value={1800}>₹1,800 / sq.ft</option>
-                    <option value={2000}>₹2,000 / sq.ft</option>
+                    <option value={1050}>₹1,050 / sq.ft</option>
+                    <option value={1120}>₹1,120 / sq.ft</option>
+                    <option value={1210}>₹1,210 / sq.ft</option>
+                    <option value={1320}>₹1,320 / sq.ft</option>
+                    <option value={1450}>₹2,450 / sq.ft</option>
+                    <option value={1600}>₹2,600 / sq.ft</option>
+                    <option value={1770}>₹1,770 / sq.ft</option>
+                    <option value={1950}>₹1,950 / sq.ft</option>
+                    <option value={2150}>₹2,150 / sq.ft</option>
                   </select>
                 </div>
 
@@ -334,15 +338,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     <option value="auto">
                       Calc: {formatINR(calculatedAutoTotal)} ({calculatedSqft} sqft)
                     </option>
-                    <option value={800000}>₹8,00,000 (₹8 Lakhs)</option>
-                    <option value={1000000}>₹10,00,000 (₹10 Lakhs)</option>
-                    <option value={1200000}>₹12,00,000 (₹12 Lakhs)</option>
-                    <option value={1500000}>₹15,00,000 (₹15 Lakhs)</option>
-                    <option value={1800000}>₹18,00,000 (₹18 Lakhs)</option>
-                    <option value={2000000}>₹20,00,000 (₹20 Lakhs)</option>
-                    <option value={2500000}>₹25,00,000 (₹25 Lakhs)</option>
-                    <option value={3000000}>₹30,00,000 (₹30 Lakhs)</option>
-                    <option value={5000000}>₹50,00,000 (₹50 Lakhs)</option>
+                    <option value={900000}>₹09,00,000 (₹09,00,000 Lakhs)</option>
+                    <option value={945000}>₹09,45,000 (₹09,45,000 Lakhs)</option>
+                    <option value={108000}>₹10,08,000 (₹10,08,000 Lakhs)</option>
+                    <option value={1089000}>₹10,89,000 (₹10,89,000 Lakhs)</option>
+                    <option value={1188000}>₹11,88,000 (₹11,88,000 Lakhs)</option>
+                    <option value={1305000}>₹13,05,000 (₹13,05,000 Lakhs)</option>
+                    <option value={1440000}>₹14,40,000 (₹14,40,000 Lakhs)</option>
+                    <option value={1593000}>₹15,93,000 (₹15,93,000 Lakhs)</option>
+                    <option value={1755000}>₹17,55,000 (₹17,55,000 Lakhs)</option>
+                    <option value={1935000}>₹19,35,000 (₹19,35,000 Lakhs)</option>
                   </select>
                 </div>
               </div>
@@ -369,14 +374,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                       {currentUser?.id || 'VPM-USR-8821'}
                     </span>
                   </div>
+                  
                   <div className="flex justify-between items-center text-[11px] pt-1 border-t border-indigo-900/90">
                     <span className="text-slate-300 font-semibold flex items-center gap-1.5">
                       <span className="text-amber-400 font-extrabold text-[11px]">3.</span>
                       <Receipt className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                      EMI Number:
+                      Extra EMI:
                     </span>
                     <strong className="text-amber-300 font-bold text-[10px] bg-indigo-900/90 px-2 py-0.5 rounded border border-indigo-700/70">
                       {emiBookingId ? `EMI #01 / 12 (${emiBookingId})` : 'EMI #01 / 12 (VPM-EMI-1001)'}
+                    </strong>
+                  </div>
+
+                  <div className="flex justify-between items-center text-[11px] pt-1 border-t border-indigo-900/90">
+                    <span className="text-slate-300 font-semibold flex items-center gap-1.5">
+                      <span className="text-amber-400 font-extrabold text-[11px]">4.</span>
+                      <Receipt className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      Extra EMI Amount:
+                    </span>
+                    <strong className="text-amber-300 font-bold text-[10px] bg-indigo-900/90 px-2 py-0.5 rounded border border-indigo-700/70">
+                      {formatINR(estimatedMonthlyEmi)}
                     </strong>
                   </div>
                 </div>
@@ -432,12 +449,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
         {/* Bottom Live Counter Stats Bar */}
         <div className="mt-16 pt-8 border-t border-indigo-900 grid grid-cols-2 md:grid-cols-4 gap-6 text-center font-sans">
           <div className="p-4 bg-indigo-900/50 rounded-xl border border-indigo-800">
-            <p className="text-2xl lg:text-3xl font-serif font-black text-amber-400">45+ Acres</p>
+            <p className="text-2xl lg:text-3xl font-serif font-black text-amber-400">5+ Acres</p>
             <p className="text-[10px] text-slate-300 mt-1 uppercase tracking-widest font-bold">Total Land Developed</p>
           </div>
           <div className="p-4 bg-indigo-900/50 rounded-xl border border-indigo-800">
             <p className="text-2xl lg:text-3xl font-serif font-black text-emerald-400">100% Clear</p>
-            <p className="text-[10px] text-slate-300 mt-1 uppercase tracking-widest font-bold">Legal Title & Dakhil Kharij</p>
+            <p className="text-[10px] text-slate-300 mt-1 uppercase tracking-widest font-bold">Legal Title</p>
           </div>
           <div className="p-4 bg-indigo-900/50 rounded-xl border border-indigo-800">
             <p className="text-2xl lg:text-3xl font-serif font-black text-indigo-300">Up to 32%</p>
@@ -508,6 +525,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     />
                   </div>
 
+                  
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-bold text-slate-300 mb-1">Customer Name</label>
@@ -528,6 +546,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                         value={emiPhone}
                         onChange={(e) => setEmiPhone(e.target.value)}
                         placeholder="10-digit phone"
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-300 mb-1">Email ID</label>
+                      <input
+                        type="email"
+                        value={emiEmail}
+                        onChange={(e) => setEmiEmail(e.target.value)}
+                        placeholder="email@example.com"
                         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
                       />
                     </div>

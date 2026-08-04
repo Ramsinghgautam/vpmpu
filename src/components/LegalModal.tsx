@@ -44,7 +44,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
           {type === 'terms' && (
             <div className="space-y-3">
               <h4 className="font-bold text-slate-900">1. Plot Booking Lock Fee</h4>
-              <p>The standard booking fee of ₹10,000 reserves the specified plot for 15 calendar days pending document submission and installment setup.</p>
+              <p>The standard booking fee of ₹10,000 reserves the specified plot for 30 calendar days pending document submission and installment setup.</p>
               <h4 className="font-bold text-slate-900">2. Dakhil Kharij & Possession</h4>
               <p>Physical possession and land registry (Dakhil Kharij) are executed upon receipt of full payment or as per agreed EMI contract terms.</p>
             </div>
@@ -53,7 +53,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ type, onClose }) => {
           {type === 'refund' && (
             <div className="space-y-3">
               <h4 className="font-bold text-slate-900">1. Cancellation Terms</h4>
-              <p>Customers may cancel plot bookings within 7 days of deposit payment. Standard processing charges may apply as detailed in the booking contract.</p>
+              <p>Customers may cancel plot bookings within 30 days of deposit payment. Standard processing charges may apply as detailed in the booking contract.</p>
               <h4 className="font-bold text-slate-900">2. Refund Processing</h4>
               <p>Approved refunds are processed back to the original payment method (Bank Account / UPI) within 5 to 7 business days.</p>
             </div>

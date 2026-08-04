@@ -139,7 +139,7 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
                 </div>
                 <input
                   type="range"
-                  min="500"
+                  min="450"
                   max="10000"
                   step="500"
                   value={sqftArea}
@@ -147,7 +147,7 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
                   className="w-full h-2 bg-indigo-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
                 />
                 <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-wider">
-                  <span>500 sq.ft</span>
+                  <span>450 sq.ft</span>
                   <span>5,000 sq.ft</span>
                   <span>10,000 sq.ft</span>
                 </div>
@@ -171,12 +171,12 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
                 </div>
 
                 <div className="flex justify-between border-b border-indigo-900 pb-2">
-                  <span className="text-slate-300">Calculated ROI Payout</span>
+                  <span className="text-slate-300">Calculated ROI</span>
                   <span className="font-extrabold text-emerald-400 text-sm">{formatINR(roiCalc.cappedRoiPayout)}</span>
                 </div>
 
                 <div className="flex justify-between pt-1">
-                  <span className="text-slate-200 font-bold uppercase tracking-wider text-[11px]">Total Maturity Return</span>
+                  <span className="text-slate-200 font-bold uppercase tracking-wider text-[11px]">Total Maturity</span>
                   <span className="font-black font-serif text-amber-400 text-xl">{formatINR(roiCalc.totalReturn)}</span>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
                   <span>Capping Rule & Investor Safety</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-slate-300">
-                  Investor commission cannot exceed total invested capital. Calculated payout is 100% backed by land allotment rights.
+                  Investor commission cannot exceed total invested capital + Intrest. Calculated payout is 100% Depend On Invastorsbacked by land allotment rights.
                 </p>
               </div>
             </div>

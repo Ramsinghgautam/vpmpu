@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Language, User, Project, Plot, Booking, InvestmentRecord, GalleryItem, MediaStatus } from './types';
 import { INITIAL_PROJECTS } from './data/mockData';
 import { INITIAL_GALLERY_ITEMS } from './data/mockGalleryData';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 // Components
 import { Navbar } from './components/Navbar';
@@ -25,8 +26,8 @@ import { LegalModal } from './components/LegalModal';
 import { WhatsAppWidget } from './components/WhatsAppWidget';
 import { Footer } from './components/Footer';
 
-export default function App() {
-  const [currentLang, setCurrentLang] = useState<Language>('en');
+function MainAppContent() {
+  const { language, setLanguage } = useLanguage();
   const [activeSection, setActiveSection] = useState<string>('home');
 
   // Application Data States
@@ -212,8 +213,8 @@ export default function App() {
       
       {/* Top Navbar */}
       <Navbar
-        currentLang={currentLang}
-        onLanguageChange={setCurrentLang}
+        currentLang={language}
+        onLanguageChange={setLanguage}
         activeSection={activeSection}
         onNavigate={handleNavigate}
         currentUserRole={currentUser?.role || null}
@@ -253,14 +254,14 @@ export default function App() {
         {activeSection !== 'dashboard' && activeSection !== 'admin-dashboard' && (
           <>
             {/* Hero Section */}
-            <HeroSection currentLang={currentLang} onNavigate={handleNavigate} currentUser={currentUser} />
+            <HeroSection currentLang={language} onNavigate={handleNavigate} currentUser={currentUser} />
 
             {/* About Company & Vision */}
-            <CompanyOverview currentLang={currentLang} onNavigate={handleNavigate} />
+            <CompanyOverview currentLang={language} onNavigate={handleNavigate} />
 
             {/* Featured Projects & Plot System */}
             <FeaturedProjects
-              currentLang={currentLang}
+              currentLang={language}
               onSelectPlotForBooking={handleSelectPlotForBooking}
               onOpenPlotMatrix={(proj) => setMatrixProject(proj)}
               onBookSiteVisit={(proj) => {
@@ -270,17 +271,17 @@ export default function App() {
 
             {/* Risk-Free Investor Module */}
             <InvestorModule
-              currentLang={currentLang}
+              currentLang={language}
               onNavigate={handleNavigate}
               onSubmitInvestment={handleAddInvestment}
             />
 
             {/* Commission & MLM Team Bonus Module */}
-            <CommissionModule currentLang={currentLang} onNavigate={handleNavigate} />
+            <CommissionModule currentLang={language} onNavigate={handleNavigate} />
 
             {/* Career & Agent Registration */}
             <CareerAgentRegistration
-              currentLang={currentLang}
+              currentLang={language}
               onRegisterAgentSuccess={(agent) => {
                 setCurrentUser(agent);
                 setActiveSection('dashboard');
@@ -308,17 +309,17 @@ export default function App() {
             <BlogSection />
 
             {/* FAQ Accordion */}
-            <FAQSection currentLang={currentLang} />
+            <FAQSection currentLang={language} />
 
             {/* Direct Contact Section */}
-            <ContactSection currentLang={currentLang} />
+            <ContactSection currentLang={language} />
           </>
         )}
       </main>
 
       {/* Footer */}
       <Footer
-        currentLang={currentLang}
+        currentLang={language}
         onNavigate={handleNavigate}
         onOpenLegal={(type) => setLegalModalType(type)}
       />
@@ -375,5 +376,13 @@ export default function App() {
       />
 
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <MainAppContent />
+    </LanguageProvider>
   );
 }
