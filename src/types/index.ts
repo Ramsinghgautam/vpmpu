@@ -453,6 +453,7 @@ export interface AgentSystemSummary {
   totalCommissionDistributed: number;
   totalEmiRecovered: number;
   outstandingEmiLiability: number;
+  totalExpencesVolume: number;
   pendingWithdrawalsAmount: number;
 }
 

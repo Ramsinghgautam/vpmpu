@@ -297,6 +297,7 @@ export function computeAgentSystemSummary(agents: AgentRecord[]): AgentSystemSum
   let totalEmiRecovered = 0;
   let outstandingEmiLiability = 0;
   let pendingWithdrawalsAmount = 0;
+  let paidWithdrawalsAmount = 0;
 
   agents.forEach(agent => {
     totalPlotSalesCount += agent.totalPlotsSold;
@@ -314,9 +315,13 @@ export function computeAgentSystemSummary(agents: AgentRecord[]): AgentSystemSum
     agent.withdrawalHistory.forEach(wd => {
       if (wd.status === 'Pending') {
         pendingWithdrawalsAmount += wd.amount;
+      } else if (wd.status === 'Approved') {
+        paidWithdrawalsAmount += wd.amount;
       }
     });
   });
+
+  const totalExpencesVolume = totalCommissionDistributed + paidWithdrawalsAmount;
 
   return {
     totalAgents: agents.length,
@@ -326,6 +331,7 @@ export function computeAgentSystemSummary(agents: AgentRecord[]): AgentSystemSum
     totalCommissionDistributed,
     totalEmiRecovered,
     outstandingEmiLiability,
+    totalExpencesVolume,
     pendingWithdrawalsAmount
   };
 }

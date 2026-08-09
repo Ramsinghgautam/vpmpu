@@ -53,6 +53,7 @@ export const AdminAgentManager: React.FC = () => {
     totalCommissionDistributed: 0,
     totalEmiRecovered: 0,
     outstandingEmiLiability: 0,
+    totalExpencesVolume: 0,
     pendingWithdrawalsAmount: 0
   });
 
@@ -328,6 +329,10 @@ export const AdminAgentManager: React.FC = () => {
           <span className="text-lg font-black text-indigo-400">{formatINR(summary.totalEmiRecovered)}</span>
         </div>
 
+        <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl">
+          <span className="text-[10px] font-bold text-slate-400 block uppercase">Total Expenses Volume</span>
+          <span className="text-lg font-black text-rose-400">{formatINR(summary.totalExpencesVolume)}</span>
+        </div>
         <div className="bg-slate-900 border border-slate-800 p-3.5 rounded-xl">
           <span className="text-[10px] font-bold text-slate-400 block uppercase">EMI Liability</span>
           <span className="text-lg font-black text-rose-400">{formatINR(summary.outstandingEmiLiability)}</span>

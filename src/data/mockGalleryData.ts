@@ -31,7 +31,7 @@ export const INITIAL_GALLERY_ITEMS: GalleryItem[] = [
       },
       {
         id: "c-102",
-        userName: "Sunita Yadav",
+        userName: "Ratan Lal Viswakarma",
         userRole: "Star Agent",
         comment: "Proud to facilitate this plot booking. Fast & smooth Dakhil Kharij process!",
         createdAt: "2026-07-30 15:05"

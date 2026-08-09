@@ -89,8 +89,8 @@ export const INITIAL_PROJECTS: Project[] = [
   },
   {
     id: "proj-003",
-    name: "Paurush Residency Naini",
-    location: "ADA Colony Corridor, Naini",
+    name: "Tula Ki Baag",
+    location: "Jhunsi",
     city: "Prayagraj, Uttar Pradesh",
     address: "Mirzapur Highway Corridor, Naini, Prayagraj - 211008",
     tagline: "Affordable Plotting & High Appreciation Smart Zone",
@@ -202,7 +202,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
   },
   {
     id: "test-2",
-    name: "Sunita Yadav",
+    name: "Ratan Lal Viswakarma",
     role: "Senior Real Estate Agent",
     location: "Phaphamau, UP",
     quote: "Vigya Paurush Milestone offers the cleanest commission payout cycle. The 8% agent commission starting slab plus multi-tier team bonus has boosted my monthly income significantly.",

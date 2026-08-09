@@ -176,7 +176,7 @@ const mockBookings: any[] = [
     paymentId: "pay_N9x2k1L8p902",
     bookingDate: "2026-07-28",
     status: "Confirmed",
-    installmentPlan: "12 Months EMI"
+    installmentPlan: "12, 24, 36,48, 60 Months EMI"
   },
   {
     id: "VPM-BK-1002",
