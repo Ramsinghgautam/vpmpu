@@ -684,6 +684,5 @@ export interface MlmSystemSummary {
   pendingWithdrawalsCount: number;
   pendingWithdrawalsAmount: number;
 }
-
-
+export * from './permissions';
 

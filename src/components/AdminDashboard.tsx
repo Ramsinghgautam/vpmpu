@@ -52,6 +52,7 @@ import { AdminRiskFreeInvestorManager } from './admin/AdminRiskFreeInvestorManag
 import { AdminAgentManager } from './admin/AdminAgentManager';
 import { AdminCustomerManager } from './admin/AdminCustomerManager';
 import { AdminMlmTeamManager } from './admin/AdminMlmTeamManager';
+import { AdminPermissionManager } from './admin/AdminPermissionManager';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
@@ -1492,6 +1493,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
 
           {/* ========================================================================= */}
+          {/* TAB 18: ENTERPRISE PERMISSION MANAGER SYSTEM (RBAC) */}
+          {/* ========================================================================= */}
+          {activeTab === 'permissions' && (
+            <AdminPermissionManager isDarkMode={isDarkMode} />
+          )}
+
+          {/* ========================================================================= */}
           {/* TAB 16: SETTINGS, DATABASE & SECURITY */}
           {/* ========================================================================= */}
           {activeTab === 'settings' && (
@@ -1504,6 +1512,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   <span>System Security, Role-Based Access (RBAC) & MongoDB Overview</span>
                 </h3>
                 <p className="text-slate-400 text-xs mt-1">Configure JWT Authentication, Encryption & MongoDB Collections Schema.</p>
+              </div>
+
+              <div className="bg-gradient-to-r from-amber-500/20 via-indigo-950/80 to-slate-900 border-2 border-amber-500/40 p-5 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black shrink-0">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="font-extrabold text-sm text-white">Enterprise Permission Manager System (19 Roles)</h4>
+                    <p className="text-xs text-slate-300 mt-0.5">Super Admin controls for assigning, editing, suspending, and revoking granular permissions across all 19 manager types.</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('permissions')}
+                  className="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all cursor-pointer shrink-0 shadow-lg"
+                >
+                  Launch Permission Manager
+                </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

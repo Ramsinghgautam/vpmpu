@@ -46,7 +46,8 @@ export type AdminTabType =
   | 'settings'
   | 'otp'
   | 'translations'
-  | 'hostinger_sql';
+  | 'hostinger_sql'
+  | 'permissions';
 
 interface AdminSidebarProps {
   activeTab: AdminTabType;
@@ -110,6 +111,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         { id: 'otp' as AdminTabType, label: 'Mobile OTP Verification', icon: ShieldCheck, badge: 'SMS Gateway' },
         { id: 'gallery' as AdminTabType, label: 'Gallery', icon: Image, badge: 'Media' },
         { id: 'notifications' as AdminTabType, label: 'Notifications', icon: Bell, badge: 'Alerts' },
+        { id: 'permissions' as AdminTabType, label: 'Permission Managers', icon: ShieldCheck, badge: 'Super Admin' },
         { id: 'settings' as AdminTabType, label: 'Settings & Security', icon: Settings, badge: 'RBAC' },
       ]
     }
