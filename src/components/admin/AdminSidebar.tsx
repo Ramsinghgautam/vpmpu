@@ -20,7 +20,8 @@ import {
   ChevronRight,
   ShieldCheck,
   Globe,
-  Database
+  Database,
+  GitMerge
 } from 'lucide-react';
 
 export type AdminTabType = 
@@ -28,6 +29,8 @@ export type AdminTabType =
   | 'customers'
   | 'agents'
   | 'investors'
+  | 'risk_free_investors'
+  | 'mlm_team'
   | 'employees'
   | 'plots'
   | 'bookings'
@@ -72,9 +75,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       title: 'CORE MANAGEMENT',
       items: [
         { id: 'dashboard' as AdminTabType, label: 'Dashboard', icon: LayoutDashboard, badge: null },
+        { id: 'mlm_team' as AdminTabType, label: 'Multi-Level Team Bonus', icon: GitMerge, badge: '9 Levels' },
         { id: 'customers' as AdminTabType, label: 'Customers', icon: Users, badge: `${counts.customersCount}` },
         { id: 'agents' as AdminTabType, label: 'Agents', icon: Award, badge: `${counts.agentsCount}` },
         { id: 'investors' as AdminTabType, label: 'Investors', icon: TrendingUp, badge: `${counts.investorsCount}` },
+        { id: 'risk_free_investors' as AdminTabType, label: 'Risk Free Investors', icon: ShieldCheck, badge: 'Fintech ROI' },
         { id: 'employees' as AdminTabType, label: 'Employees', icon: UserCheck, badge: `${counts.employeesCount}` },
       ]
     },

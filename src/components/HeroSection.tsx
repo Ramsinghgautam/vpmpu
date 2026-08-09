@@ -3,6 +3,7 @@ import { ShieldCheck, ArrowRight, TrendingUp, Building2, MapPin, Search, Award, 
 import { Language, User } from '../types';
 import { TRANSLATIONS } from '../utils/translations';
 import { formatINR } from '../utils/calculators';
+import { isTransactionIdAlreadyUsed, registerCompletedTransactionId } from '../utils/transactionRegistry';
 
 interface HeroSectionProps {
   currentLang: Language;
@@ -30,6 +31,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
   const [emiEmail, setEmiEmail] = useState('');
   const [emiAmount, setEmiAmount] = useState<number>(10000);
   const [emiPaymentMethod, setEmiPaymentMethod] = useState<'upi' | 'razorpay' | 'card' | 'netbanking'>('upi');
+  const [emiTransactionId, setEmiTransactionId] = useState('');
+  const [emiTransactionDate, setEmiTransactionDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [emiPaymentError, setEmiPaymentError] = useState<string | null>(null);
   const [emiReceiptData, setEmiReceiptData] = useState<any | null>(null);
   const [isProcessingEmi, setIsProcessingEmi] = useState(false);
 
@@ -40,17 +44,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
 
   const handlePayEmiSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const cleanDigits = emiTransactionId.trim().replace(/\D/g, '');
+    if (!emiTransactionId || !emiTransactionId.trim() || cleanDigits.length !== 12) {
+      setEmiPaymentError('Transaction Failed! A valid 12-digit Transaction ID / UTR number is required.');
+      return;
+    }
+
+    if (isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(emiTransactionId)) {
+      setEmiPaymentError('Transaction Failed! This Transaction ID / UTR has ALREADY been completed in a previous transaction. Duplicate transaction IDs cannot be re-validated or reused.');
+      return;
+    }
+
+    if (!emiTransactionDate) {
+      setEmiPaymentError('Transaction Failed! Date of Transaction is required.');
+      return;
+    }
+
+    setEmiPaymentError(null);
     setIsProcessingEmi(true);
     setTimeout(() => {
-      const generatedTxnId = 'EMI_' + Math.floor(100000 + Math.random() * 900000);
+      const finalTxnId = cleanDigits;
+      registerCompletedTransactionId(finalTxnId);
       setEmiReceiptData({
         bookingId: emiBookingId || 'VPM-BK-1001',
         customerName: emiCustomerName || 'Valued Buyer',
         phone: emiPhone || '9876543210',
         amountPaid: emiAmount,
         paymentMethod: emiPaymentMethod === 'upi' ? 'UPI Direct (GPay/PhonePe)' : emiPaymentMethod === 'razorpay' ? 'Razorpay Secure' : emiPaymentMethod === 'card' ? 'Credit/Debit Card' : 'Net Banking',
-        paymentId: generatedTxnId,
-        date: new Date().toISOString().split('T')[0],
+        paymentId: finalTxnId,
+        date: emiTransactionDate || new Date().toISOString().split('T')[0],
         plotDetails: `Milestone Township (${length}ft × ${width}ft)`,
         remainingBalance: Math.max(0, effectiveTotalAmount - 10000 - emiAmount)
       });
@@ -99,9 +122,42 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
               {t.heroTitle || "Prime Plots & Risk-Free Investments in Prayagraj"}
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl font-sans">
-              {t.heroDesc || "Solve your land buying & investment challenges with 100% legal clear title plots, transparent pricing, guaranteed up to 32% investor ROI slabs, and direct buyer/agent commission programs in New Jhunsi, Naini & Phaphamau."}
+            <p className="text-slate-200 text-sm sm:text-base leading-relaxed max-w-2xl font-sans font-medium">
+              We deliver a complete real estate solution in Prayagraj: Prime clear-title plots at fair prices for <strong>Buyers</strong>, direct commissions and plot ownership for <strong>Agents</strong>, and guaranteed up to 32% ROI with fast principal recovery for <strong>Investors</strong>.
             </p>
+
+            {/* 3 Core Solutions Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 max-w-2xl pt-1">
+              <div className="p-3 rounded-2xl bg-indigo-950/80 border border-indigo-800/80 text-xs text-slate-200 space-y-1 shadow-sm">
+                <div className="flex items-center gap-1.5 text-amber-400 font-extrabold text-[11px] uppercase tracking-wider">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>1. For Buyers</span>
+                </div>
+                <p className="text-slate-300 text-[11px] leading-snug">
+                  Prime location plots, clear titles, transparent rates & flat ₹10,000 token booking.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-indigo-950/80 border border-indigo-800/80 text-xs text-slate-200 space-y-1 shadow-sm">
+                <div className="flex items-center gap-1.5 text-amber-400 font-extrabold text-[11px] uppercase tracking-wider">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />
+                  <span>2. For Agents</span>
+                </div>
+                <p className="text-slate-300 text-[11px] leading-snug">
+                  Fair commission payouts on every deal plus guaranteed plot ownership support.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-indigo-950/80 border border-indigo-800/80 text-xs text-slate-200 space-y-1 shadow-sm">
+                <div className="flex items-center gap-1.5 text-amber-400 font-extrabold text-[11px] uppercase tracking-wider">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
+                  <span>3. For Investors</span>
+                </div>
+                <p className="text-slate-300 text-[11px] leading-snug">
+                  Up to 32% guaranteed ROI slabs with rapid capital recovery & bank-grade security.
+                </p>
+              </div>
+            </div>
 
             {/* Value Highlights Pill Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-xs font-bold text-slate-200 uppercase tracking-wider">
@@ -433,6 +489,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                   type="button"
                   onClick={() => {
                     setEmiReceiptData(null);
+                    setEmiTransactionId('');
+                    setEmiTransactionDate(new Date().toISOString().split('T')[0]);
+                    setEmiPaymentError(null);
                     setShowEmiModal(true);
                   }}
                   className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold uppercase tracking-wider py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs border border-emerald-400/50 cursor-pointer active:scale-95"
@@ -620,6 +679,121 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     </div>
                   </div>
 
+                  {/* Mandatory Transaction ID & Date Fields */}
+                  <div className="space-y-3 pt-1 border-t border-slate-800/80">
+                    {/* Transaction ID / UTR Input */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-200 mb-1 flex items-center justify-between">
+                        <span>Transaction ID / UTR Number <span className="text-rose-400">*</span></span>
+                        <span className="text-[10px] font-extrabold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                          Mandatory to Submit
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={emiTransactionId}
+                        onChange={(e) => {
+                          setEmiTransactionId(e.target.value);
+                          if (emiPaymentError) setEmiPaymentError(null);
+                        }}
+                        placeholder="e.g. 12-digit UTR 423910293841 or TXN98765432"
+                        className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none ${
+                          emiPaymentError && !emiTransactionId.trim()
+                            ? 'border-rose-500 ring-2 ring-rose-500/20 bg-rose-950/30 text-rose-200'
+                            : 'border-slate-800 focus:border-emerald-500'
+                        }`}
+                      />
+                      <p className="text-[10px] text-slate-400 mt-1">
+                        Enter the 12-digit UTR or reference transaction ID from GPay, PhonePe, Paytm, or bank transfer.
+                      </p>
+                    </div>
+
+                    {/* Date of Transaction Input */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-200 mb-1 flex items-center justify-between">
+                        <span>Date of Transaction <span className="text-rose-400">*</span></span>
+                        <span className="text-[10px] font-extrabold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/30">
+                          Payment Date
+                        </span>
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={emiTransactionDate}
+                        max={new Date().toISOString().split('T')[0]}
+                        onChange={(e) => {
+                          setEmiTransactionDate(e.target.value);
+                          if (emiPaymentError) setEmiPaymentError(null);
+                        }}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 font-sans"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Transaction Status Alert */}
+                  {(() => {
+                    const cleanEmiDigits = emiTransactionId.trim().replace(/\D/g, '');
+                    const isEmiTxnValid12 = cleanEmiDigits.length === 12;
+                    const hasEmiTxnInput = emiTransactionId.trim().length > 0;
+                    const isAlreadyUsed = isTransactionIdAlreadyUsed(cleanEmiDigits) || isTransactionIdAlreadyUsed(emiTransactionId);
+
+                    if (isAlreadyUsed) {
+                      return (
+                        <div className="bg-rose-950/90 border-2 border-rose-500 p-3 rounded-xl text-rose-200 text-xs flex items-center gap-2.5 shadow-lg animate-pulse">
+                          <X className="w-5 h-5 text-rose-400 shrink-0" />
+                          <div>
+                            <p className="font-extrabold text-[11px] uppercase tracking-wide text-rose-400">Duplicate Transaction ID Detected!</p>
+                            <p className="text-[10px] text-rose-200">
+                              This Transaction ID / UTR (<span className="font-mono font-bold text-amber-300">{cleanEmiDigits || emiTransactionId}</span>) has ALREADY been completed in a previous transaction and cannot be reused.
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    } else if (isEmiTxnValid12 && emiTransactionDate) {
+                      return (
+                        <div className="bg-emerald-950/80 border border-emerald-500/60 p-3 rounded-xl text-emerald-300 text-xs flex items-center gap-2.5 shadow-inner">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <div>
+                            <p className="font-extrabold text-[11px] uppercase tracking-wide">12-Digit Transaction Verified!</p>
+                            <p className="text-[10px] text-emerald-200">
+                              Transaction UTR (<span className="font-mono font-bold text-amber-300">{cleanEmiDigits}</span>) & Date ({emiTransactionDate}) attached.
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    } else if (hasEmiTxnInput && !isEmiTxnValid12) {
+                      return (
+                        <div className="bg-rose-950/80 border border-rose-500/60 p-3 rounded-xl text-rose-300 text-xs flex items-center gap-2.5 shadow-inner">
+                          <X className="w-4 h-4 text-rose-400 shrink-0" />
+                          <div>
+                            <p className="font-extrabold text-[11px] uppercase tracking-wide">Invalid Transaction ID (12 Digits Required)</p>
+                            <p className="text-[10px] text-rose-200">
+                              Enter a valid 12-digit UTR/Reference ID. Currently entered: <span className="font-bold text-amber-300">{cleanEmiDigits.length}/12</span> digits.
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    } else if (emiPaymentError) {
+                      return (
+                        <div className="bg-rose-950/80 border border-rose-500/60 p-3 rounded-xl text-rose-300 text-xs flex items-center gap-2.5 shadow-inner animate-pulse">
+                          <X className="w-4 h-4 text-rose-400 shrink-0" />
+                          <div>
+                            <p className="font-extrabold text-[11px] uppercase tracking-wide">Cannot Submit Transaction!</p>
+                            <p className="text-[10px] text-rose-200">{emiPaymentError}</p>
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="bg-amber-950/40 border border-amber-500/30 p-2.5 rounded-xl text-amber-300/90 text-[11px] flex items-center gap-2">
+                          <Lock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>A unique 12-digit UTR/Transaction ID & Date are strictly required to process this transaction.</span>
+                        </div>
+                      );
+                    }
+                  })()}
+
                   <button
                     type="submit"
                     disabled={isProcessingEmi}
@@ -660,6 +834,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     <div className="flex justify-between border-b border-slate-800 pb-2">
                       <span className="text-slate-400">Payment Gateway:</span>
                       <span className="text-slate-200">{emiReceiptData.paymentMethod}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-800 pb-2">
+                      <span className="text-slate-400">Transaction Date:</span>
+                      <strong className="text-amber-300 font-mono">{emiReceiptData.date}</strong>
                     </div>
                     <div className="flex justify-between pt-1">
                       <span className="text-slate-400">Est. Remaining Balance:</span>

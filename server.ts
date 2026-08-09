@@ -465,6 +465,204 @@ app.post("/api/investments", (req, res) => {
   res.json({ success: true, message: "Investment request processed successfully!", investment: newInv });
 });
 
+// =============================================================================
+// CUSTOMER PLOT SALES & PROGRESSIVE COMMISSION REST APIS
+// =============================================================================
+
+// Get All Customers
+app.get("/api/customers", (req, res) => {
+  res.json({
+    success: true,
+    message: "Customer records loaded",
+    ruleNoteHindi: "जो ग्राहक ₹1,000 प्रति वर्गफुट की दर से प्लॉट खरीदते हैं, उन्हें ग्राहक श्रेणी में रखा जाएगा। प्रथम प्लॉट विक्रय पर 15.5% कमीशन दिया जाएगा तथा निर्धारित स्लैब के अनुसार कमीशन क्रमशः घटता जाएगा। 45 प्लॉट विक्रय पूर्ण होने के बाद प्रत्येक अतिरिक्त प्लॉट पर 4.5% कमीशन स्थायी रूप से लागू रहेगा।",
+    ruleNoteEnglish: "Customers purchasing plots at ₹1,000/sqft qualify for the Progressive Customer Commission Structure. The 1st plot sale earns 15.5% commission, stepping down across 45 sales slabs. After 45 completed plot sales, a permanent 4.5% commission applies."
+  });
+});
+
+// Register New Customer
+app.post("/api/customers/register", (req, res) => {
+  const { customerName, phone, email, plotNo } = req.body;
+  if (!customerName || !phone) {
+    return res.status(400).json({ success: false, error: "Customer name and mobile phone are required." });
+  }
+
+  const newCustomer = {
+    id: "CUST-" + Math.floor(1000 + Math.random() * 9000),
+    customerName,
+    phone,
+    email: email || `${phone}@vigyapaurush.com`,
+    kycStatus: "Verified",
+    registrationDate: new Date().toISOString().split("T")[0],
+    purchasedPlot: {
+      plotNo: plotNo || "C-101",
+      plotSizeSqft: 900,
+      ratePerSqft: 1000,
+      totalPlotValue: 900000,
+      purchaseDate: new Date().toISOString().split("T")[0],
+      paymentStatus: "Fully Paid"
+    },
+    totalPlotsSold: 0,
+    currentSlabPercentage: 15.5,
+    wallet: { availableBalance: 0, pendingCommission: 0, paidCommission: 0, totalCommissionEarned: 0 }
+  };
+
+  res.json({ success: true, message: "Customer registered successfully!", customer: newCustomer });
+});
+
+// Record Customer Plot Sale
+app.post("/api/customers/sale/record", (req, res) => {
+  const { customerId, buyerName, buyerPhone, plotNo } = req.body;
+  if (!customerId || !buyerName) {
+    return res.status(400).json({ success: false, error: "Customer ID and buyer details are required." });
+  }
+
+  res.json({
+    success: true,
+    message: "Customer plot sale recorded and progressive commission credited to wallet!",
+    saleId: "CSALE-" + Math.floor(1000 + Math.random() * 9000)
+  });
+});
+
+// Customer Wallet Withdrawal Request
+app.post("/api/customers/wallet/withdraw", (req, res) => {
+  const { customerId, amount, paymentMethod, accountDetails } = req.body;
+  if (!customerId || !amount) {
+    return res.status(400).json({ success: false, error: "Customer ID and withdrawal amount are required." });
+  }
+
+  res.json({
+    success: true,
+    message: "Withdrawal request submitted successfully! Awaiting Admin approval.",
+    requestId: "WD-" + Math.floor(1000 + Math.random() * 9000)
+  });
+});
+
+// Export Customers CSV
+app.get("/api/customers/export/csv", (req, res) => {
+  const csvHeaders = "Customer_ID,Customer_Name,Phone,Purchased_Plot,Plots_Sold,Current_Slab_%,Available_Wallet_INR,Total_Earned_INR\n";
+  const mockCsvRows = [
+    "CUST-1001,Rajesh Sharma,9876543210,C-101 (900 Sqft),4,14.25%,242750,542750",
+    "CUST-1002,Meena Verma,9812345678,D-201 (900 Sqft),1,15.50%,139500,139500",
+    "CUST-1003,Ramesh Chander,9988776655,E-301 (900 Sqft),0,15.50%,0,0"
+  ].join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=VigyaPaurush_Customers_Commission_Ledger.csv");
+  res.send(csvHeaders + mockCsvRows);
+});
+
+// =============================================================================
+// MULTI-LEVEL BONUS (TEAM BUILDING BONUS) REST APIS
+// =============================================================================
+
+// Get All MLM Team Members
+app.get("/api/mlm/team", (req, res) => {
+  res.json({
+    success: true,
+    message: "MLM Team Records & Genealogy Hierarchy loaded",
+    mandatoryDeductionRuleHindi: "डाउनलाइन के बोनस में से निर्धारित प्रतिशत की कटौती करके ही अपलाइन को मल्टी-लेवल बोनस प्रदान किया जाएगा।",
+    mandatoryDeductionRuleEnglish: "The multi-level bonus is paid to the upline strictly after deducting the specified percentage bonus amount from the downline's commission allocation.",
+    mandatoryQualificationRuleHindi: "मल्टी-लेवल बोनस केवल योग्य डाउनलाइन के प्लॉट विक्रय पर देय होगा। प्रत्येक स्तर का बोनस निर्धारित प्रतिशत के अनुसार गणना किया जाएगा तथा डाउनलाइन बोनस कटौती नियम लागू रहेगा।",
+    mandatoryQualificationRuleEnglish: "Multi-level bonus is payable exclusively on qualifying downline plot sales. Each level bonus is calculated according to the predefined percentage, and downline bonus deduction rules apply.",
+    levelsConfig: [
+      { level: 1, designation: "Buyer", qualification: "First Downline sells 1 Plot", bonusPercentage: 2.0 },
+      { level: 2, designation: "Agentship", qualification: "Second Downline sells 2 Plots", bonusPercentage: 3.0 },
+      { level: 3, designation: "Salesman", qualification: "Third Downline sells 3 Plots", bonusPercentage: 3.5 },
+      { level: 4, designation: "Leadership", qualification: "Fourth Downline sells 4 Plots", bonusPercentage: 4.0 },
+      { level: 5, designation: "Mentorship", qualification: "Fifth Downline sells 5 Plots", bonusPercentage: 4.2 },
+      { level: 6, designation: "Distributership", qualification: "Sixth Downline sells 6 Plots", bonusPercentage: 4.4 },
+      { level: 7, designation: "Dealership", qualification: "Seventh Downline sells 7 Plots", bonusPercentage: 4.6 },
+      { level: 8, designation: "Councelership", qualification: "Eighth Downline sells 8 Plots", bonusPercentage: 4.8 },
+      { level: 9, designation: "Co-Partnership", qualification: "Ninth Downline sells 9 Plots", bonusPercentage: 5.0 }
+    ]
+  });
+});
+
+// Register New Sponsor Member
+app.post("/api/mlm/sponsor/register", (req, res) => {
+  const { name, phone, email, role, sponsorId } = req.body;
+  if (!name || !phone) {
+    return res.status(400).json({ success: false, error: "Member name and mobile phone are required." });
+  }
+
+  const newMember = {
+    id: "TMB-" + Math.floor(1000 + Math.random() * 9000),
+    name,
+    phone,
+    email: email || `${phone}@vigyapaurush.com`,
+    role: role || "Agent",
+    sponsorId: sponsorId || "TMB-1001",
+    joiningDate: new Date().toISOString().split("T")[0],
+    status: "Active",
+    currentLevel: 1,
+    currentDesignation: "Buyer",
+    teamSize: 0,
+    wallet: { availableBonus: 0, paidBonus: 0, pendingWithdrawalsBonus: 0, totalBonusEarned: 0 }
+  };
+
+  res.json({ success: true, message: "Team sponsor member registered and bound to hierarchy!", member: newMember });
+});
+
+// Record Downline Plot Sale & Process Multi-Level Bonus
+app.post("/api/mlm/sale/record", (req, res) => {
+  const { downlineId, plotNo, saleValue = 900000 } = req.body;
+  if (!downlineId) {
+    return res.status(400).json({ success: false, error: "Downline member ID is required." });
+  }
+
+  const calculatedBonus = Math.round((saleValue * 2.0) / 100);
+
+  res.json({
+    success: true,
+    message: `Downline sale recorded! Level 1 Team Building Bonus (₹${calculatedBonus}) credited to upline wallet after downline bonus deduction.`,
+    transactionId: "TXN-MLM-" + Math.floor(1000 + Math.random() * 9000),
+    bonusCalculated: calculatedBonus,
+    deductionNote: "डाउनलाइन के बोनस में से 2.0% (₹18,000) की कटौती करके अपलाइन वॉलेट में क्रेडिट किया गया।"
+  });
+});
+
+// Submit Bonus Wallet Withdrawal Request
+app.post("/api/mlm/bonus/withdraw", (req, res) => {
+  const { memberId, amount, paymentMethod, accountDetails } = req.body;
+  if (!memberId || !amount) {
+    return res.status(400).json({ success: false, error: "Member ID and withdrawal amount are required." });
+  }
+
+  res.json({
+    success: true,
+    message: "Team Building Bonus withdrawal request submitted! Pending Admin Approval.",
+    requestId: "PWR-" + Math.floor(1000 + Math.random() * 9000)
+  });
+});
+
+// Approve Bonus Payout Request
+app.post("/api/mlm/bonus/approve", (req, res) => {
+  const { requestId } = req.body;
+  if (!requestId) {
+    return res.status(400).json({ success: false, error: "Request ID is required." });
+  }
+
+  res.json({
+    success: true,
+    message: "Bonus payout request approved and disbursed successfully!",
+    transactionId: "TXN-BANK-" + Math.floor(100000 + Math.random() * 900000)
+  });
+});
+
+// Export MLM Team Ledger CSV
+app.get("/api/mlm/export/csv", (req, res) => {
+  const csvHeaders = "Member_ID,Name,Phone,Role,Sponsor_ID,Designation,Level,Team_Size,Sales_Volume_INR,Available_Bonus_INR,Total_Earned_INR,Status\n";
+  const mockCsvRows = [
+    "TMB-1001,Shri Vikramaditya Singh,9839011223,Agent,None,Co-Partnership,Level 9,34,306000000,385000,1785000,Active",
+    "TMB-1002,Rajesh Sharma,9876543210,Customer,TMB-1001,Leadership,Level 4,12,98100000,142000,462000,Active",
+    "TMB-1003,Amitabh Verma,9988776655,Agent,TMB-1001,Mentorship,Level 5,15,125000000,215000,715000,Active"
+  ].join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=VigyaPaurush_MultiLevelBonus_Ledger.csv");
+  res.send(csvHeaders + mockCsvRows);
+});
+
 // Mock Auth OTP verify
 app.post("/api/auth/send-otp", (req, res) => {
   const { phone, gateway = "Fast2SMS", purpose = "Verification" } = req.body;
@@ -1195,6 +1393,275 @@ app.get("/api/payments/audit-logs", (req, res) => {
     success: true,
     logs: auditLogsStore
   });
+});
+
+// =============================================================================
+// AGENT PLOT SALES & COMMISSION SYSTEM REST APIS
+// =============================================================================
+
+// Mock DB Collection for Agents
+const agentsCollectionStore: any[] = [
+  {
+    id: 'AGENT-1001',
+    agentName: 'Rajesh Sharma',
+    phone: '9876543210',
+    email: 'rajesh.agent@vigyapaurush.com',
+    kycStatus: 'Verified',
+    joiningDate: '2025-01-15',
+    status: 'Active',
+    assignedPlot: {
+      plotNo: 'A-101',
+      plotSizeSqft: 900,
+      totalPlotValue: 900000,
+      emiDurationMonths: 60,
+      monthlyEmiAmount: 15000,
+      totalEmiPaidDirectly: 120000,
+      emiAdjustedFromCommission: 88500,
+      remainingEmiLiability: 691500,
+      emiCompletionPercentage: 23.16
+    },
+    totalPlotsSold: 2,
+    currentSlabPercentage: 7.5,
+    wallet: {
+      availableBalance: 45000,
+      pendingBalance: 12000,
+      totalEmiAdjustedBalance: 88500,
+      totalWithdrawn: 30000,
+      totalEarned: 163500
+    },
+    salesLedger: [
+      {
+        id: 'SALE-101',
+        agentId: 'AGENT-1001',
+        date: '2025-02-10',
+        customerName: 'Amit Verma',
+        customerPhone: '9812345678',
+        plotNo: 'B-204',
+        plotSizeSqft: 900,
+        saleType: 'Standard Plot',
+        saleValue: 900000,
+        slabPercentageUsed: 8.0,
+        grossCommissionEarned: 72000,
+        emiDeductionAmount: 36000,
+        netWalletAmount: 36000,
+        notes: 'Standard plot sale with 50/50 EMI offset applied'
+      },
+      {
+        id: 'SALE-102',
+        agentId: 'AGENT-1001',
+        date: '2025-03-22',
+        customerName: 'Sanjay Gupta (Risk Free)',
+        customerPhone: '9823456789',
+        plotNo: 'RF-105',
+        plotSizeSqft: 900,
+        saleType: 'Risk Free Investor Plot',
+        saleValue: 1305000,
+        slabPercentageUsed: 7.5,
+        grossCommissionEarned: 97875,
+        emiDeductionAmount: 48937.5,
+        netWalletAmount: 48937.5,
+        investorPlanRate: 1450,
+        notes: 'Risk Free Investor Plan 5 sale at active 7.5% slab'
+      }
+    ],
+    withdrawalHistory: [
+      {
+        id: 'WD-501',
+        agentId: 'AGENT-1001',
+        agentName: 'Rajesh Sharma',
+        requestDate: '2025-03-01',
+        amount: 30000,
+        paymentMethod: 'Bank Transfer',
+        accountDetails: 'HDFC Bank A/C ****4821',
+        status: 'Approved',
+        processedDate: '2025-03-02',
+        transactionId: 'TXN-8829104'
+      }
+    ]
+  }
+];
+
+// Helper to determine slab percentage based on upcoming sale index (1-based)
+function calculateSlabPercentage(saleIndex: number): number {
+  if (saleIndex === 1) return 8.0;
+  if (saleIndex <= 3) return 7.5;
+  if (saleIndex <= 6) return 7.0;
+  if (saleIndex <= 10) return 6.25;
+  if (saleIndex <= 15) return 5.5;
+  if (saleIndex <= 21) return 4.75;
+  if (saleIndex <= 28) return 4.0;
+  if (saleIndex <= 36) return 3.0;
+  return 2.0;
+}
+
+// 1. Get All Agents or Register Agent
+app.get("/api/agents", (req, res) => {
+  res.json({ success: true, agents: agentsCollectionStore });
+});
+
+app.post("/api/agents/register", (req, res) => {
+  try {
+    const { agentName, phone, email, assignedPlotNo } = req.body;
+    if (!agentName || !phone) {
+      return res.status(400).json({ success: false, error: "Name and phone are required." });
+    }
+
+    const newAgent = {
+      id: `AGENT-${Math.floor(1000 + Math.random() * 9000)}`,
+      agentName,
+      phone,
+      email: email || `${phone}@vigyapaurush.com`,
+      kycStatus: 'Verified',
+      joiningDate: new Date().toISOString().split('T')[0],
+      status: 'Active',
+      assignedPlot: {
+        plotNo: assignedPlotNo || `PLT-${Math.floor(100 + Math.random() * 900)}`,
+        plotSizeSqft: 900,
+        totalPlotValue: 900000,
+        emiDurationMonths: 60,
+        monthlyEmiAmount: 15000,
+        totalEmiPaidDirectly: 0,
+        emiAdjustedFromCommission: 0,
+        remainingEmiLiability: 900000,
+        emiCompletionPercentage: 0
+      },
+      totalPlotsSold: 0,
+      currentSlabPercentage: 8.0,
+      wallet: {
+        availableBalance: 0,
+        pendingBalance: 0,
+        totalEmiAdjustedBalance: 0,
+        totalWithdrawn: 0,
+        totalEarned: 0
+      },
+      salesLedger: [],
+      withdrawalHistory: []
+    };
+
+    agentsCollectionStore.unshift(newAgent);
+    res.json({ success: true, agent: newAgent, message: "Agent registered successfully." });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 2. Record Plot Sale or Risk Free Investor Sale for Agent
+app.post("/api/agents/sale/record", (req, res) => {
+  try {
+    const { agentId, customerName, customerPhone, plotNo, saleType, saleValue, investorPlanRate, notes } = req.body;
+    const agent = agentsCollectionStore.find(a => a.id === agentId);
+    if (!agent) {
+      return res.status(404).json({ success: false, error: "Agent not found." });
+    }
+
+    const nextSaleIndex = agent.totalPlotsSold + 1;
+    const slabPct = calculateSlabPercentage(nextSaleIndex);
+    const finalSaleVal = saleValue || 900000;
+    const grossCommission = (finalSaleVal * slabPct) / 100;
+
+    let emiDeduction = 0;
+    let netWallet = grossCommission;
+
+    const remainingLiability = agent.assignedPlot ? agent.assignedPlot.remainingEmiLiability : 0;
+
+    if (remainingLiability > 0) {
+      const halfSplit = grossCommission * 0.50;
+      emiDeduction = Math.min(halfSplit, remainingLiability);
+      netWallet = grossCommission - emiDeduction;
+
+      if (agent.assignedPlot) {
+        agent.assignedPlot.emiAdjustedFromCommission += emiDeduction;
+        agent.assignedPlot.remainingEmiLiability = Math.max(0, agent.assignedPlot.remainingEmiLiability - emiDeduction);
+        const totalPaid = agent.assignedPlot.totalEmiPaidDirectly + agent.assignedPlot.emiAdjustedFromCommission;
+        agent.assignedPlot.emiCompletionPercentage = Number(((totalPaid / agent.assignedPlot.totalPlotValue) * 100).toFixed(2));
+      }
+    }
+
+    // Update Agent totals
+    agent.totalPlotsSold += 1;
+    agent.currentSlabPercentage = calculateSlabPercentage(agent.totalPlotsSold + 1);
+
+    agent.wallet.availableBalance += netWallet;
+    agent.wallet.totalEmiAdjustedBalance += emiDeduction;
+    agent.wallet.totalEarned += grossCommission;
+
+    const newSaleRecord = {
+      id: `SALE-${Math.floor(100 + Math.random() * 900)}`,
+      agentId,
+      date: new Date().toISOString().split('T')[0],
+      customerName: customerName || 'Valued Buyer',
+      customerPhone: customerPhone || '9999999999',
+      plotNo: plotNo || `PLT-${Math.floor(100 + Math.random() * 900)}`,
+      plotSizeSqft: 900,
+      saleType: saleType || 'Standard Plot',
+      saleValue: finalSaleVal,
+      slabPercentageUsed: slabPct,
+      grossCommissionEarned: grossCommission,
+      emiDeductionAmount: emiDeduction,
+      netWalletAmount: netWallet,
+      investorPlanRate,
+      notes: notes || 'Automated commission calculation'
+    };
+
+    agent.salesLedger.unshift(newSaleRecord);
+
+    res.json({
+      success: true,
+      saleRecord: newSaleRecord,
+      agentUpdated: agent,
+      message: `Sale recorded successfully! Commission: ₹${grossCommission.toLocaleString('en-IN')} @ ${slabPct}% slab.`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3. Request Wallet Withdrawal
+app.post("/api/agents/wallet/withdraw", (req, res) => {
+  try {
+    const { agentId, amount, paymentMethod, accountDetails } = req.body;
+    const agent = agentsCollectionStore.find(a => a.id === agentId);
+    if (!agent) {
+      return res.status(404).json({ success: false, error: "Agent not found." });
+    }
+
+    if (amount > agent.wallet.availableBalance) {
+      return res.status(400).json({ success: false, error: "Insufficient available wallet balance." });
+    }
+
+    // Move from available to pending
+    agent.wallet.availableBalance -= amount;
+    agent.wallet.pendingBalance += amount;
+
+    const withdrawalReq = {
+      id: `WD-${Math.floor(500 + Math.random() * 500)}`,
+      agentId,
+      agentName: agent.agentName,
+      requestDate: new Date().toISOString().split('T')[0],
+      amount,
+      paymentMethod: paymentMethod || 'Bank Transfer',
+      accountDetails: accountDetails || 'Bank A/C Details',
+      status: 'Pending'
+    };
+
+    agent.withdrawalHistory.unshift(withdrawalReq);
+
+    res.json({ success: true, request: withdrawalReq, message: "Withdrawal request submitted for Admin Approval." });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 4. Export Agents CSV Report
+app.get("/api/agents/export/csv", (req, res) => {
+  const headers = "Agent ID,Agent Name,Phone,Email,KYC Status,Plots Sold,Active Slab %,Available Wallet,EMI Adjusted,Remaining EMI Liability\n";
+  const rows = agentsCollectionStore.map(a =>
+    `"${a.id}","${a.agentName}","${a.phone}","${a.email}","${a.kycStatus}","${a.totalPlotsSold}","${a.currentSlabPercentage}%","${a.wallet.availableBalance}","${a.wallet.totalEmiAdjustedBalance}","${a.assignedPlot ? a.assignedPlot.remainingEmiLiability : 0}"`
+  ).join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", `attachment; filename=VPM_Agent_Commission_Report_${new Date().toISOString().split('T')[0]}.csv`);
+  res.send(headers + rows);
 });
 
 

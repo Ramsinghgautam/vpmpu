@@ -3,6 +3,7 @@ import { INVESTOR_SLABS, calculateInvestorRoi, formatINR } from '../utils/calcul
 import { InvestmentRecord, Language } from '../types';
 import { TrendingUp, ShieldAlert, CheckCircle2, Calculator, Landmark, ShieldCheck, ArrowRight, DollarSign } from 'lucide-react';
 import { TRANSLATIONS } from '../utils/translations';
+import { RiskFreeInvestorPublicView } from './RiskFreeInvestorPublicView';
 
 interface InvestorModuleProps {
   currentLang: Language;
@@ -267,6 +268,11 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
             )}
           </div>
 
+        </div>
+
+        {/* Dedicated Risk Free Investor System Module */}
+        <div className="mt-16 pt-12 border-t border-indigo-900/80">
+          <RiskFreeInvestorPublicView />
         </div>
 
       </div>

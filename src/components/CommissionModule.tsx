@@ -10,6 +10,7 @@ import {
 import { Language } from '../types';
 import { Award, Users, Calculator, Network, CheckCircle2, ChevronRight, HelpCircle } from 'lucide-react';
 import { TRANSLATIONS } from '../utils/translations';
+import { AgentCommissionCalculatorView } from './AgentCommissionCalculatorView';
 
 interface CommissionModuleProps {
   currentLang: Language;
@@ -226,6 +227,11 @@ export const CommissionModule: React.FC<CommissionModuleProps> = ({ currentLang,
             </div>
 
           </div>
+        </div>
+
+        {/* Dedicated Agent Plot Sales & 50/50 Commission System Calculator */}
+        <div className="mt-16">
+          <AgentCommissionCalculatorView />
         </div>
 
       </div>

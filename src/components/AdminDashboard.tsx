@@ -48,6 +48,10 @@ import { AdminModals } from './admin/AdminModals';
 import { AdminTranslationManager } from './admin/AdminTranslationManager';
 import { AdminPaymentManager } from './admin/AdminPaymentManager';
 import { AdminHostingerSqlManager } from './admin/AdminHostingerSqlManager';
+import { AdminRiskFreeInvestorManager } from './admin/AdminRiskFreeInvestorManager';
+import { AdminAgentManager } from './admin/AdminAgentManager';
+import { AdminCustomerManager } from './admin/AdminCustomerManager';
+import { AdminMlmTeamManager } from './admin/AdminMlmTeamManager';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
@@ -730,134 +734,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* TAB 2: CUSTOMERS TAB */}
           {/* ========================================================================= */}
           {activeTab === 'customers' && (
-            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
-              isDarkMode ? 'bg-slate-900 border-amber-500/40' : 'bg-white border-slate-200'
-            }`}>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div>
-                  <h3 className="text-xl font-black flex items-center gap-2">
-                    <Users className="w-5 h-5 text-amber-400" />
-                    <span>Customer Plot Allocations & Payout Directory</span>
-                  </h3>
-                  <p className="text-slate-400 text-xs mt-1">Total 142 Registered Buyers across Milestone City Jhunsi & Prayag Royal Enclave Naini.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('addCustomer')}
-                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
-                >
-                  <UserPlus className="w-4 h-4" />
-                  <span>+ Add Customer</span>
-                </button>
-              </div>
+            <AdminCustomerManager />
+          )}
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
-                      <th className="p-3">Customer ID</th>
-                      <th className="p-3">Customer Name</th>
-                      <th className="p-3">Contact</th>
-                      <th className="p-3">Allocated Plot</th>
-                      <th className="p-3">Total Paid</th>
-                      <th className="p-3">Payout / Cashback</th>
-                      <th className="p-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/80 font-medium">
-                    {customersList.map((c) => (
-                      <tr key={c.id} className="hover:bg-slate-800/40">
-                        <td className="p-3 font-mono text-amber-400 font-bold">{c.id}</td>
-                        <td className="p-3 font-bold text-white">{c.name}</td>
-                        <td className="p-3 text-slate-300">{c.phone}<br/><span className="text-[10px] text-slate-500">{c.email}</span></td>
-                        <td className="p-3 text-emerald-400 font-bold">{c.plotNo} ({c.projectName})</td>
-                        <td className="p-3 font-black text-white">{formatINR(c.totalPaid)}</td>
-                        <td className="p-3 font-bold text-amber-400">{formatINR(c.payoutReceived)}</td>
-                        <td className="p-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => handleExportPDF(`Customer Ledger - ${c.name}`, c.id)}
-                            className="bg-slate-800 hover:bg-slate-700 text-amber-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
-                          >
-                            PDF Receipt
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          {/* ========================================================================= */}
+          {/* TAB: MULTI-LEVEL TEAM BONUS MANAGEMENT */}
+          {/* ========================================================================= */}
+          {activeTab === 'mlm_team' && (
+            <AdminMlmTeamManager />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 3: AGENTS & COMMISSION MANAGEMENT TAB */}
           {/* ========================================================================= */}
           {activeTab === 'agents' && (
-            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
-              isDarkMode ? 'bg-slate-900 border-indigo-500/40' : 'bg-white border-slate-200'
-            }`}>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div>
-                  <h3 className="text-xl font-black flex items-center gap-2">
-                    <Award className="w-5 h-5 text-indigo-400" />
-                    <span>Channel Partner Commission Ledger & Team Hierarchy</span>
-                  </h3>
-                  <p className="text-slate-400 text-xs mt-1">Track 8% Direct Sales Commission, Downline Team Overrides & Payout History.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('addAgent')}
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>+ Add Agent</span>
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
-                      <th className="p-3">Agent ID</th>
-                      <th className="p-3">Channel Partner</th>
-                      <th className="p-3">Assigned Region</th>
-                      <th className="p-3">Active Bookings</th>
-                      <th className="p-3">Total Commission Payout</th>
-                      <th className="p-3">Status</th>
-                      <th className="p-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/80 font-medium">
-                    {agentsList.map((a) => (
-                      <tr key={a.id} className="hover:bg-slate-800/40">
-                        <td className="p-3 font-mono text-indigo-400 font-bold">{a.id}</td>
-                        <td className="p-3 font-bold text-white">{a.name}<br/><span className="text-[10px] text-slate-400">{a.phone}</span></td>
-                        <td className="p-3 text-slate-300">{a.region}</td>
-                        <td className="p-3 font-bold text-sky-400">{a.activeBookings} Plots Sold</td>
-                        <td className="p-3 font-black text-emerald-400">{formatINR(a.commissionPayout)}</td>
-                        <td className="p-3">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            a.status === 'Active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'
-                          }`}>
-                            {a.status}
-                          </span>
-                        </td>
-                        <td className="p-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => handleExportPDF(`Agent Commission Voucher - ${a.name}`, a.id)}
-                            className="bg-slate-800 hover:bg-slate-700 text-indigo-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
-                          >
-                            Voucher PDF
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <AdminAgentManager />
           )}
 
           {/* ========================================================================= */}
@@ -1591,6 +1482,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           {/* ========================================================================= */}
           {activeTab === 'translations' && (
             <AdminTranslationManager />
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 17: RISK FREE INVESTOR SYSTEM */}
+          {/* ========================================================================= */}
+          {activeTab === 'risk_free_investors' && (
+            <AdminRiskFreeInvestorManager />
           )}
 
           {/* ========================================================================= */}

@@ -75,7 +75,7 @@ export const CompanyOverview: React.FC<CompanyOverviewProps> = ({ currentLang, o
               <ul className="space-y-3 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>Plot Buyer Cash Back:</strong> Earn 15.5% commission on 1st plot down to 4.5% on 9th plot.</span>
+                  <span><strong>Plot Buyer Cash Back:</strong> Earn 15.5% commission on 1st plot down to 4.5% on 45th plot.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -87,7 +87,7 @@ export const CompanyOverview: React.FC<CompanyOverviewProps> = ({ currentLang, o
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>Easy EMI Plans:</strong> Flexible installment tenure over 12 or 24 months.</span>
+                  <span><strong>Easy EMI Plans:</strong> Flexible installment tenure over 12 or 24 or 36 or 48 or 60 months.</span>
                 </li>
               </ul>
               <button
@@ -109,7 +109,7 @@ export const CompanyOverview: React.FC<CompanyOverviewProps> = ({ currentLang, o
               <ul className="space-y-3 text-xs text-slate-600">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  <span><strong>Direct Sales Commission:</strong> Starts at 8% on 1st plot down to 2% on 9th plot.</span>
+                  <span><strong>Direct Sales Commission:</strong> Starts at 8% on 1st plot down to 2% on 45th plot.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />

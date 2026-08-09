@@ -5,8 +5,11 @@ import { User as UserIcon, ShieldCheck, CreditCard, TrendingUp, Users, FileText,
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { formatINR } from '../utils/calculators';
+import { isTransactionIdAlreadyUsed, registerCompletedTransactionId } from '../utils/transactionRegistry';
 import { MediaUploadManager } from './MediaUploadManager';
 import { CustomerPaymentHistory } from './CustomerPaymentHistory';
+import { UserRiskFreeInvestorView } from './UserRiskFreeInvestorView';
+import { UserAgentPortalView } from './UserAgentPortalView';
 
 interface UserDashboardProps {
   currentUser: User | null;
@@ -23,7 +26,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   onLogout,
   onNavigate
 }) => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial' | 'media'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial' | 'media' | 'risk_free_investor' | 'agent_portal'>('profile');
   const [financialTimeframe, setFinancialTimeframe] = useState<'monthly' | 'quarterly' | 'sixMonthly' | 'annually'>('monthly');
   const [copiedRef, setCopiedRef] = useState(false);
   const [showICardModal, setShowICardModal] = useState(false);
@@ -57,10 +60,16 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
       return;
     }
 
+    if (isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(emiTxnIdInput)) {
+      setEmiTxnError('Payment Failed! This Transaction ID / UTR has ALREADY been completed in a previous payment. Duplicate transaction IDs cannot be reused.');
+      return;
+    }
+
     setEmiTxnError('');
     setIsProcessingEmi(true);
     setTimeout(() => {
       setIsProcessingEmi(false);
+      registerCompletedTransactionId(cleanDigits);
       const todayDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
       if (selectedEmi) {
         setPaidEmiNumbers((prev) => Array.from(new Set([...prev, selectedEmi.number])));
@@ -1472,7 +1481,33 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             <CloudUpload className="w-4 h-4 text-amber-500" />
             <span>Media Vault & Uploads</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('risk_free_investor')}
+            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'risk_free_investor' ? 'bg-amber-500 text-slate-950 shadow-md font-black' : 'text-slate-700 hover:bg-amber-50 border border-amber-500/30 font-bold'}`}
+          >
+            <ShieldCheck className="w-4 h-4 text-amber-600" />
+            <span>Risk Free Investor Portal</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('agent_portal')}
+            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'agent_portal' ? 'bg-amber-500 text-slate-950 shadow-md font-black' : 'text-slate-700 hover:bg-amber-50 border border-amber-500/30 font-bold'}`}
+          >
+            <Award className="w-4 h-4 text-amber-600" />
+            <span>Agent Plot Sales Portal</span>
+          </button>
         </div>
+
+        {/* Tab: Agent Plot Sales & Commission Management Portal */}
+        {activeTab === 'agent_portal' && (
+          <UserAgentPortalView currentUser={currentUser} />
+        )}
+
+        {/* Tab: Risk Free Investor System */}
+        {activeTab === 'risk_free_investor' && (
+          <UserRiskFreeInvestorView currentUser={currentUser} />
+        )}
 
         {/* Tab: Media Upload Manager */}
         {activeTab === 'media' && (
@@ -3566,12 +3601,17 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       }}
                       placeholder="Enter 12-digit UTR (e.g. 123456789012)"
                       className={`w-full bg-slate-900 border rounded-xl px-3 py-2.5 text-amber-300 font-mono text-xs focus:outline-none transition-colors ${
-                        emiTxnError
+                        emiTxnError || (emiTxnIdInput.trim() && isTransactionIdAlreadyUsed(emiTxnIdInput))
                           ? 'border-rose-500 ring-2 ring-rose-500/20'
                           : 'border-slate-800 focus:border-emerald-500'
                       }`}
                     />
-                    {emiTxnError ? (
+                    {isTransactionIdAlreadyUsed(emiTxnIdInput) ? (
+                      <p className="text-[11px] text-rose-400 font-bold flex items-center gap-1 mt-1">
+                        <XCircle className="w-3.5 h-3.5 shrink-0" />
+                        <span>Duplicate Transaction ID! This UTR was already completed and cannot be reused.</span>
+                      </p>
+                    ) : emiTxnError ? (
                       <p className="text-[11px] text-rose-400 font-bold flex items-center gap-1 mt-1">
                         <XCircle className="w-3.5 h-3.5 shrink-0" />
                         <span>{emiTxnError}</span>

@@ -5,6 +5,7 @@ import confetti from 'canvas-confetti';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { formatINR } from '../utils/calculators';
+import { isTransactionIdAlreadyUsed, registerCompletedTransactionId } from '../utils/transactionRegistry';
 
 interface PlotBookingModalProps {
   initialProject?: Project | null;
@@ -401,6 +402,11 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
       return;
     }
 
+    if (isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(transactionId)) {
+      setPaymentErrorMessage('Transaction Failed! This Transaction ID / UTR has ALREADY been completed in a previous booking. Duplicate transaction IDs cannot be re-validated or reused.');
+      return;
+    }
+
     if (!transactionDate) {
       setPaymentErrorMessage('Transaction Failed! Date of Transaction is required.');
       return;
@@ -410,6 +416,9 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
     setIsProcessingPayment(true);
     setTimeout(() => {
       setIsProcessingPayment(false);
+
+      const finalTxnId = transactionId.trim().toUpperCase();
+      registerCompletedTransactionId(finalTxnId);
 
       const bookingObj: Booking = {
         id: "VPM-BK-" + Math.floor(1000 + Math.random() * 9000),
@@ -424,7 +433,7 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
         totalPrice,
         bookingAmountPaid: bookingAmount,
         paymentMethod: paymentMethod === 'upi' ? 'UPI Direct (GPay/PhonePe)' : paymentMethod === 'razorpay' ? 'Razorpay Secure Gateway' : paymentMethod === 'card' ? 'Credit / Debit Card' : 'Net Banking',
-        paymentId: transactionId.trim().toUpperCase(),
+        paymentId: finalTxnId,
         bookingDate: transactionDate || new Date().toISOString().split('T')[0],
         status: 'Confirmed',
         installmentPlan
@@ -920,25 +929,62 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
             </div>
 
             {/* Transaction Success or Failure Alert */}
-            {transactionId.trim() && transactionDate ? (
-              <div className="bg-emerald-50 border-2 border-emerald-500 p-3.5 rounded-xl text-emerald-900 font-bold flex items-center gap-3 shadow-xs animate-fadeIn">
-                <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
-                <div>
-                  <p className="font-black text-xs text-emerald-800 uppercase tracking-wide">Transaction Successful!</p>
-                  <p className="text-xs font-semibold text-slate-700 mt-0.5">
-                    Transaction ID ({transactionId.trim()}) & Date ({transactionDate}) filled & verified.
-                  </p>
-                </div>
-              </div>
-            ) : paymentErrorMessage ? (
-              <div className="bg-red-50 border-2 border-red-500 p-3.5 rounded-xl text-red-900 font-bold flex items-center gap-3 shadow-sm animate-bounce-short">
-                <XCircle className="w-6 h-6 text-red-600 shrink-0" />
-                <div>
-                  <p className="font-black text-xs text-red-700 uppercase tracking-wide">Transaction Failed!</p>
-                  <p className="text-xs font-semibold text-slate-800 mt-0.5">{paymentErrorMessage}</p>
-                </div>
-              </div>
-            ) : null}
+            {(() => {
+              const cleanDigits = transactionId.trim().replace(/\D/g, '');
+              const isValid12 = cleanDigits.length === 12;
+              const hasEntered = transactionId.trim().length > 0;
+              const isAlreadyUsed = isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(transactionId);
+
+              if (isAlreadyUsed) {
+                return (
+                  <div className="bg-red-50 border-2 border-red-500 p-3.5 rounded-xl text-red-900 font-bold flex items-center gap-3 shadow-md animate-pulse">
+                    <XCircle className="w-6 h-6 text-red-600 shrink-0" />
+                    <div>
+                      <p className="font-black text-xs text-red-700 uppercase tracking-wide">Duplicate Transaction ID Detected!</p>
+                      <p className="text-xs font-semibold text-slate-800 mt-0.5">
+                        This Transaction ID / UTR (<span className="font-mono text-red-800">{cleanDigits || transactionId}</span>) has ALREADY been completed in a previous transaction and cannot be reused.
+                      </p>
+                    </div>
+                  </div>
+                );
+              } else if (isValid12 && transactionDate) {
+                return (
+                  <div className="bg-emerald-50 border-2 border-emerald-500 p-3.5 rounded-xl text-emerald-900 font-bold flex items-center gap-3 shadow-xs animate-fadeIn">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
+                    <div>
+                      <p className="font-black text-xs text-emerald-800 uppercase tracking-wide">12-Digit Transaction Verified!</p>
+                      <p className="text-xs font-semibold text-slate-700 mt-0.5">
+                        Transaction ID / UTR ({cleanDigits}) & Date ({transactionDate}) verified & ready for booking submission.
+                      </p>
+                    </div>
+                  </div>
+                );
+              } else if (hasEntered && !isValid12) {
+                return (
+                  <div className="bg-red-50 border-2 border-red-500 p-3.5 rounded-xl text-red-900 font-bold flex items-center gap-3 shadow-sm">
+                    <XCircle className="w-6 h-6 text-red-600 shrink-0" />
+                    <div>
+                      <p className="font-black text-xs text-red-700 uppercase tracking-wide">Invalid Transaction ID (12 Digits Required)</p>
+                      <p className="text-xs font-semibold text-slate-800 mt-0.5">
+                        A valid 12-digit UTR/Reference ID is required. Currently entered: <span className="font-bold text-red-700">{cleanDigits.length}/12</span> digits.
+                      </p>
+                    </div>
+                  </div>
+                );
+              } else if (paymentErrorMessage) {
+                return (
+                  <div className="bg-red-50 border-2 border-red-500 p-3.5 rounded-xl text-red-900 font-bold flex items-center gap-3 shadow-sm animate-bounce-short">
+                    <XCircle className="w-6 h-6 text-red-600 shrink-0" />
+                    <div>
+                      <p className="font-black text-xs text-red-700 uppercase tracking-wide">Transaction Failed!</p>
+                      <p className="text-xs font-semibold text-slate-800 mt-0.5">{paymentErrorMessage}</p>
+                    </div>
+                  </div>
+                );
+              } else {
+                return null;
+              }
+            })()}
 
             {/* Bottom Action Bar */}
             <div className="pt-2 border-t border-slate-200 flex items-center gap-3">
