@@ -365,7 +365,58 @@ export const UserCustomerPortalView: React.FC<UserCustomerPortalViewProps> = ({ 
             29-36 (6.75%)
           </div>
           <div className={`p-1.5 rounded-lg border ${selectedCustomer.totalPlotsSold >= 45 ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 font-bold' : 'bg-slate-950 border-slate-800 text-slate-500'}`}>
-            37-45 (4.5%)
+            37-45+ (4.5%)
+          </div>
+        </div>
+      </div>
+
+      {/* CUSTOMER PLOT EMI SCHEDULE & ONLINE PAYMENTS MODULE */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6 shadow-2xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <h3 className="text-lg font-black text-white flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-rose-400" />
+              <span>My Active Plot EMI Schedule & Online Razorpay Payment</span>
+            </h3>
+            <p className="text-slate-400 text-xs mt-0.5">
+              Select tenure plan (12, 24, 36, 48, 60 Months) and pay monthly installment online via UPI, Credit Card, or NetBanking.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
+            <span className="text-xs text-slate-400 font-bold">Tenure Plan:</span>
+            <span className="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-0.5 rounded-lg">
+              36 Months (3 Years) @ 10.5% p.a.
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
+            <span className="text-[10px] text-slate-400 font-bold uppercase">Plot Allotted</span>
+            <div className="text-lg font-black text-amber-400">Plot A-12</div>
+            <span className="text-[10px] text-slate-400 block">Milestone City Prayagraj</span>
+          </div>
+
+          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
+            <span className="text-[10px] text-slate-400 font-bold uppercase">Monthly Installment</span>
+            <div className="text-lg font-black text-rose-400 font-mono">₹42,500 / mo</div>
+            <span className="text-[10px] text-slate-400 block">Due Date: 15th of Every Month</span>
+          </div>
+
+          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
+            <span className="text-[10px] text-slate-400 font-bold uppercase">Installments Completed</span>
+            <div className="text-lg font-black text-emerald-400 font-mono">12 / 36 Months</div>
+            <span className="text-[10px] text-slate-400 block">Remaining: ₹10,20,000</span>
+          </div>
+
+          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => alert('Launching Razorpay Secure Gateway for ₹42,500 EMI Payment...')}
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase py-2.5 rounded-xl shadow-lg transition-all"
+            >
+              Pay Current EMI Online
+            </button>
           </div>
         </div>
       </div>

@@ -117,7 +117,7 @@ export const CompanyOverview: React.FC<CompanyOverviewProps> = ({ currentLang, o
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                  <span><strong>Instant Agent ID & Portal:</strong> Track referrals, downlines & weekly payouts in real-time.</span>
+                  <span><strong>Instant Agent ID & Portal:</strong> Track referrals, downlines & monthly payouts in real-time.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />

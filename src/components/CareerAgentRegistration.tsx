@@ -102,7 +102,7 @@ export const CareerAgentRegistration: React.FC<CareerAgentRegistrationProps> = (
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Weekly Payout Assurance:</strong> Direct bank transfer or UPI payout without delay.</span>
+                  <span><strong>Monthly Payout Assurance:</strong> Direct bank transfer or UPI payout without delay.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />

@@ -53,6 +53,7 @@ import { AdminAgentManager } from './admin/AdminAgentManager';
 import { AdminCustomerManager } from './admin/AdminCustomerManager';
 import { AdminMlmTeamManager } from './admin/AdminMlmTeamManager';
 import { AdminPermissionManager } from './admin/AdminPermissionManager';
+import { AdminEmiManager } from './admin/AdminEmiManager';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
@@ -1060,69 +1061,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 9: EMI MANAGEMENT & DEFAULTERS */}
+          {/* TAB 9: ENTERPRISE SMART EMI ENGINE & DEFAULTERS */}
           {/* ========================================================================= */}
           {activeTab === 'emi' && (
-            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
-              isDarkMode ? 'bg-slate-900 border-rose-500/40' : 'bg-white border-slate-200'
-            }`}>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div>
-                  <h3 className="text-xl font-black flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-rose-400" />
-                    <span>Customer Plot EMI Schedule & Overdue Tracking</span>
-                  </h3>
-                  <p className="text-slate-400 text-xs mt-1">Track monthly customer installment collections & trigger automated legal reminder notices.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('defaultersList')}
-                  className="bg-rose-600 hover:bg-rose-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
-                >
-                  <AlertTriangle className="w-4 h-4" />
-                  <span>View Defaulters List ({defaultersList.length})</span>
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
-                      <th className="p-3">Customer Name</th>
-                      <th className="p-3">Plot No</th>
-                      <th className="p-3">Monthly EMI</th>
-                      <th className="p-3">Due Date</th>
-                      <th className="p-3">Status</th>
-                      <th className="p-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/80 font-medium">
-                    {defaultersList.map((def, idx) => (
-                      <tr key={idx} className="hover:bg-slate-800/40">
-                        <td className="p-3 font-bold text-white">{def.name}<br/><span className="text-[10px] text-slate-400">{def.phone}</span></td>
-                        <td className="p-3 text-amber-400 font-bold">{def.plotNo} ({def.projectName})</td>
-                        <td className="p-3 font-black text-rose-400">{formatINR(def.emiAmount)}</td>
-                        <td className="p-3 text-slate-300">{def.dueDate}</td>
-                        <td className="p-3">
-                          <span className="bg-rose-500/20 text-rose-300 font-bold px-2 py-0.5 rounded text-[10px] animate-pulse">
-                            {def.overdueDays} Days Overdue
-                          </span>
-                        </td>
-                        <td className="p-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => alert(`Notice dispatched to ${def.name}`)}
-                            className="bg-rose-600 hover:bg-rose-500 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold"
-                          >
-                            Send Notice
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <AdminEmiManager isDarkMode={isDarkMode} />
           )}
 
           {/* ========================================================================= */}
