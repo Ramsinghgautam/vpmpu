@@ -10,6 +10,7 @@ import { MediaUploadManager } from './MediaUploadManager';
 import { CustomerPaymentHistory } from './CustomerPaymentHistory';
 import { UserRiskFreeInvestorView } from './UserRiskFreeInvestorView';
 import { UserAgentPortalView } from './UserAgentPortalView';
+import { UserEmployeePortalView } from './UserEmployeePortalView';
 
 interface UserDashboardProps {
   currentUser: User | null;
@@ -26,7 +27,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   onLogout,
   onNavigate
 }) => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial' | 'media' | 'risk_free_investor' | 'agent_portal'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial' | 'media' | 'risk_free_investor' | 'agent_portal' | 'employee_portal'>('profile');
   const [financialTimeframe, setFinancialTimeframe] = useState<'monthly' | 'quarterly' | 'sixMonthly' | 'annually'>('monthly');
   const [copiedRef, setCopiedRef] = useState(false);
   const [showICardModal, setShowICardModal] = useState(false);
@@ -1497,7 +1498,20 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             <Award className="w-4 h-4 text-amber-600" />
             <span>Agent Plot Sales Portal</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('employee_portal')}
+            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'employee_portal' ? 'bg-sky-500 text-slate-950 shadow-md font-black' : 'text-slate-700 hover:bg-sky-50 border border-sky-500/30 font-bold'}`}
+          >
+            <UserCheck className="w-4 h-4 text-sky-600" />
+            <span>Employee Promotion & Honorarium Portal</span>
+          </button>
         </div>
+
+        {/* Tab: Employee Promotion & Honorarium Portal */}
+        {activeTab === 'employee_portal' && (
+          <UserEmployeePortalView />
+        )}
 
         {/* Tab: Agent Plot Sales & Commission Management Portal */}
         {activeTab === 'agent_portal' && (

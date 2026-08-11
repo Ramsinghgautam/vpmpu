@@ -21,7 +21,8 @@ import {
   ShieldCheck,
   Globe,
   Database,
-  GitMerge
+  GitMerge,
+  Calculator
 } from 'lucide-react';
 
 export type AdminTabType = 
@@ -41,6 +42,7 @@ export type AdminTabType =
   | 'payments'
   | 'cashflow'
   | 'reports'
+  | 'tax_itr'
   | 'gallery'
   | 'notifications'
   | 'settings'
@@ -81,7 +83,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         { id: 'agents' as AdminTabType, label: 'Agents', icon: Award, badge: `${counts.agentsCount}` },
         { id: 'investors' as AdminTabType, label: 'Investors', icon: TrendingUp, badge: `${counts.investorsCount}` },
         { id: 'risk_free_investors' as AdminTabType, label: 'Risk Free Investors', icon: ShieldCheck, badge: 'Fintech ROI' },
-        { id: 'employees' as AdminTabType, label: 'Employees', icon: UserCheck, badge: `${counts.employeesCount}` },
+        { id: 'employees' as AdminTabType, label: 'Employee Promotions & WFH', icon: UserCheck, badge: 'Point Engine' },
       ]
     },
     {
@@ -101,6 +103,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         { id: 'expenses' as AdminTabType, label: 'Expenses & Outflow', icon: Receipt, badge: null },
         { id: 'cashflow' as AdminTabType, label: 'Cash Flow', icon: Wallet, badge: 'Live' },
         { id: 'reports' as AdminTabType, label: 'Reports', icon: BarChart3, badge: 'PDF/Excel' },
+        { id: 'tax_itr' as AdminTabType, label: 'Tax & ITR Management', icon: Calculator, badge: 'Form 16/26AS' },
       ]
     },
     {

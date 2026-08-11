@@ -54,6 +54,8 @@ import { AdminCustomerManager } from './admin/AdminCustomerManager';
 import { AdminMlmTeamManager } from './admin/AdminMlmTeamManager';
 import { AdminPermissionManager } from './admin/AdminPermissionManager';
 import { AdminEmiManager } from './admin/AdminEmiManager';
+import { AdminEmployeePromotionManager } from './admin/AdminEmployeePromotionManager';
+import { AdminItrManager } from './admin/AdminItrManager';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
@@ -818,65 +820,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           )}
 
           {/* ========================================================================= */}
-          {/* TAB 5: EMPLOYEES & PAYROLL TAB */}
+          {/* TAB 5: EMPLOYEES POINT PROMOTION, HONORARIUM & WFH MANAGER */}
           {/* ========================================================================= */}
           {activeTab === 'employees' && (
-            <div className={`rounded-3xl p-6 md:p-8 border shadow-xl space-y-6 ${
-              isDarkMode ? 'bg-slate-900 border-sky-500/40' : 'bg-white border-slate-200'
-            }`}>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-                <div>
-                  <h3 className="text-xl font-black flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-sky-400" />
-                    <span>Employee Directory, Attendance Logs & Monthly Payroll</span>
-                  </h3>
-                  <p className="text-slate-400 text-xs mt-1">24 Full-Time Engineers, Surveyors & Account Officers on Company Payroll.</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal('addEmployee')}
-                  className="bg-sky-600 hover:bg-sky-500 text-white font-black px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>+ Add Employee</span>
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
-                      <th className="p-3">Staff ID</th>
-                      <th className="p-3">Employee Name</th>
-                      <th className="p-3">Designation & Dept</th>
-                      <th className="p-3">Monthly Base Salary</th>
-                      <th className="p-3">Attendance Ratio</th>
-                      <th className="p-3 text-right">Salary Slip</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-800/80 font-medium">
-                    {employeesList.map((e) => (
-                      <tr key={e.id} className="hover:bg-slate-800/40">
-                        <td className="p-3 font-mono text-sky-400 font-bold">{e.id}</td>
-                        <td className="p-3 font-bold text-white">{e.name}</td>
-                        <td className="p-3 text-slate-300">{e.role}<br/><span className="text-[10px] text-slate-500">{e.dept}</span></td>
-                        <td className="p-3 font-black text-white">{formatINR(e.salary)}</td>
-                        <td className="p-3 font-bold text-emerald-400">{e.attendance} Present</td>
-                        <td className="p-3 text-right">
-                          <button
-                            type="button"
-                            onClick={() => handleExportPDF(`Employee Salary Slip - ${e.name}`, e.id)}
-                            className="bg-slate-800 hover:bg-slate-700 text-sky-400 px-3 py-1.5 rounded-lg text-[11px] font-bold"
-                          >
-                            Payslip PDF
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <AdminEmployeePromotionManager isDarkMode={isDarkMode} />
           )}
 
           {/* ========================================================================= */}
@@ -1196,6 +1143,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 ))}
               </div>
             </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB 12.5: TAX & ITR MANAGEMENT */}
+          {/* ========================================================================= */}
+          {activeTab === 'tax_itr' && (
+            <AdminItrManager isDarkMode={isDarkMode} />
           )}
 
           {/* ========================================================================= */}
