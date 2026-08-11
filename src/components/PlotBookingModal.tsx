@@ -805,7 +805,10 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod('upi')}
+                  onClick={() => {
+                    setPaymentMethod('upi');
+                    setPaymentErrorMessage(null);
+                  }}
                   className={`p-3 rounded-xl border text-left flex items-center gap-2.5 font-bold transition-all cursor-pointer ${paymentMethod === 'upi' ? 'border-emerald-600 bg-emerald-50 text-emerald-950 ring-2 ring-emerald-500' : 'border-slate-300 hover:bg-slate-50'}`}
                 >
                   <QrCode className="w-5 h-5 text-emerald-600" />
@@ -817,7 +820,10 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => setPaymentMethod('razorpay')}
+                  onClick={() => {
+                    setPaymentMethod('razorpay');
+                    setPaymentErrorMessage(null);
+                  }}
                   className={`p-3 rounded-xl border text-left flex items-center gap-2.5 font-bold transition-all cursor-pointer ${paymentMethod === 'razorpay' ? 'border-sky-600 bg-sky-50 text-sky-950 ring-2 ring-sky-500' : 'border-slate-300 hover:bg-slate-50'}`}
                 >
                   <CreditCard className="w-5 h-5 text-sky-600" />
@@ -883,32 +889,32 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
               </div>
             </div>
 
-            {/* Transaction ID / UTR Input Field */}
-            <div className="bg-white border border-slate-300 rounded-xl p-3.5 space-y-2 shadow-xs">
-              <label className="block font-bold text-slate-900 text-xs flex items-center justify-between">
-                <span>Enter Transaction ID / UTR Number <span className="text-red-500">*</span></span>
-                <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Mandatory to Verify</span>
-              </label>
-              <input
-                type="text"
-                value={transactionId}
-                onChange={(e) => {
-                  setTransactionId(e.target.value);
-                  if (paymentErrorMessage) setPaymentErrorMessage(null);
-                }}
-                placeholder="e.g. UPI UTR 423910293841 or TXN98765432"
-                className={`w-full bg-slate-50 border rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 ${
-                  paymentErrorMessage
-                    ? 'border-red-500 ring-2 ring-red-200 bg-red-50/40 text-red-950 font-bold'
-                    : 'border-slate-300 focus:border-amber-500 ring-amber-200'
-                }`}
-              />
-              <p className="text-[10px] text-slate-500 leading-tight">
-                {paymentMethod === 'upi'
-                  ? 'Please check your UPI app (GPay / PhonePe / Paytm) transaction history to find the 12-digit UTR.'
-                  : 'Enter the reference transaction number received on payment completion.'}
-              </p>
-            </div>
+            {/* Transaction ID / UTR Input Field - Visible only for UPI / QR Code */}
+            {paymentMethod === 'upi' && (
+              <div className="bg-white border border-slate-300 rounded-xl p-3.5 space-y-2 shadow-xs">
+                <label className="block font-bold text-slate-900 text-xs flex items-center justify-between">
+                  <span>Enter Transaction ID / UTR Number <span className="text-red-500">*</span></span>
+                  <span className="text-[10px] font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Mandatory to Verify</span>
+                </label>
+                <input
+                  type="text"
+                  value={transactionId}
+                  onChange={(e) => {
+                    setTransactionId(e.target.value);
+                    if (paymentErrorMessage) setPaymentErrorMessage(null);
+                  }}
+                  placeholder="e.g. UPI UTR 423910293841 or TXN98765432"
+                  className={`w-full bg-slate-50 border rounded-lg p-2.5 text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 ${
+                    paymentErrorMessage
+                      ? 'border-red-500 ring-2 ring-red-200 bg-red-50/40 text-red-950 font-bold'
+                      : 'border-slate-300 focus:border-amber-500 ring-amber-200'
+                  }`}
+                />
+                <p className="text-[10px] text-slate-500 leading-tight">
+                  Please check your UPI app (GPay / PhonePe / Paytm) transaction history to find the 12-digit UTR.
+                </p>
+              </div>
+            )}
 
             {/* Date of Transaction Input Field */}
             <div className="bg-white border border-slate-300 rounded-xl p-3.5 space-y-2 shadow-xs">

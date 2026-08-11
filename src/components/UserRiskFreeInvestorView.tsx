@@ -703,7 +703,7 @@ export const UserRiskFreeInvestorView: React.FC<UserRiskFreeInvestorViewProps> =
                     <div key={s.id} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
                       <div>
                         <span className="font-bold text-white block">{s.projectName} ({s.plotNo})</span>
-                        <span className="text-[10px] text-slate-500">Buyer: {s.buyerName} | Date: {s.date}</span>
+                        <span className="text-[10px] text-slate-500">Risk-Free Investor: {s.buyerName} | Date: {s.date}</span>
                       </div>
                       <div className="text-right">
                         <span className="font-black text-emerald-400 block">₹{formatINR(s.commissionEarned)}</span>
@@ -845,17 +845,17 @@ export const UserRiskFreeInvestorView: React.FC<UserRiskFreeInvestorViewProps> =
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 font-bold mb-1">Buyer Name</label>
+                  <label className="block text-slate-400 font-bold mb-1">Risk-Free Investor Name</label>
                   <input 
                     type="text" 
-                    placeholder="Buyer Name"
+                    placeholder="Risk-Free Investor Name"
                     value={buyerName}
                     onChange={(e) => setBuyerName(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-400 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 font-bold mb-1">Buyer Phone</label>
+                  <label className="block text-slate-400 font-bold mb-1">Risk-Free Investor Phone</label>
                   <input 
                     type="text" 
                     placeholder="9876543210"

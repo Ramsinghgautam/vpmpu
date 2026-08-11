@@ -170,8 +170,8 @@ export const MOCK_BLOG_POSTS: BlogPost[] = [
   },
   {
     id: "blog-2",
-    title: "How to Earn up to 15.5% Buyer & 8% Agent Commissions Capped by VPM Transparency",
-    excerpt: "Understand Vigya Paurush Milestone's progressive plot slab structure designed to reward loyal property buyers and dedicated sales agents.",
+    title: "How to Earn up to 15.5% Risk-Free Investor & 8% Agent Commissions Capped by VPM Transparency",
+    excerpt: "Understand Vigya Paurush Milestone's progressive plot slab structure designed to reward loyal property risk-free investors and dedicated sales agents.",
     category: "Commission & Earnings",
     date: "July 15, 2026",
     author: "VPM Advisory Desk",
@@ -194,7 +194,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
   {
     id: "test-1",
     name: "Dr. Ramesh Chandra Mishra",
-    role: "Property Buyer",
+    role: "Property Risk-Free Investor",
     location: "Civil Lines, Prayagraj",
     quote: "I booked a 1500 sq.ft plot in Milestone City Jhunsi with just ₹10,000 booking fee. The transparency in Dakhil Kharij and clear legal documents handled by Mr. Prabhat Gautam was unmatched!",
     rating: 5,

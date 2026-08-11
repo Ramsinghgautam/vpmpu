@@ -509,7 +509,7 @@ export const UserCustomerPortalView: React.FC<UserCustomerPortalViewProps> = ({ 
               <tr className="bg-slate-800/80 text-slate-300 border-b border-slate-700">
                 <th className="p-3">Sale ID</th>
                 <th className="p-3">Date</th>
-                <th className="p-3">Buyer Details</th>
+                <th className="p-3">Risk-Free Investor Details</th>
                 <th className="p-3">Plot No</th>
                 <th className="p-3">Sale Value</th>
                 <th className="p-3">Slab Rate</th>
@@ -638,7 +638,7 @@ export const UserCustomerPortalView: React.FC<UserCustomerPortalViewProps> = ({ 
 
             <form onSubmit={handleRecordNewSale} className="space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">Buyer Full Name</label>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Risk-Free Investor Full Name</label>
                 <input
                   type="text"
                   required
@@ -650,7 +650,7 @@ export const UserCustomerPortalView: React.FC<UserCustomerPortalViewProps> = ({ 
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-300 block mb-1">Buyer Phone</label>
+                <label className="text-xs font-bold text-slate-300 block mb-1">Risk-Free Investor Phone</label>
                 <input
                   type="tel"
                   required

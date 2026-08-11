@@ -24,7 +24,7 @@ export const MANDATORY_MLM_QUALIFICATION_RULE_ENG =
 export const MLM_LEVEL_CONFIGS: MlmLevelConfig[] = [
   {
     level: 1,
-    designation: 'Buyer',
+    designation: 'Risk-Free Investor',
     qualificationRule: 'First Downline sells 1 Plot',
     requiredPlotsSold: 1,
     bonusPercentage: 2.0,
@@ -146,7 +146,7 @@ export const INITIAL_TEAM_MEMBERS_SEED: TeamMemberRecord[] = [
         uplineMemberId: 'TMB-1001',
         uplineName: 'Shri Vikramaditya Singh',
         levelTriggered: 1,
-        designation: 'Buyer',
+        designation: 'Risk-Free Investor',
         plotNo: 'PLT-C104',
         saleValue: 900000,
         grossCommission: 139500,
@@ -251,7 +251,7 @@ export const INITIAL_TEAM_MEMBERS_SEED: TeamMemberRecord[] = [
         uplineMemberId: 'TMB-1002',
         uplineName: 'Rajesh Sharma',
         levelTriggered: 1,
-        designation: 'Buyer',
+        designation: 'Risk-Free Investor',
         plotNo: 'PLT-A101',
         saleValue: 900000,
         grossCommission: 139500,

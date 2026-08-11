@@ -55,15 +55,20 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   };
 
   const handleProcessEmiPayment = () => {
-    const cleanDigits = emiTxnIdInput.trim().replace(/\D/g, '');
-    if (cleanDigits.length !== 12) {
-      setEmiTxnError('Payment Failed! Please enter a valid 12-digit Transaction ID / UTR number.');
-      return;
-    }
+    let cleanDigits = '';
+    if (paymentMethod === 'upi') {
+      cleanDigits = emiTxnIdInput.trim().replace(/\D/g, '');
+      if (cleanDigits.length !== 12) {
+        setEmiTxnError('Payment Failed! Please enter a valid 12-digit Transaction ID / UTR number.');
+        return;
+      }
 
-    if (isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(emiTxnIdInput)) {
-      setEmiTxnError('Payment Failed! This Transaction ID / UTR has ALREADY been completed in a previous payment. Duplicate transaction IDs cannot be reused.');
-      return;
+      if (isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(emiTxnIdInput)) {
+        setEmiTxnError('Payment Failed! This Transaction ID / UTR has ALREADY been completed in a previous payment. Duplicate transaction IDs cannot be reused.');
+        return;
+      }
+    } else {
+      cleanDigits = `RZP_${Math.floor(100000000000 + Math.random() * 900000000000)}`;
     }
 
     setEmiTxnError('');
@@ -430,7 +435,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
 
     ctx.fillStyle = '#fbbf24';
     ctx.font = 'bold 15px sans-serif';
-    const displayRole = role === 'buyer' ? 'AUTHORISED BUYER / PARTNER' : `${role.toUpperCase()} AGENT`;
+    const displayRole = role === 'buyer' ? 'AUTHORISED RISK-FREE INVESTOR / PARTNER' : `${role.toUpperCase()} AGENT`;
     ctx.fillText(displayRole, 160, 178);
 
     ctx.fillStyle = '#94a3b8';
@@ -1009,7 +1014,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
       pdf.setTextColor(15, 23, 42);
       pdf.text('1. Certified that Khatauni Khata #00849 is free from all encumbrances, litigation, or bank mortgage.', 20, yPos + 27);
       pdf.text('2. Land is 100% NA Section 143 converted for non-agricultural residential township development in Prayagraj.', 20, yPos + 34);
-      pdf.text('3. Immediate sub-registrar registry (बैनामा) and Dakhil-Kharij assistance guaranteed for all buyers.', 20, yPos + 41);
+      pdf.text('3. Immediate sub-registrar registry (बैनामा) and Dakhil-Kharij assistance guaranteed for all risk-free investors.', 20, yPos + 41);
 
       pdf.setDrawColor(217, 119, 6);
       pdf.roundedRect(140, yPos + 58, 54, 26, 2, 2, 'D');
@@ -2727,7 +2732,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       </div>
                       <div>
                         <h5 className="font-bold text-white text-xs">1. Total Customers & His Payout</h5>
-                        <span className="text-[10px] text-slate-400">Plot Buyers & Registry Clients</span>
+                        <span className="text-[10px] text-slate-400">Plot Risk-Free Investors & Registry Clients</span>
                       </div>
                     </div>
                     <span className="bg-amber-500/10 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/20">
@@ -2738,7 +2743,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Total Customer Count:</span>
-                      <strong className="text-white font-extrabold">142 Active Buyers</strong>
+                      <strong className="text-white font-extrabold">142 Active Risk-Free Investors</strong>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Total Customer Payout Disbursed:</span>
@@ -3291,7 +3296,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       </button>
                     </div>
                     <p className="text-[11px] font-bold text-amber-400 uppercase tracking-wide">
-                      {role === 'buyer' ? 'AUTHORISED BUYER / PARTNER' : `${role.toUpperCase()} AGENT`}
+                      {role === 'buyer' ? 'AUTHORISED RISK-FREE INVESTOR / PARTNER' : `${role.toUpperCase()} AGENT`}
                     </p>
                     <p className="text-[10px] text-slate-300 font-mono">
                       ID NO: <strong className="text-white">{agentId}</strong>
@@ -3596,46 +3601,48 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                     </div>
                   )}
 
-                  {/* 12-Digit Transaction ID Input Field */}
-                  <div className="space-y-1.5 text-xs bg-slate-950 p-3 rounded-xl border border-slate-800">
-                    <label className="text-[11px] font-bold text-slate-200 flex items-center justify-between">
-                      <span>Transaction ID / 12-Digit UTR <span className="text-rose-400">*</span></span>
-                      <span className="text-[10px] text-amber-400 font-bold bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
-                        12 Digits Required
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={12}
-                      value={emiTxnIdInput}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, '');
-                        setEmiTxnIdInput(val);
-                        if (emiTxnError) setEmiTxnError('');
-                      }}
-                      placeholder="Enter 12-digit UTR (e.g. 123456789012)"
-                      className={`w-full bg-slate-900 border rounded-xl px-3 py-2.5 text-amber-300 font-mono text-xs focus:outline-none transition-colors ${
-                        emiTxnError || (emiTxnIdInput.trim() && isTransactionIdAlreadyUsed(emiTxnIdInput))
-                          ? 'border-rose-500 ring-2 ring-rose-500/20'
-                          : 'border-slate-800 focus:border-emerald-500'
-                      }`}
-                    />
-                    {isTransactionIdAlreadyUsed(emiTxnIdInput) ? (
-                      <p className="text-[11px] text-rose-400 font-bold flex items-center gap-1 mt-1">
-                        <XCircle className="w-3.5 h-3.5 shrink-0" />
-                        <span>Duplicate Transaction ID! This UTR was already completed and cannot be reused.</span>
-                      </p>
-                    ) : emiTxnError ? (
-                      <p className="text-[11px] text-rose-400 font-bold flex items-center gap-1 mt-1">
-                        <XCircle className="w-3.5 h-3.5 shrink-0" />
-                        <span>{emiTxnError}</span>
-                      </p>
-                    ) : (
-                      <p className="text-[10px] text-slate-400">
-                        Please check your payment app receipt to enter the exact 12-digit UTR number.
-                      </p>
-                    )}
-                  </div>
+                  {/* 12-Digit Transaction ID Input Field - Visible only for UPI / QR Code */}
+                  {paymentMethod === 'upi' && (
+                    <div className="space-y-1.5 text-xs bg-slate-950 p-3 rounded-xl border border-slate-800">
+                      <label className="text-[11px] font-bold text-slate-200 flex items-center justify-between">
+                        <span>Transaction ID / 12-Digit UTR <span className="text-rose-400">*</span></span>
+                        <span className="text-[10px] text-amber-400 font-bold bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">
+                          12 Digits Required
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={12}
+                        value={emiTxnIdInput}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, '');
+                          setEmiTxnIdInput(val);
+                          if (emiTxnError) setEmiTxnError('');
+                        }}
+                        placeholder="Enter 12-digit UTR (e.g. 123456789012)"
+                        className={`w-full bg-slate-900 border rounded-xl px-3 py-2.5 text-amber-300 font-mono text-xs focus:outline-none transition-colors ${
+                          emiTxnError || (emiTxnIdInput.trim() && isTransactionIdAlreadyUsed(emiTxnIdInput))
+                            ? 'border-rose-500 ring-2 ring-rose-500/20'
+                            : 'border-slate-800 focus:border-emerald-500'
+                        }`}
+                      />
+                      {isTransactionIdAlreadyUsed(emiTxnIdInput) ? (
+                        <p className="text-[11px] text-rose-400 font-bold flex items-center gap-1 mt-1">
+                          <XCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>Duplicate Transaction ID! This UTR was already completed and cannot be reused.</span>
+                        </p>
+                      ) : emiTxnError ? (
+                        <p className="text-[11px] text-rose-400 font-bold flex items-center gap-1 mt-1">
+                          <XCircle className="w-3.5 h-3.5 shrink-0" />
+                          <span>{emiTxnError}</span>
+                        </p>
+                      ) : (
+                        <p className="text-[10px] text-slate-400">
+                          Please check your payment app receipt to enter the exact 12-digit UTR number.
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Submit Button */}
                   <button

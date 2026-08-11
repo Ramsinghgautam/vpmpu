@@ -65,7 +65,7 @@ export const INITIAL_GALLERY_ITEMS: GalleryItem[] = [
       {
         id: "c-103",
         userName: "Anand Kumar",
-        userRole: "Buyer",
+        userRole: "Risk-Free Investor",
         comment: "Incredible transparency. Best land investment company in Prayagraj!",
         createdAt: "2026-07-28 18:30"
       }
@@ -181,7 +181,7 @@ export const INITIAL_GALLERY_ITEMS: GalleryItem[] = [
     category: "Site Visit Gallery",
     mediaType: "photo",
     mediaUrl: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&w=1200&q=80",
-    title: "Weekly Luxury AC Bus Site Visit with 40+ Buyer Families",
+    title: "Weekly Luxury AC Bus Site Visit with 40+ Risk-Free Investor Families",
     description: "Free pickup and drop facility organized every Sunday for families visiting Milestone City and Paurush Residency Naini.",
     location: "Jhunsi & Naini Growth Corridors",
     projectId: "proj-001",

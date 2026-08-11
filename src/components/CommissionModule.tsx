@@ -11,6 +11,7 @@ import { Language } from '../types';
 import { Award, Users, Calculator, Network, CheckCircle2, ChevronRight, HelpCircle } from 'lucide-react';
 import { TRANSLATIONS } from '../utils/translations';
 import { AgentCommissionCalculatorView } from './AgentCommissionCalculatorView';
+import { RiskFreeInvestorTable3 } from './RiskFreeInvestorTable3';
 
 interface CommissionModuleProps {
   currentLang: Language;
@@ -44,22 +45,25 @@ export const CommissionModule: React.FC<CommissionModuleProps> = ({ currentLang,
           </h2>
 
           <p className="text-slate-600 text-sm leading-relaxed">
-            VIGYA PAURUSH MILESTONE PRIVATE LIMITED rewards both direct buyers and registered sales agents through progressive plot sales commission slabs and level team bonuses.
+            VIGYA PAURUSH MILESTONE PRIVATE LIMITED rewards both direct investors and registered sales agents through progressive plot sales commission slabs and level team bonuses.
           </p>
         </div>
 
-        {/* Triple Column Tables: Buyer Commission, Agent Commission & Team Bonus */}
+        {/* Table 3: Risk-Free Investor Commission Table & Management Ledger */}
+        <RiskFreeInvestorTable3 />
+
+        {/* Triple Column Tables: Investor Commission, Agent Commission & Team Bonus */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
           
-          {/* Buyer Commission Table */}
+          {/* Investor Commission Table */}
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4 border-t-4 border-t-emerald-600">
             <div className="flex items-center gap-2">
               <span className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs">
                 1
               </span>
               <div>
-                <h3 className="font-serif font-bold text-indigo-950 text-base">Buyer Commission Table</h3>
-                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Earned directly by property buyers</p>
+                <h3 className="font-serif font-bold text-indigo-950 text-base">Investor Commission Table</h3>
+                <p className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Earned directly by plot investors</p>
               </div>
             </div>
 
@@ -160,7 +164,7 @@ export const CommissionModule: React.FC<CommissionModuleProps> = ({ currentLang,
                 onClick={() => setCalcRole('buyer')}
                 className={`px-4 py-1.5 rounded-lg font-bold transition-all ${calcRole === 'buyer' ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:text-white'}`}
               >
-                Buyer Cashback
+                Investor Cashback
               </button>
               <button
                 onClick={() => setCalcRole('agent')}

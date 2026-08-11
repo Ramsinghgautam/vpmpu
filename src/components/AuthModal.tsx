@@ -14,7 +14,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('9876543210');
   const [email, setEmail] = useState('');
-  const [smsGateway, setSmsGateway] = useState<'Fast2SMS' | 'MSG91' | 'Twilio'>('Fast2SMS');
+  const [smsGateway, setSmsGateway] = useState<string>('2FA_SMS');
   
   // OTP state
   const [generatedOtp, setGeneratedOtp] = useState<string>('');
@@ -209,7 +209,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
               </div>
               <div className="text-xs">
                 <p className="font-extrabold text-amber-400 flex items-center gap-1.5">
-                  <span>📱 SMS Delivered via {smsGateway} Gateway (+91 {phone})</span>
+                  <span>📱 2FA OTP Code Delivered (+91 {phone})</span>
                 </p>
                 <p className="text-slate-200 mt-1 leading-tight font-sans">
                   "Your verification code is <strong className="bg-amber-400 text-slate-950 font-mono font-black px-2 py-0.5 rounded text-sm tracking-widest">{generatedOtp}</strong>. Valid for 5 minutes. Do not share this code with anyone."
@@ -256,7 +256,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 onClick={() => setSelectedRole('buyer')}
                 className={`py-1.5 rounded-lg transition-all ${selectedRole === 'buyer' ? 'bg-sky-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
               >
-                Buyer
+                Risk-Free Investor
               </button>
 
               <button
@@ -333,17 +333,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 </div>
               )}
 
-              {/* SMS Gateway Selection */}
+              {/* 2-Factor Authentication Selection */}
               <div>
-                <label className="block font-bold text-slate-800 mb-1">SMS Gateway Router</label>
+                <label className="block font-bold text-slate-800 mb-1 flex items-center justify-between">
+                  <span>Authentication Method</span>
+                  <span className="text-[10px] text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full font-black border border-emerald-300">
+                    2FA MANDATORY
+                  </span>
+                </label>
                 <select
                   value={smsGateway}
-                  onChange={(e) => setSmsGateway(e.target.value as any)}
-                  className="w-full border border-slate-300 rounded-lg p-2 text-xs font-semibold text-slate-800 focus:outline-none"
+                  onChange={(e) => setSmsGateway(e.target.value)}
+                  className="w-full border-2 border-emerald-600 bg-emerald-50/60 rounded-xl p-2.5 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs transition-colors"
                 >
-                  <option value="Fast2SMS">Fast2SMS (High Priority DLT Gateway)</option>
-                  <option value="MSG91">MSG91 (Enterprise SMS Route)</option>
-                  <option value="Twilio">Twilio Global SMS API</option>
+                  <option value="2FA_SMS">2-Factor Authentication (Mandatory 2FA OTP)</option>
+                  <option value="2FA_TOTP">2-Factor Authentication (Google / Microsoft Authenticator App)</option>
+                  <option value="2FA_BIOMETRIC">2-Factor Authentication (Biometric / Hardware Passkey)</option>
                 </select>
               </div>
 
@@ -397,7 +402,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 </div>
 
                 <p className="text-[10px] text-slate-600">
-                  SMS Gateway: <strong>{smsGateway}</strong> • Valid for 5 Minutes • Unique Random Code
+                  Security: <strong>Mandatory 2-Factor Authentication (2FA)</strong> • Valid for 5 Minutes • Encrypted Verification
                 </p>
               </div>
 

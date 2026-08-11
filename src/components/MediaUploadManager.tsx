@@ -472,7 +472,7 @@ export const MediaUploadManager: React.FC<MediaUploadManagerProps> = ({
             <span>Media Upload & Document Vault System</span>
           </h2>
           <p className="text-slate-400 text-xs mt-1 max-w-3xl">
-            Upload and manage site photos, aerial videos, voice notes, and official registry documents across Admin, Agent, Buyer, Investor, and Employee desks.
+            Upload and manage site photos, aerial videos, voice notes, and official registry documents across Admin, Agent, Risk-Free Investor, Investor, and Employee desks.
           </p>
         </div>
 
@@ -657,7 +657,7 @@ export const MediaUploadManager: React.FC<MediaUploadManagerProps> = ({
               <option value="all">All User Roles</option>
               <option value="admin">Admin / Director</option>
               <option value="agent">Certified Agent</option>
-              <option value="customer">Buyer / Plot Holder</option>
+              <option value="customer">Risk-Free Investor / Plot Holder</option>
               <option value="investor">Investor Desk</option>
               <option value="employee">Employee Desk</option>
             </select>

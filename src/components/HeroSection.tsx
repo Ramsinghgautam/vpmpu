@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldCheck, ArrowRight, TrendingUp, Building2, MapPin, Search, Award, CheckCircle2, Calculator, Share2, Send, Check, Copy, MessageCircle, CreditCard, X, Receipt, QrCode, IndianRupee, Lock, Printer, User as UserIcon } from 'lucide-react';
+import { ShieldCheck, ArrowRight, TrendingUp, Building2, MapPin, Search, Award, CheckCircle2, Calculator, Share2, Send, Check, Copy, MessageCircle, CreditCard, X, Receipt, QrCode, IndianRupee, Lock, Printer, User as UserIcon, Upload, Paperclip, FileText, Trash2 } from 'lucide-react';
 import { Language, User } from '../types';
 import { TRANSLATIONS } from '../utils/translations';
 import { formatINR } from '../utils/calculators';
@@ -22,6 +22,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
   const [rateSqft, setRateSqft] = useState<number>(1000);
   const [selectedTotalOption, setSelectedTotalOption] = useState<number | 'auto'>('auto');
   const [copiedShare, setCopiedShare] = useState(false);
+  const [receiptFile, setReceiptFile] = useState<{ name: string; url: string; size: string } | null>(null);
+
+  const handleReceiptUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const sizeInMb = (file.size / (1024 * 1024)).toFixed(2);
+      const url = URL.createObjectURL(file);
+      setReceiptFile({
+        name: file.name,
+        size: `${sizeInMb} MB`,
+        url,
+      });
+    }
+  };
 
   // Pay EMI Modal State
   const [showEmiModal, setShowEmiModal] = useState(false);
@@ -45,15 +59,21 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
   const handlePayEmiSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const cleanDigits = emiTransactionId.trim().replace(/\D/g, '');
-    if (!emiTransactionId || !emiTransactionId.trim() || cleanDigits.length !== 12) {
-      setEmiPaymentError('Transaction Failed! A valid 12-digit Transaction ID / UTR number is required.');
-      return;
-    }
+    let finalTxnId = '';
+    if (emiPaymentMethod === 'upi') {
+      const cleanDigits = emiTransactionId.trim().replace(/\D/g, '');
+      if (!emiTransactionId || !emiTransactionId.trim() || cleanDigits.length !== 12) {
+        setEmiPaymentError('Transaction Failed! A valid 12-digit Transaction ID / UTR number is required.');
+        return;
+      }
 
-    if (isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(emiTransactionId)) {
-      setEmiPaymentError('Transaction Failed! This Transaction ID / UTR has ALREADY been completed in a previous transaction. Duplicate transaction IDs cannot be re-validated or reused.');
-      return;
+      if (isTransactionIdAlreadyUsed(cleanDigits) || isTransactionIdAlreadyUsed(emiTransactionId)) {
+        setEmiPaymentError('Transaction Failed! This Transaction ID / UTR has ALREADY been completed in a previous transaction. Duplicate transaction IDs cannot be re-validated or reused.');
+        return;
+      }
+      finalTxnId = cleanDigits;
+    } else {
+      finalTxnId = `RZP_${Math.floor(100000000000 + Math.random() * 900000000000)}`;
     }
 
     if (!emiTransactionDate) {
@@ -64,7 +84,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
     setEmiPaymentError(null);
     setIsProcessingEmi(true);
     setTimeout(() => {
-      const finalTxnId = cleanDigits;
       registerCompletedTransactionId(finalTxnId);
       setEmiReceiptData({
         bookingId: emiBookingId || 'VPM-BK-1001',
@@ -123,7 +142,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
             </h1>
 
             <p className="text-slate-200 text-sm sm:text-base leading-relaxed max-w-2xl font-sans font-medium">
-              We deliver a complete real estate solution in Prayagraj: Prime clear-title plots at fair prices for <strong>Buyers</strong>, direct commissions and plot ownership for <strong>Agents</strong>, and guaranteed up to 32% ROI with fast principal recovery for <strong>Investors</strong>.
+              We deliver a complete real estate solution in Prayagraj: Prime clear-title plots at fair prices for <strong>Risk-Free Investors</strong>, direct commissions and plot ownership for <strong>Agents</strong>, and guaranteed up to 32% ROI with fast principal recovery for <strong>Investors</strong>.
             </p>
 
             {/* 3 Core Solutions Grid */}
@@ -131,7 +150,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
               <div className="p-3 rounded-2xl bg-indigo-950/80 border border-indigo-800/80 text-xs text-slate-200 space-y-1 shadow-sm">
                 <div className="flex items-center gap-1.5 text-amber-400 font-extrabold text-[11px] uppercase tracking-wider">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>1. For Buyers</span>
+                  <span>1. For Risk-Free Investors</span>
                 </div>
                 <p className="text-slate-300 text-[11px] leading-snug">
                   Prime location plots, clear titles, transparent rates & flat ₹10,000 token booking.
@@ -216,7 +235,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                 )}
               </div>
               <p className="text-[11px] text-slate-300 font-sans leading-snug">
-                Send project details, booking plans, and plot matrix instantly to buyers, agents, and platform contacts:
+                Send project details, booking plans, and plot matrix instantly to risk-free investors, agents, and platform contacts:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-bold pt-1">
                 {/* WhatsApp Share Link */}
@@ -474,6 +493,67 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                   </span>
                   <span className="font-extrabold text-amber-300">{formatINR(estimatedMonthlyEmi)} / mo</span>
                 </div>
+
+                {/* 5. Payment / Deposit Receipt Upload Option */}
+                <div className="pt-2 border-t border-indigo-800/60 space-y-1.5">
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="text-slate-200 font-bold flex items-center gap-1.5">
+                      <Upload className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      Attach Payment / Token Receipt:
+                    </span>
+                    <span className="text-[10px] text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/80 font-mono font-semibold">
+                      {receiptFile ? 'RECEIPT ATTACHED' : 'OPTIONAL PROOF'}
+                    </span>
+                  </div>
+
+                  {!receiptFile ? (
+                    <label className="flex flex-col items-center justify-center p-2.5 bg-indigo-950/90 hover:bg-indigo-900/90 border border-dashed border-indigo-600/80 hover:border-amber-400 rounded-xl cursor-pointer transition-all group">
+                      <div className="flex items-center gap-2 text-[11px] text-indigo-200 group-hover:text-amber-300">
+                        <Paperclip className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform shrink-0" />
+                        <span className="font-semibold">Click or drag receipt file (PDF, JPG, PNG)</span>
+                      </div>
+                      <span className="text-[9px] text-slate-400 mt-0.5">Instant verification & digital ledger logging</span>
+                      <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={handleReceiptUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  ) : (
+                    <div className="flex items-center justify-between p-2 bg-emerald-950/90 border border-emerald-700/80 rounded-xl text-xs">
+                      <div className="flex items-center gap-2 overflow-hidden pr-2">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-900/80 border border-emerald-600/80 flex items-center justify-center text-emerald-300 shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="truncate">
+                          <p className="text-[11px] font-bold text-white truncate">{receiptFile.name}</p>
+                          <p className="text-[9px] text-emerald-300">{receiptFile.size} • Attached</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {receiptFile.url && (
+                          <a
+                            href={receiptFile.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 rounded bg-indigo-900 hover:bg-indigo-800 text-amber-300 text-[10px] font-bold px-2 py-0.5 border border-indigo-700"
+                          >
+                            View
+                          </a>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setReceiptFile(null)}
+                          className="p-1 rounded bg-rose-950/80 hover:bg-rose-900/90 text-rose-300 hover:text-white transition-colors border border-rose-800/80 cursor-pointer"
+                          title="Remove receipt"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
@@ -521,7 +601,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
           </div>
           <div className="p-4 bg-indigo-900/50 rounded-xl border border-indigo-800">
             <p className="text-2xl lg:text-3xl font-serif font-black text-amber-300">15.5% / 8%</p>
-            <p className="text-[10px] text-slate-300 mt-1 uppercase tracking-widest font-bold">Buyer & Agent Commission</p>
+            <p className="text-[10px] text-slate-300 mt-1 uppercase tracking-widest font-bold">Risk-Free Investor & Agent Commission</p>
           </div>
         </div>
 
@@ -681,33 +761,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
 
                   {/* Mandatory Transaction ID & Date Fields */}
                   <div className="space-y-3 pt-1 border-t border-slate-800/80">
-                    {/* Transaction ID / UTR Input */}
-                    <div>
-                      <label className="block text-xs font-bold text-slate-200 mb-1 flex items-center justify-between">
-                        <span>Transaction ID / UTR Number <span className="text-rose-400">*</span></span>
-                        <span className="text-[10px] font-extrabold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
-                          Mandatory to Submit
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={emiTransactionId}
-                        onChange={(e) => {
-                          setEmiTransactionId(e.target.value);
-                          if (emiPaymentError) setEmiPaymentError(null);
-                        }}
-                        placeholder="e.g. 12-digit UTR 423910293841 or TXN98765432"
-                        className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none ${
-                          emiPaymentError && !emiTransactionId.trim()
-                            ? 'border-rose-500 ring-2 ring-rose-500/20 bg-rose-950/30 text-rose-200'
-                            : 'border-slate-800 focus:border-emerald-500'
-                        }`}
-                      />
-                      <p className="text-[10px] text-slate-400 mt-1">
-                        Enter the 12-digit UTR or reference transaction ID from GPay, PhonePe, Paytm, or bank transfer.
-                      </p>
-                    </div>
+                    {/* Transaction ID / UTR Input - Visible only for UPI / QR Code */}
+                    {emiPaymentMethod === 'upi' && (
+                      <div>
+                        <label className="block text-xs font-bold text-slate-200 mb-1 flex items-center justify-between">
+                          <span>Transaction ID / UTR Number <span className="text-rose-400">*</span></span>
+                          <span className="text-[10px] font-extrabold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+                            Mandatory to Submit
+                          </span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={emiTransactionId}
+                          onChange={(e) => {
+                            setEmiTransactionId(e.target.value);
+                            if (emiPaymentError) setEmiPaymentError(null);
+                          }}
+                          placeholder="e.g. 12-digit UTR 423910293841 or TXN98765432"
+                          className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-xs text-white font-mono focus:outline-none ${
+                            emiPaymentError && !emiTransactionId.trim()
+                              ? 'border-rose-500 ring-2 ring-rose-500/20 bg-rose-950/30 text-rose-200'
+                              : 'border-slate-800 focus:border-emerald-500'
+                          }`}
+                        />
+                        <p className="text-[10px] text-slate-400 mt-1">
+                          Enter the 12-digit UTR or reference transaction ID from GPay, PhonePe, Paytm, or bank transfer.
+                        </p>
+                      </div>
+                    )}
 
                     {/* Date of Transaction Input */}
                     <div>

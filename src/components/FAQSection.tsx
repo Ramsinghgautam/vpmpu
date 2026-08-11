@@ -13,21 +13,21 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ currentLang }) => {
     {
       question: "How does the ₹10,000 plot booking process work?",
       answer: "You can lock your preferred plot in any VPM project with a flat booking deposit of ₹10,000. An official digital receipt is instantly generated. The remaining plot balance can be paid in full (with a 5% discount) or via easy 12 to 24-month EMI installments.",
-      category: "Buyers"
+      category: "Risk-Free Investors"
     },
     {
       question: "Are the plot lands 100% legal with Dakhil Kharij?",
       answer: "Yes, all townships developed by VIGYA PAURUSH MILESTONE PRIVATE LIMITED are 100% freehold land with clear title deeds. Dakhil Kharij and immediate registry are executed at the local Prayagraj sub-registrar office.",
-      category: "Buyers"
+      category: "Risk-Free Investors"
     },
     {
-      question: "How does the Buyer Commission Cash Back work?",
+      question: "How does the Risk-Free Investor Commission Cash Back work?",
       answer: "When a customer buys plots directly, VPM provides a progressive commission cash back structure starting at 15.5% on the 1st plot, 15% on the next 2 plots, down to 4.5% on the 9th plot.",
-      category: "Buyers"
+      category: "Risk-Free Investors"
     },
     {
       question: "What is the Agent Commission & Team Bonus structure?",
-      answer: "Registered agents earn 8% direct commission on their first plot sale down to 2% on the 9th plot. Additionally, agents earn MLM-style level bonuses ranging from 2% at Buyer Level up to 5% at Co-Partner Level.",
+      answer: "Registered agents earn 8% direct commission on their first plot sale down to 2% on the 9th plot. Additionally, agents earn MLM-style level bonuses ranging from 2% at Risk-Free Investor Level up to 5% at Co-Partner Level.",
       category: "Agents"
     },
     {
