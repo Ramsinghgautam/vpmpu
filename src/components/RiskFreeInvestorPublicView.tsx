@@ -94,7 +94,7 @@ export const RiskFreeInvestorPublicView: React.FC<RiskFreeInvestorPublicViewProp
           </div>
 
           <h1 className="text-2xl md:text-4xl font-black text-white leading-tight">
-            VGM Free Plot Scheme
+            VPM Free Plot Scheme
           </h1>
 
           <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
