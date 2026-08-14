@@ -514,7 +514,7 @@ export const MediaGallery: React.FC<MediaGalleryProps> = ({
               className="bg-indigo-900/80 border border-indigo-800 rounded-lg px-2.5 py-1.5 text-white text-[10px] font-bold uppercase tracking-wider focus:outline-none focus:border-amber-400"
             >
               <option value="All">All User Roles</option>
-              <option value="customer">Plot Risk-Free Investors</option>
+              <option value="customer">Free Plot Scheme / Plot Holders</option>
               <option value="agent">Certified Agents</option>
               <option value="investor">ROI Investors</option>
               <option value="admin">Official VPM Desk</option>

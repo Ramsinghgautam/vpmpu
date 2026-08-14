@@ -235,8 +235,7 @@ export const AdminPermissionManager: React.FC<AdminPermissionManagerProps> = ({
       return;
     }
 
-    if (window.confirm(`SUPER ADMIN SECURITY CONFIRMATION:\nAre you sure you want to permanently delete Manager '${target.name}' (${target.managerId})?\nAll permissions and access keys will be revoked immediately.`)) {
-      setManagers(prev => prev.filter(m => m.id !== managerId));
+    setManagers(prev => prev.filter(m => m.id !== managerId));
 
       const newLog: PermissionAuditLog = {
         id: `LOG-${Math.floor(8000 + Math.random() * 1000)}`,
@@ -252,7 +251,6 @@ export const AdminPermissionManager: React.FC<AdminPermissionManagerProps> = ({
         status: 'Revoked'
       };
       setAuditLogs(prev => [newLog, ...prev]);
-    }
   };
 
   // Wizard Step Handler

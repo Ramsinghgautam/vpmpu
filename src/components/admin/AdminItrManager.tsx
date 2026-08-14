@@ -759,7 +759,7 @@ export const AdminItrManager: React.FC<AdminItrManagerProps> = ({ isDarkMode = t
                 <option value="Employee">Employees (Form 16)</option>
                 <option value="Agent">Agents (Form 16A)</option>
                 <option value="Investor">Investors (Form 26AS)</option>
-                <option value="Risk-Free Investor">Risk-Free Investors</option>
+                <option value="Risk-Free Investor">Free Plot Scheme</option>
               </select>
             </div>
           </div>

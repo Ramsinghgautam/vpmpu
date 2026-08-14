@@ -128,10 +128,8 @@ export const AdminTranslationManager: React.FC = () => {
   };
 
   const handleDeleteKey = (key: string) => {
-    if (window.confirm(`Are you sure you want to delete translation key "${key}"?`)) {
-      deleteKey(key);
-      showToast('success', `Translation key "${key}" deleted.`);
-    }
+    deleteKey(key);
+    showToast('success', `Translation key "${key}" deleted.`);
   };
 
   const handleExportJson = () => {

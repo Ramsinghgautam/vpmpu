@@ -82,7 +82,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         { id: 'customers' as AdminTabType, label: 'Customers', icon: Users, badge: `${counts.customersCount}` },
         { id: 'agents' as AdminTabType, label: 'Agents', icon: Award, badge: `${counts.agentsCount}` },
         { id: 'investors' as AdminTabType, label: 'Investors', icon: TrendingUp, badge: `${counts.investorsCount}` },
-        { id: 'risk_free_investors' as AdminTabType, label: 'Risk Free Investors', icon: ShieldCheck, badge: 'Fintech ROI' },
+        { id: 'risk_free_investors' as AdminTabType, label: 'Free Plot Scheme', icon: ShieldCheck, badge: 'Fintech ROI' },
         { id: 'employees' as AdminTabType, label: 'Employee Promotions & WFH', icon: UserCheck, badge: 'Point Engine' },
       ]
     },

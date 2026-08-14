@@ -94,7 +94,7 @@ export const RiskFreeInvestorPublicView: React.FC<RiskFreeInvestorPublicViewProp
           </div>
 
           <h1 className="text-2xl md:text-4xl font-black text-white leading-tight">
-            VGM Risk Free Investor System
+            VGM Free Plot Scheme
           </h1>
 
           <p className="text-slate-300 text-xs md:text-sm leading-relaxed">
@@ -143,13 +143,13 @@ export const RiskFreeInvestorPublicView: React.FC<RiskFreeInvestorPublicViewProp
         </div>
       </div>
 
-      {/* 9 Risk-Free Investor Plans Grid */}
+      {/* 9 Free Plot Scheme Plans Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-black text-white flex items-center gap-2">
               <Layers className="w-5 h-5 text-amber-400" />
-              <span>Select Risk Free Investor Plan Slab</span>
+              <span>Select Free Plot Scheme Plan Slab</span>
             </h2>
             <p className="text-xs text-slate-400">Choose a purchase rate slab to inspect principal, interest, and recovery targets.</p>
           </div>
@@ -335,7 +335,7 @@ export const RiskFreeInvestorPublicView: React.FC<RiskFreeInvestorPublicViewProp
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-white">Enroll in Risk Free Investor Plan</h3>
+                  <h3 className="text-base font-black text-white">Enroll in Free Plot Scheme Plan</h3>
                   <p className="text-xs text-amber-400 font-bold">Plan: ₹{activePlan.purchaseRate}/sqft ({activePlan.commissionRate}% Comm.)</p>
                 </div>
               </div>
@@ -352,7 +352,7 @@ export const RiskFreeInvestorPublicView: React.FC<RiskFreeInvestorPublicViewProp
               <div className="py-8 text-center space-y-3">
                 <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto animate-bounce" />
                 <h4 className="text-lg font-black text-white">Enrollment Request Submitted!</h4>
-                <p className="text-xs text-slate-400">Our director team will review your KYC and activate your Risk Free Investor dashboard within 2 hours.</p>
+                <p className="text-xs text-slate-400">Our director team will review your KYC and activate your Free Plot Scheme dashboard within 2 hours.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmitEnrollment} className="space-y-4 text-xs">

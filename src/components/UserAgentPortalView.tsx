@@ -421,7 +421,7 @@ export const UserAgentPortalView: React.FC<UserAgentPortalViewProps> = ({ curren
               Agent Plot Sales Ledger & Commission Records
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              History of customer plot sales and Risk Free Investor sales processed under your Agent ID.
+              History of customer plot sales and Free Plot Scheme sales processed under your Agent ID.
             </p>
           </div>
 
@@ -614,13 +614,13 @@ export const UserAgentPortalView: React.FC<UserAgentPortalViewProps> = ({ curren
                   className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-amber-500 focus:outline-none"
                 >
                   <option value="Standard Plot">Standard Plot (₹9,00,000 Base)</option>
-                  <option value="Risk Free Investor Plot">Risk Free Investor Sale (Tiered Rates)</option>
+                  <option value="Risk Free Investor Plot">Free Plot Scheme Sale (Tiered Rates)</option>
                 </select>
               </div>
 
               {saleCategory === 'Risk Free Investor Plot' && (
                 <div className="space-y-1 bg-slate-950 p-3 rounded-xl border border-amber-500/30">
-                  <label className="text-xs font-semibold text-amber-300">Select Risk Free Investor Rate Plan</label>
+                  <label className="text-xs font-semibold text-amber-300">Select Free Plot Scheme Rate Plan</label>
                   <select
                     value={selectedInvestorRate}
                     onChange={(e) => setSelectedInvestorRate(Number(e.target.value))}

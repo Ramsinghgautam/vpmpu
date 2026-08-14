@@ -23,7 +23,8 @@ import {
   FileText,
   DollarSign,
   ChevronRight,
-  X
+  X,
+  Trash2
 } from 'lucide-react';
 import {
   loadCustomerRecordsFromStorage,
@@ -60,6 +61,7 @@ export const AdminCustomerManager: React.FC = () => {
   // Modals
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
   const [showRecordSaleModal, setShowRecordSaleModal] = useState(false);
+  const [customerToDelete, setCustomerToDelete] = useState<CustomerRecord | null>(null);
 
   // Add Customer Form State
   const [newCustomerName, setNewCustomerName] = useState('');
@@ -206,6 +208,28 @@ export const AdminCustomerManager: React.FC = () => {
       };
     });
 
+    refreshData(updatedList);
+  };
+
+  // Delete Customer Record
+  const handleConfirmDeleteCustomer = () => {
+    if (!customerToDelete) return;
+    const updatedList = customers.filter(c => c.id !== customerToDelete.id);
+    refreshData(updatedList);
+    setCustomerToDelete(null);
+  };
+
+  // Delete Withdrawal Request
+  const handleDeleteWithdrawal = (customerId: string, withdrawalId: string) => {
+    const updatedList = customers.map(c => {
+      if (c.id === customerId) {
+        return {
+          ...c,
+          withdrawalHistory: c.withdrawalHistory.filter(w => w.id !== withdrawalId)
+        };
+      }
+      return c;
+    });
     refreshData(updatedList);
   };
 
@@ -371,7 +395,7 @@ export const AdminCustomerManager: React.FC = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left text-xs border-collapse min-w-[950px]">
               <thead>
                 <tr className="bg-slate-800/80 text-slate-300 border-b border-slate-700">
                   <th className="p-3">Customer ID</th>
@@ -381,6 +405,9 @@ export const AdminCustomerManager: React.FC = () => {
                   <th className="p-3">Active Slab</th>
                   <th className="p-3">Wallet Available</th>
                   <th className="p-3">Total Earned</th>
+                  <th className="p-3 text-center text-rose-400 font-bold uppercase tracking-wider bg-rose-950/30 border-x border-rose-900/40">
+                    Delete Column
+                  </th>
                   <th className="p-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -403,13 +430,28 @@ export const AdminCustomerManager: React.FC = () => {
                     </td>
                     <td className="p-3 font-bold text-emerald-400">{formatINR(cust.wallet.availableBalance)}</td>
                     <td className="p-3 font-bold text-amber-300">{formatINR(cust.wallet.totalCommissionEarned)}</td>
+                    <td className="p-3 text-center bg-rose-950/10 border-x border-rose-900/20">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCustomerToDelete(cust);
+                        }}
+                        className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-md hover:shadow-rose-900/50 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                        title={`Delete customer ${cust.customerName}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
+                      </button>
+                    </td>
                     <td className="p-3 text-right">
                       <button
+                        type="button"
                         onClick={() => {
                           setSelectedCustomer(cust);
                           setShowRecordSaleModal(true);
                         }}
-                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-3 py-1.5 rounded-lg"
+                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-3 py-1.5 rounded-lg cursor-pointer"
                       >
                         Record Sale
                       </button>
@@ -431,7 +473,7 @@ export const AdminCustomerManager: React.FC = () => {
           </h2>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left text-xs border-collapse min-w-[950px]">
               <thead>
                 <tr className="bg-slate-800/80 text-slate-300 border-b border-slate-700">
                   <th className="p-3">Request ID</th>
@@ -441,6 +483,9 @@ export const AdminCustomerManager: React.FC = () => {
                   <th className="p-3">Method</th>
                   <th className="p-3">Account Details</th>
                   <th className="p-3">Status</th>
+                  <th className="p-3 text-center text-rose-400 font-bold uppercase tracking-wider bg-rose-950/30 border-x border-rose-900/40">
+                    Delete Column
+                  </th>
                   <th className="p-3 text-right">Action</th>
                 </tr>
               </thead>
@@ -462,14 +507,28 @@ export const AdminCustomerManager: React.FC = () => {
                         {wd.status}
                       </span>
                     </td>
+                    <td className="p-3 text-center bg-rose-950/10 border-x border-rose-900/20">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteWithdrawal(wd.customerId, wd.id)}
+                        className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-md hover:shadow-rose-900/50 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                        title="Delete Withdrawal Request"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
+                      </button>
+                    </td>
                     <td className="p-3 text-right">
-                      {wd.status === 'Pending' && (
+                      {wd.status === 'Pending' ? (
                         <button
+                          type="button"
                           onClick={() => handleApproveWithdrawal(wd.customerId, wd.id)}
-                          className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] px-3 py-1 rounded-lg"
+                          className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] px-3 py-1.5 rounded-lg cursor-pointer"
                         >
                           Approve Payout
                         </button>
+                      ) : (
+                        <span className="text-slate-500 text-[10px] font-bold">Approved</span>
                       )}
                     </td>
                   </tr>
@@ -620,6 +679,38 @@ export const AdminCustomerManager: React.FC = () => {
                 Process Sale & Credit Commission
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {customerToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-rose-500/50 rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 text-rose-400">
+              <Trash2 className="w-6 h-6 shrink-0" />
+              <h3 className="text-lg font-bold text-white">Delete Customer Record</h3>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Are you sure you want to permanently delete customer <strong className="text-white">{customerToDelete.customerName}</strong> (<span className="font-mono text-amber-300">{customerToDelete.id}</span>)? This will remove their record, plot assignment, and commission history.
+            </p>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setCustomerToDelete(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteCustomer}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-bold transition-all shadow-lg cursor-pointer flex items-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Confirm Delete</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

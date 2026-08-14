@@ -343,8 +343,6 @@ export const MediaUploadManager: React.FC<MediaUploadManagerProps> = ({
 
   // Delete Media Handler
   const handleDeleteItem = async (id: string, title: string) => {
-    if (!window.confirm(`Are you sure you want to delete "${title}" permanently?`)) return;
-
     try {
       const res = await fetch(`/api/media/delete/${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -472,7 +470,7 @@ export const MediaUploadManager: React.FC<MediaUploadManagerProps> = ({
             <span>Media Upload & Document Vault System</span>
           </h2>
           <p className="text-slate-400 text-xs mt-1 max-w-3xl">
-            Upload and manage site photos, aerial videos, voice notes, and official registry documents across Admin, Agent, Risk-Free Investor, Investor, and Employee desks.
+            Upload and manage site photos, aerial videos, voice notes, and official registry documents across Admin, Agent, Free Plot Scheme, Investor, and Employee desks.
           </p>
         </div>
 
@@ -657,7 +655,7 @@ export const MediaUploadManager: React.FC<MediaUploadManagerProps> = ({
               <option value="all">All User Roles</option>
               <option value="admin">Admin / Director</option>
               <option value="agent">Certified Agent</option>
-              <option value="customer">Risk-Free Investor / Plot Holder</option>
+              <option value="customer">Free Plot Scheme / Plot Holder</option>
               <option value="investor">Investor Desk</option>
               <option value="employee">Employee Desk</option>
             </select>

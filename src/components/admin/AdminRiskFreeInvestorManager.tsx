@@ -213,7 +213,7 @@ export const AdminRiskFreeInvestorManager: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-black text-white">Risk Free Investor System Control Center</h2>
+              <h2 className="text-xl font-black text-white">Free Plot Scheme Control Center</h2>
               <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
                 Fintech Ledger Engine
               </span>
@@ -518,7 +518,7 @@ export const AdminRiskFreeInvestorManager: React.FC = () => {
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-white">Add New Risk Free Investor</h3>
+                  <h3 className="text-base font-black text-white">Add New Free Plot Scheme Investor</h3>
                   <p className="text-xs text-slate-400">Assign investor plan tier & calculate liability targets</p>
                 </div>
               </div>

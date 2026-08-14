@@ -138,11 +138,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-extrabold tracking-tight text-white leading-tight">
-              {t.heroTitle || "Prime Plots & Risk-Free Investments in Prayagraj"}
+              {t.heroTitle || "Prime Plots & Free Plot Scheme in Prayagraj"}
             </h1>
 
             <p className="text-slate-200 text-sm sm:text-base leading-relaxed max-w-2xl font-sans font-medium">
-              We deliver a complete real estate solution in Prayagraj: Prime clear-title plots at fair prices for <strong>Risk-Free Investors</strong>, direct commissions and plot ownership for <strong>Agents</strong>, and guaranteed up to 32% ROI with fast principal recovery for <strong>Investors</strong>.
+              We deliver a complete real estate solution in Prayagraj: Prime clear-title plots at fair prices for <strong>Free Plot Scheme</strong>, direct commissions and plot ownership for <strong>Agents</strong>, and guaranteed up to 32% ROI with fast principal recovery for <strong>Investors</strong>.
             </p>
 
             {/* 3 Core Solutions Grid */}
@@ -150,7 +150,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
               <div className="p-3 rounded-2xl bg-indigo-950/80 border border-indigo-800/80 text-xs text-slate-200 space-y-1 shadow-sm">
                 <div className="flex items-center gap-1.5 text-amber-400 font-extrabold text-[11px] uppercase tracking-wider">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>1. For Risk-Free Investors</span>
+                  <span>1. Free Plot Scheme</span>
                 </div>
                 <p className="text-slate-300 text-[11px] leading-snug">
                   Prime location plots, clear titles, transparent rates & flat ₹10,000 token booking.
@@ -235,7 +235,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                 )}
               </div>
               <p className="text-[11px] text-slate-300 font-sans leading-snug">
-                Send project details, booking plans, and plot matrix instantly to risk-free investors, agents, and platform contacts:
+                Send project details, booking plans, and plot matrix instantly to Free Plot Scheme clients, agents, and platform contacts:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-bold pt-1">
                 {/* WhatsApp Share Link */}
@@ -601,7 +601,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
           </div>
           <div className="p-4 bg-indigo-900/50 rounded-xl border border-indigo-800">
             <p className="text-2xl lg:text-3xl font-serif font-black text-amber-300">15.5% / 8%</p>
-            <p className="text-[10px] text-slate-300 mt-1 uppercase tracking-widest font-bold">Risk-Free Investor & Agent Commission</p>
+            <p className="text-[10px] text-slate-300 mt-1 uppercase tracking-widest font-bold">Free Plot Scheme & Agent Commission</p>
           </div>
         </div>
 

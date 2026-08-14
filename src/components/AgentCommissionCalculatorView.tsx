@@ -176,7 +176,7 @@ export const AgentCommissionCalculatorView: React.FC = () => {
                     : 'bg-slate-700/60 text-slate-300 border-slate-600 hover:bg-slate-700'
                 }`}
               >
-                Risk Free Investor Sale
+                Free Plot Scheme Sale
               </button>
             </div>
           </div>
@@ -185,7 +185,7 @@ export const AgentCommissionCalculatorView: React.FC = () => {
           {saleType === 'Risk Free Investor Plot' && (
             <div className="space-y-1.5 bg-slate-900/80 p-3 rounded-xl border border-amber-500/30">
               <label className="text-xs font-semibold text-amber-300 flex justify-between">
-                <span>Risk Free Investor Purchase Rate Plan</span>
+                <span>Free Plot Scheme Purchase Rate Plan</span>
                 <span className="font-bold text-amber-400">₹{selectedInvestorRate}/Sqft</span>
               </label>
               <select

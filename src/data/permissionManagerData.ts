@@ -43,10 +43,10 @@ export const PERMISSION_CATEGORIES_CATALOG: PermissionCategoryDefinition[] = [
   },
   {
     category: 'Customer Management',
-    description: 'Plot risk-free investors, CRM queries, document registries & booking histories',
+    description: 'Free Plot Scheme clients, CRM queries, document registries & booking histories',
     iconName: 'Users',
     permissions: [
-      { key: 'view_customers', label: 'View Customers', description: 'See plot risk-free investor profiles & payment schedules' },
+      { key: 'view_customers', label: 'View Customers', description: 'See Free Plot Scheme client profiles & payment schedules' },
       { key: 'add_customers', label: 'Add Customers', description: 'Create new customer CRM records' },
       { key: 'edit_customers', label: 'Edit Customers', description: 'Update customer contact & address information' },
       { key: 'delete_customers', label: 'Delete Customers', description: 'Purge customer entries from CRM ledger', isHighRisk: true },
@@ -142,10 +142,10 @@ export const PERMISSION_CATEGORIES_CATALOG: PermissionCategoryDefinition[] = [
   },
   {
     category: 'Customer Support',
-    description: 'Risk-free investor ticket escalation, refund requests & site visit assistance',
+    description: 'Free Plot Scheme ticket escalation, refund requests & site visit assistance',
     iconName: 'Bell',
     permissions: [
-      { key: 'view_tickets', label: 'View Tickets', description: 'Monitor risk-free investor complaints & phone inquiries' },
+      { key: 'view_tickets', label: 'View Tickets', description: 'Monitor Free Plot Scheme complaints & phone inquiries' },
       { key: 'resolve_tickets', label: 'Resolve Tickets', description: 'Mark customer issues as resolved with audit note' },
       { key: 'issue_refunds', label: 'Issue Refunds', description: 'Authorize booking token refunds per cancellation policy', isHighRisk: true },
     ],
@@ -421,7 +421,7 @@ export const ALL_19_ROLE_TEMPLATES: RoleTemplate[] = [
     id: 'TPL-12',
     role: 'Customer Support Manager',
     department: 'Client Relations & Helpdesk',
-    description: 'Oversees risk-free investor inquiry desk, resolves ticket escalations & handles refund requests.',
+    description: 'Oversees Free Plot Scheme inquiry desk, resolves ticket escalations & handles refund requests.',
     badgeColor: 'from-sky-500 to-indigo-500',
     recommendedPermissions: {
       'Customer Support': ['view_tickets', 'resolve_tickets', 'issue_refunds'],
@@ -490,7 +490,7 @@ export const ALL_19_ROLE_TEMPLATES: RoleTemplate[] = [
     id: 'TPL-15',
     role: 'Legal Manager',
     department: 'Legal & RERA Compliance',
-    description: 'Drafts risk-free investor sale deeds, files Section 143 clearances & monitors UP RERA court filings.',
+    description: 'Drafts Free Plot Scheme sale deeds, files Section 143 clearances & monitors UP RERA court filings.',
     badgeColor: 'from-slate-600 to-slate-800',
     recommendedPermissions: {
       'Legal & RERA': ['view_legal_docs', 'approve_agreements', 'file_rera_registrations'],

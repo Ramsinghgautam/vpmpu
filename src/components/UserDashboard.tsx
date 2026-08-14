@@ -435,7 +435,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
 
     ctx.fillStyle = '#fbbf24';
     ctx.font = 'bold 15px sans-serif';
-    const displayRole = role === 'buyer' ? 'AUTHORISED RISK-FREE INVESTOR / PARTNER' : `${role.toUpperCase()} AGENT`;
+    const displayRole = role === 'buyer' ? 'AUTHORISED FREE PLOT SCHEME / PARTNER' : `${role.toUpperCase()} AGENT`;
     ctx.fillText(displayRole, 160, 178);
 
     ctx.fillStyle = '#94a3b8';
@@ -1014,7 +1014,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
       pdf.setTextColor(15, 23, 42);
       pdf.text('1. Certified that Khatauni Khata #00849 is free from all encumbrances, litigation, or bank mortgage.', 20, yPos + 27);
       pdf.text('2. Land is 100% NA Section 143 converted for non-agricultural residential township development in Prayagraj.', 20, yPos + 34);
-      pdf.text('3. Immediate sub-registrar registry (बैनामा) and Dakhil-Kharij assistance guaranteed for all risk-free investors.', 20, yPos + 41);
+      pdf.text('3. Immediate sub-registrar registry (बैनामा) and Dakhil-Kharij assistance guaranteed for all Free Plot Scheme investors.', 20, yPos + 41);
 
       pdf.setDrawColor(217, 119, 6);
       pdf.roundedRect(140, yPos + 58, 54, 26, 2, 2, 'D');
@@ -1493,7 +1493,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'risk_free_investor' ? 'bg-amber-500 text-slate-950 shadow-md font-black' : 'text-slate-700 hover:bg-amber-50 border border-amber-500/30 font-bold'}`}
           >
             <ShieldCheck className="w-4 h-4 text-amber-600" />
-            <span>Risk Free Investor Portal</span>
+            <span>Free Plot Scheme Portal</span>
           </button>
 
           <button
@@ -1658,7 +1658,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
         {activeTab === 'investments' && (
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 text-xs">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="text-base font-bold text-slate-900">My Risk-Free Investments</h3>
+              <h3 className="text-base font-bold text-slate-900">My Free Plot Scheme Investments</h3>
               <button
                 onClick={() => onNavigate('investment')}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs"
@@ -2732,7 +2732,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       </div>
                       <div>
                         <h5 className="font-bold text-white text-xs">1. Total Customers & His Payout</h5>
-                        <span className="text-[10px] text-slate-400">Plot Risk-Free Investors & Registry Clients</span>
+                        <span className="text-[10px] text-slate-400">Plot Free Plot Scheme & Registry Clients</span>
                       </div>
                     </div>
                     <span className="bg-amber-500/10 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/20">
@@ -2743,7 +2743,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                   <div className="space-y-2">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Total Customer Count:</span>
-                      <strong className="text-white font-extrabold">142 Active Risk-Free Investors</strong>
+                      <strong className="text-white font-extrabold">142 Active Free Plot Scheme Clients</strong>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Total Customer Payout Disbursed:</span>
@@ -3296,7 +3296,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                       </button>
                     </div>
                     <p className="text-[11px] font-bold text-amber-400 uppercase tracking-wide">
-                      {role === 'buyer' ? 'AUTHORISED RISK-FREE INVESTOR / PARTNER' : `${role.toUpperCase()} AGENT`}
+                      {role === 'buyer' ? 'AUTHORISED FREE PLOT SCHEME / PARTNER' : `${role.toUpperCase()} AGENT`}
                     </p>
                     <p className="text-[10px] text-slate-300 font-mono">
                       ID NO: <strong className="text-white">{agentId}</strong>

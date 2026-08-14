@@ -137,6 +137,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     { id: 'GAL-3', title: 'Approved Section 143 Non-Agricultural Registry Doc', type: 'document', url: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=800&q=80', date: '2026-07-18' },
   ]);
 
+  const [localBookings, setLocalBookings] = useState<Booking[]>(bookings);
+  React.useEffect(() => {
+    setLocalBookings(bookings);
+  }, [bookings]);
+
+  const handleDeleteInvestor = (id: string) => {
+    setInvestorsList(prev => prev.filter(i => i.id !== id));
+  };
+
+  const handleDeleteBooking = (id: string) => {
+    setLocalBookings(prev => prev.filter(b => b.id !== id));
+  };
+
+  const handleDeleteExpense = (id: string) => {
+    setExpensesList(prev => prev.filter(e => e.id !== id));
+  };
+
   // Handle PDF Export helper
   const handleExportPDF = (title: string, docId = 'VPM-REP-9021') => {
     const doc = new jsPDF();
@@ -781,7 +798,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+                <table className="w-full text-left border-collapse text-xs min-w-[950px]">
                   <thead>
                     <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
                       <th className="p-3">Investor ID</th>
@@ -790,6 +807,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <th className="p-3">Guaranteed ROI %</th>
                       <th className="p-3">Calculated ROI Payout</th>
                       <th className="p-3">Lock-in Tenure</th>
+                      <th className="p-3 text-center text-rose-400 font-bold uppercase tracking-wider bg-rose-950/30 border-x border-rose-900/40">
+                        Delete Column
+                      </th>
                       <th className="p-3 text-right">Action</th>
                     </tr>
                   </thead>
@@ -802,6 +822,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <td className="p-3 font-bold text-amber-400">{i.roiPercent}% p.a.</td>
                         <td className="p-3 font-black text-emerald-400">{formatINR(i.totalPayout)}</td>
                         <td className="p-3 text-slate-300">{i.tenure}</td>
+                        <td className="p-3 text-center bg-rose-950/10 border-x border-rose-900/20">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteInvestor(i.id)}
+                            className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-md hover:shadow-rose-900/50 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                            title="Delete Investor Record"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </td>
                         <td className="p-3 text-right">
                           <button
                             type="button"
@@ -901,7 +932,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+                <table className="w-full text-left border-collapse text-xs min-w-[950px]">
                   <thead>
                     <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
                       <th className="p-3">Booking ID</th>
@@ -910,11 +941,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <th className="p-3">Total Land Price</th>
                       <th className="p-3">Deposit Paid</th>
                       <th className="p-3">Status</th>
+                      <th className="p-3 text-center text-rose-400 font-bold uppercase tracking-wider bg-rose-950/30 border-x border-rose-900/40">
+                        Delete Column
+                      </th>
                       <th className="p-3 text-right">Allotment Certificate</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80 font-medium">
-                    {bookings.map((b) => (
+                    {localBookings.map((b) => (
                       <tr key={b.id} className="hover:bg-slate-800/40">
                         <td className="p-3 font-mono text-amber-400 font-bold">{b.id}</td>
                         <td className="p-3 font-bold text-white">{b.customerName}<br/><span className="text-[10px] text-slate-400">{b.customerPhone}</span></td>
@@ -925,6 +959,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           <span className="bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded text-[10px]">
                             {b.status}
                           </span>
+                        </td>
+                        <td className="p-3 text-center bg-rose-950/10 border-x border-rose-900/20">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteBooking(b.id)}
+                            className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-md hover:shadow-rose-900/50 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                            title="Delete Booking Record"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
                         </td>
                         <td className="p-3 text-right">
                           <button
@@ -1064,7 +1109,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
+                <table className="w-full text-left border-collapse text-xs min-w-[950px]">
                   <thead>
                     <tr className="bg-slate-950 text-slate-400 border-b border-slate-800 font-bold uppercase">
                       <th className="p-3">Expense ID</th>
@@ -1073,6 +1118,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <th className="p-3">Vendor / Recipient</th>
                       <th className="p-3">Date</th>
                       <th className="p-3">Amount Spent</th>
+                      <th className="p-3 text-center text-rose-400 font-bold uppercase tracking-wider bg-rose-950/30 border-x border-rose-900/40">
+                        Delete Column
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/80 font-medium">
@@ -1088,6 +1136,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         <td className="p-3 text-slate-300">{exp.vendor}</td>
                         <td className="p-3 text-slate-400">{exp.date}</td>
                         <td className="p-3 font-black text-rose-400">{formatINR(exp.amount)}</td>
+                        <td className="p-3 text-center bg-rose-950/10 border-x border-rose-900/20">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteExpense(exp.id)}
+                            className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-md hover:shadow-rose-900/50 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                            title="Delete Expense Record"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            <span>Delete</span>
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

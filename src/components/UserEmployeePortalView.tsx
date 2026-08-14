@@ -326,10 +326,10 @@ export const UserEmployeePortalView: React.FC<UserEmployeePortalViewProps> = ({
                 <span className="text-xs text-amber-400 font-bold block">Points Credited = {evalStatus.pointBreakdown.investorPoints} Pts</span>
               </div>
 
-              {/* Risk-Free Investor Joinings */}
+              {/* Free Plot Scheme Joinings */}
               <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
-                <span className="text-[10px] text-slate-400 font-bold uppercase block">Risk-Free Investor (4 Pts)</span>
-                <div className="text-xl font-black text-white">{employee.riskFreeInvestorJoinings} RFI</div>
+                <span className="text-[10px] text-slate-400 font-bold uppercase block">Free Plot Scheme (4 Pts)</span>
+                <div className="text-xl font-black text-white">{employee.riskFreeInvestorJoinings} FPS</div>
                 <span className="text-xs text-amber-400 font-bold block">Points Credited = {evalStatus.pointBreakdown.riskFreeInvestorPoints} Pts</span>
               </div>
             </div>
@@ -629,7 +629,7 @@ export const UserEmployeePortalView: React.FC<UserEmployeePortalViewProps> = ({
                 <option value="Agent">Agent Joining (+1 Point)</option>
                 <option value="Customer">Customer Joining (+2 Points)</option>
                 <option value="Investor">Investor Joining (+3 Points)</option>
-                <option value="Risk-Free Investor">Risk-Free Investor Joining (+4 Points)</option>
+                <option value="Risk-Free Investor">Free Plot Scheme Joining (+4 Points)</option>
               </select>
             </div>
 

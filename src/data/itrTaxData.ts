@@ -39,7 +39,7 @@ export interface CompanyTaxProfile {
 export interface StakeholderTaxRecord {
   id: string;
   name: string;
-  stakeholderType: 'Employee' | 'Agent' | 'Investor' | 'Risk-Free Investor';
+  stakeholderType: 'Employee' | 'Agent' | 'Investor' | 'Risk-Free Investor' | 'Free Plot Scheme';
   panNumber: string;
   aadhaarNumber: string;
   mobileNumber: string;
@@ -214,7 +214,7 @@ export const INITIAL_REVENUE_BREAKDOWN: RevenueSourceCategory[] = [
 export const INITIAL_EXPENSE_BREAKDOWN: ExpenseSourceCategory[] = [
   { category: 'Employee Honorarium & Base Salary', amount: 32400000, allowableDeduction: true, notes: '24 Staff Engineers, Surveyors & Officers' },
   { category: 'Agent Commission Payouts (Direct & MLM)', amount: 48600000, allowableDeduction: true, notes: '32% Direct + 9-Level MLM Commission' },
-  { category: 'Investor ROI & Risk-Free Returns', amount: 18200000, allowableDeduction: true, notes: '15.5% Annual Interest + Settlement' },
+  { category: 'Investor ROI & Free Plot Scheme Returns', amount: 18200000, allowableDeduction: true, notes: '15.5% Annual Interest + Settlement' },
   { category: 'Marketing & Digital Advertising', amount: 9800000, allowableDeduction: true, notes: 'Meta Ads, Google Ads, Hoardings' },
   { category: 'Office Rent & Utilities', amount: 4500000, allowableDeduction: true, notes: 'Corporate HQ & Regional Offices' },
   { category: 'Administrative & Traveling Expenses', amount: 3800000, allowableDeduction: true, notes: 'Site visits & surveyor logistics' },
@@ -304,7 +304,7 @@ export const INITIAL_STAKEHOLDER_TAX_RECORDS: StakeholderTaxRecord[] = [
   {
     id: 'INV-3001',
     name: 'Dr. Suresh Chandra Gautam',
-    stakeholderType: 'Risk-Free Investor',
+    stakeholderType: 'Free Plot Scheme',
     panNumber: 'EKRPS7890E',
     aadhaarNumber: '409102938405',
     mobileNumber: '+91 94120 12345',

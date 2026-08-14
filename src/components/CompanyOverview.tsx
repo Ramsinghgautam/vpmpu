@@ -28,7 +28,7 @@ export const CompanyOverview: React.FC<CompanyOverviewProps> = ({ currentLang, o
           </h2>
 
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            {t.companyDesc || '"VIGYA PAURUSH MILESTONE PRIVATE LIMITED" was founded to eliminate ambiguity in plot purchases, empower local agents with structured commissions, and provide investors with asset-backed, risk-free returns.'}
+            {t.companyDesc || '"VIGYA PAURUSH MILESTONE PRIVATE LIMITED" was founded to eliminate ambiguity in plot purchases, empower local agents with structured commissions, and provide investors with asset-backed Free Plot Scheme returns.'}
           </p>
         </div>
 

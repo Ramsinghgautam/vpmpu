@@ -27,6 +27,7 @@ import {
   Send,
   Printer,
   ChevronRight,
+  Trash2,
   X
 } from 'lucide-react';
 import {
@@ -198,6 +199,31 @@ export const AdminAgentManager: React.FC = () => {
     setCustomerName('');
     setCustomerPhone('');
     setSalePlotNo('');
+  };
+
+  // Agent Delete Modal state
+  const [agentToDelete, setAgentToDelete] = useState<AgentRecord | null>(null);
+
+  // Delete Agent
+  const handleDeleteAgent = (agentId: string) => {
+    const updated = agents.filter(a => a.id !== agentId);
+    refreshData(updated);
+    if (selectedAgent?.id === agentId) {
+      setSelectedAgent(null);
+    }
+    setAgentToDelete(null);
+  };
+
+  // Delete Withdrawal Request
+  const handleDeleteWithdrawal = (agentId: string, reqId: string) => {
+    const updatedList = agents.map(agent => {
+      if (agent.id !== agentId) return agent;
+      return {
+        ...agent,
+        withdrawalHistory: agent.withdrawalHistory.filter(w => w.id !== reqId)
+      };
+    });
+    refreshData(updatedList);
   };
 
   // Approve Withdrawal Request
@@ -388,7 +414,7 @@ export const AdminAgentManager: React.FC = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left text-xs border-collapse min-w-[950px]">
               <thead>
                 <tr className="bg-slate-800/80 text-slate-300 border-b border-slate-700">
                   <th className="p-3">Agent ID</th>
@@ -399,6 +425,9 @@ export const AdminAgentManager: React.FC = () => {
                   <th className="p-3">Wallet Available</th>
                   <th className="p-3">EMI Offset</th>
                   <th className="p-3">Remaining Liability</th>
+                  <th className="p-3 text-center text-rose-400 font-bold uppercase tracking-wider bg-rose-950/30 border-x border-rose-900/40">
+                    Delete Column
+                  </th>
                   <th className="p-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -424,13 +453,28 @@ export const AdminAgentManager: React.FC = () => {
                     <td className="p-3 font-mono font-bold text-amber-300">
                       {agent.assignedPlot ? formatINR(agent.assignedPlot.remainingEmiLiability) : '₹0'}
                     </td>
+                    <td className="p-3 text-center bg-rose-950/10 border-x border-rose-900/20">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAgentToDelete(agent);
+                        }}
+                        className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-md hover:shadow-rose-900/50 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                        title={`Delete agent ${agent.agentName}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
+                      </button>
+                    </td>
                     <td className="p-3 text-right">
                       <button
+                        type="button"
                         onClick={() => {
                           setSelectedAgent(agent);
                           setShowRecordSaleModal(true);
                         }}
-                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-3 py-1.5 rounded-lg mr-2"
+                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-3 py-1.5 rounded-lg cursor-pointer"
                       >
                         Record Sale
                       </button>
@@ -452,7 +496,7 @@ export const AdminAgentManager: React.FC = () => {
           </h2>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left text-xs border-collapse min-w-[950px]">
               <thead>
                 <tr className="bg-slate-800/80 text-slate-300 border-b border-slate-700">
                   <th className="p-3">Request ID</th>
@@ -462,6 +506,9 @@ export const AdminAgentManager: React.FC = () => {
                   <th className="p-3">Method</th>
                   <th className="p-3">Account Details</th>
                   <th className="p-3">Status</th>
+                  <th className="p-3 text-center text-rose-400 font-bold uppercase tracking-wider bg-rose-950/30 border-x border-rose-900/40">
+                    Delete Column
+                  </th>
                   <th className="p-3 text-right">Action</th>
                 </tr>
               </thead>
@@ -483,14 +530,28 @@ export const AdminAgentManager: React.FC = () => {
                         {wd.status}
                       </span>
                     </td>
+                    <td className="p-3 text-center bg-rose-950/10 border-x border-rose-900/20">
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteWithdrawal(wd.agentId, wd.id)}
+                        className="bg-rose-600 hover:bg-rose-500 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg shadow-md hover:shadow-rose-900/50 transition-all cursor-pointer inline-flex items-center gap-1.5"
+                        title="Delete Withdrawal Request"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Delete</span>
+                      </button>
+                    </td>
                     <td className="p-3 text-right">
-                      {wd.status === 'Pending' && (
+                      {wd.status === 'Pending' ? (
                         <button
+                          type="button"
                           onClick={() => handleApproveWithdrawal(wd.agentId, wd.id)}
-                          className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] px-3 py-1 rounded-lg"
+                          className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] px-3 py-1.5 rounded-lg cursor-pointer"
                         >
                           Approve Payout
                         </button>
+                      ) : (
+                        <span className="text-slate-500 text-[10px] font-bold">Approved</span>
                       )}
                     </td>
                   </tr>
@@ -595,7 +656,7 @@ export const AdminAgentManager: React.FC = () => {
                 className="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white"
               >
                 <option value="Standard Plot">Standard Plot (₹9,00,000 Base)</option>
-                <option value="Risk Free Investor Plot">Risk Free Investor Sale (Tiered Rates)</option>
+                <option value="Risk Free Investor Plot">Free Plot Scheme Sale (Tiered Rates)</option>
               </select>
 
               {saleCategory === 'Risk Free Investor Plot' && (
@@ -614,11 +675,58 @@ export const AdminAgentManager: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full bg-amber-500 text-slate-950 font-black text-xs uppercase py-3 rounded-xl"
+                className="w-full bg-amber-500 text-slate-950 font-black text-xs uppercase py-3 rounded-xl cursor-pointer"
               >
                 Process Sale & Calculate Commission
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Agent Confirmation Modal */}
+      {agentToDelete && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-900 border-2 border-rose-500/50 rounded-2xl p-6 max-w-md w-full text-white shadow-2xl space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+              <h3 className="font-black text-lg text-rose-400 flex items-center gap-2">
+                <Trash2 className="w-5 h-5 text-rose-500" />
+                <span>Confirm Agent Deletion</span>
+              </h3>
+              <button onClick={() => setAgentToDelete(null)} className="cursor-pointer text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs text-slate-300">
+              <p className="text-sm font-semibold text-slate-200">
+                Are you sure you want to permanently delete agent record for <strong className="text-white font-bold">{agentToDelete.agentName}</strong>?
+              </p>
+              <div className="bg-rose-950/30 border border-rose-900/50 p-3 rounded-xl space-y-1 text-[11px] text-rose-200">
+                <div>• Agent ID: <strong className="font-mono">{agentToDelete.id}</strong></div>
+                <div>• Total Plots Sold: {agentToDelete.totalPlotsSold} Plots</div>
+                <div>• Wallet Balance: {formatINR(agentToDelete.wallet.availableBalance)}</div>
+              </div>
+              <p className="text-slate-400 italic">This action will remove the agent from the roster and cannot be undone.</p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setAgentToDelete(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold text-xs cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDeleteAgent(agentToDelete.id)}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-xs shadow-lg cursor-pointer flex items-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Permanently Delete Agent</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -976,7 +976,7 @@ export const AdminEmployeePromotionManager: React.FC<AdminEmployeePromotionManag
                   <span>Verified Point Allocation Ledger & Reversal Records</span>
                 </h3>
                 <p className="text-slate-400 text-xs mt-0.5">
-                  Complete audit log of Agent (1pt), Customer (2pt), Investor (3pt), Risk-Free Investor (4pt) credits and point reversals.
+                  Complete audit log of Agent (1pt), Customer (2pt), Investor (3pt), Free Plot Scheme (4pt) credits and point reversals.
                 </p>
               </div>
               <button
@@ -1074,7 +1074,7 @@ export const AdminEmployeePromotionManager: React.FC<AdminEmployeePromotionManag
                   <option value="Agent">Agent Joining (+1 Point / unit)</option>
                   <option value="Customer">Customer Joining (+2 Points / unit)</option>
                   <option value="Investor">Investor Joining (+3 Points / unit)</option>
-                  <option value="Risk-Free Investor">Risk-Free Investor Joining (+4 Points / unit)</option>
+                  <option value="Risk-Free Investor">Free Plot Scheme Joining (+4 Points / unit)</option>
                   <option value="Point Reversal">Point Reversal (Deduct Points for Cancelled Joining)</option>
                 </select>
               </div>

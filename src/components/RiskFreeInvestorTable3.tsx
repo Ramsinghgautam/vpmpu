@@ -23,7 +23,8 @@ import {
   Percent,
   Check,
   Info,
-  DollarSign
+  DollarSign,
+  Trash2
 } from 'lucide-react';
 import { formatINR } from '../utils/calculators';
 
@@ -319,6 +320,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
   const [showRecordPaymentModal, setShowRecordPaymentModal] = useState<InvestorTable3Record | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState<InvestorTable3Record | null>(null);
   const [showStatementModal, setShowStatementModal] = useState<InvestorTable3Record | null>(null);
+  const [investorToDelete, setInvestorToDelete] = useState<InvestorTable3Record | null>(null);
 
   // New Investor Form State
   const [newInvestorName, setNewInvestorName] = useState('');
@@ -470,6 +472,13 @@ export const RiskFreeInvestorTable3: React.FC = () => {
     setPayAmountInput(100000);
   };
 
+  // Handle Deleting Investor
+  const handleConfirmDeleteInvestor = () => {
+    if (!investorToDelete) return;
+    setRecords(prev => prev.filter(r => r.investorId !== investorToDelete.investorId));
+    setInvestorToDelete(null);
+  };
+
   // CSV Export Helper
   const exportToCSV = () => {
     const headers = [
@@ -536,7 +545,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
 
           <div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-black text-white tracking-tight">
-              Risk-Free Investor Commission Table – 3
+              Free Plot Scheme Commission Table – 3
             </h2>
             <p className="text-sm text-slate-300 mt-1.5 max-w-3xl font-medium leading-relaxed">
               Guaranteed high-yield investment return mechanism for clear-title residential plot investors in Prayagraj.
@@ -550,7 +559,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
               <span>Important Commission Rule & Operational Ceiling</span>
             </div>
             <p className="text-slate-200 leading-relaxed font-normal">
-              For each investment slab, when a <strong>Risk-Free Investor</strong> purchases a plot at the specified <strong>Purchase Rate per Sq. Ft.</strong>, the investor will be eligible to receive the specified commission percentage on the value of plots sold by the investor, <strong>up to the total amount of their invested plot amount</strong>.
+              For each investment slab, when a <strong>Free Plot Scheme Investor</strong> purchases a plot at the specified <strong>Purchase Rate per Sq. Ft.</strong>, the investor will be eligible to receive the specified commission percentage on the value of plots sold by the investor, <strong>up to the total amount of their invested plot amount</strong>.
             </p>
             <p className="text-amber-200/90 font-semibold italic border-t border-indigo-800/80 pt-2 text-[11px]">
               * Mandatory Constraint: The commission should be calculated ONLY until the investor has sold plots whose total eligible sales value reaches the investor's original invested amount.
@@ -777,7 +786,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
           <div>
             <h3 className="font-serif font-bold text-indigo-950 text-lg flex items-center gap-2">
               <Building2 className="w-5 h-5 text-indigo-900" />
-              Risk-Free Investor Commission Ledger
+              Free Plot Scheme Commission Ledger
             </h3>
             <p className="text-xs text-slate-500 font-medium">
               Manage accounts, record plot sales, calculate commission ceilings, and issue payouts with audit log.
@@ -849,7 +858,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>Add Risk-Free Investor</span>
+              <span>Add Free Plot Scheme Investor</span>
             </button>
           </div>
         </div>
@@ -873,7 +882,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
               {filteredRecords.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="text-center p-8 text-slate-400 italic">
-                    No risk-free investor records match your search or filter criteria.
+                    No free plot scheme investor records match your search or filter criteria.
                   </td>
                 </tr>
               ) : (
@@ -978,6 +987,19 @@ export const RiskFreeInvestorTable3: React.FC = () => {
                           + Pay
                         </button>
 
+                        {/* Delete Investor */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setInvestorToDelete(r);
+                          }}
+                          className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold transition-colors border border-rose-200 cursor-pointer flex items-center gap-1"
+                          title="Delete Investor Record"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                        </button>
+
                       </div>
                     </td>
 
@@ -1000,7 +1022,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <h3 className="font-serif font-black text-indigo-950 text-lg flex items-center gap-2">
                 <Plus className="w-5 h-5 text-emerald-600" />
-                Add Risk-Free Investor (Table 3)
+                Add Free Plot Scheme Investor (Table 3)
               </h3>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -1412,7 +1434,7 @@ export const RiskFreeInvestorTable3: React.FC = () => {
               {/* Title Banner */}
               <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
                 <h2 className="text-sm font-serif font-bold text-indigo-950 uppercase tracking-wider">
-                  Risk-Free Investor Commission Statement (Table 3)
+                  Free Plot Scheme Commission Statement (Table 3)
                 </h2>
               </div>
 
@@ -1476,6 +1498,38 @@ export const RiskFreeInvestorTable3: React.FC = () => {
 
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {investorToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full border border-rose-200 shadow-2xl p-6 space-y-4">
+            <div className="flex items-center gap-3 text-rose-600">
+              <Trash2 className="w-6 h-6 shrink-0" />
+              <h3 className="font-serif font-black text-slate-900 text-lg">Delete Investor Record</h3>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Are you sure you want to permanently delete investor <strong className="text-slate-900">{investorToDelete.investorName}</strong> (<span className="font-mono text-indigo-900">{investorToDelete.investorId}</span>)? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setInvestorToDelete(null)}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteInvestor}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-md cursor-pointer flex items-center gap-1.5"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Confirm Delete</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

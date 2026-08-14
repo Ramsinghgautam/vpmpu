@@ -16,7 +16,7 @@ export const INITIAL_TRANSLATIONS: Record<Language, TranslationDictionary> = {
   en: {
     // Brand & General
     companyName: "VIGYA PAURUSH MILESTONE PRIVATE LIMITED",
-    tagline: "Your Gateway to Prime Real Estate & Risk-Free Investment Milestones",
+    tagline: "Your Gateway to Prime Real Estate & Free Plot Scheme Milestones",
     home: "Home",
     aboutUs: "About Us",
     projects: "Projects",
@@ -35,11 +35,11 @@ export const INITIAL_TRANSLATIONS: Record<Language, TranslationDictionary> = {
     viewInvestmentPlans: "Investor ROI Plans",
     commissionCalculator: "Commission Calculator",
     whyChooseUs: "Why Choose Us?",
-    buyerBenefits: "Risk-Free Investor Benefits",
+    buyerBenefits: "Free Plot Scheme Benefits",
     agentBenefits: "Agent Benefits",
     investorBenefits: "Investor Benefits",
     featuredProjects: "Featured Premium Projects",
-    investmentSlabsHeading: "Risk-Free Investor ROI Slabs",
+    investmentSlabsHeading: "Free Plot Scheme ROI Slabs",
     plotBookingFeeNotice: "Instant Plot Booking Fee: Flat ₹10,000 Only",
     address: "4/199 EWS AVC New Jhunsi, Prayagraj, Uttar Pradesh, India",
     phone: "7275300974 / 6394918657",
@@ -55,8 +55,8 @@ export const INITIAL_TRANSLATIONS: Record<Language, TranslationDictionary> = {
     instantAvailability: "Instant Availability",
     flat10kBooking: "Flat ₹10,000 Booking",
     upTo32Roi: "Up to 32% Investor ROI",
-    upTo15BuyerCash: "Up to 15.5% Risk-Free Investor Cash",
-    heroTitle: "Prime Plots & Risk-Free Investments in Prayagraj",
+    upTo15BuyerCash: "Up to 15.5% Free Plot Scheme Cash",
+    heroTitle: "Prime Plots & Free Plot Scheme Investments in Prayagraj",
     heroDesc: "In the real estate sector, customers often fail to find the right plot, while agents simply earn their commissions. Investors typically face delays in receiving interest, the principal amount, or even the return of their investment; however, this company delivers on all these fronts.",
     
     // Auth & OTP

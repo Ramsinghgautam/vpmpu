@@ -32,7 +32,7 @@ export const Footer: React.FC<FooterProps> = ({ currentLang, onNavigate, onOpenL
           </div>
 
           <p className="text-slate-300 text-xs leading-relaxed">
-            Your trusted real estate & risk-free investment milestone provider in Prayagraj. Clear Dakhil Kharij title deeds, ₹10,000 instant bookings, up to 32% ROI, and transparent agent commissions.
+            Your trusted real estate & Free Plot Scheme milestone provider in Prayagraj. Clear Dakhil Kharij title deeds, ₹10,000 instant bookings, up to 32% ROI, and transparent agent commissions.
           </p>
 
           <div className="pt-2 text-[10px] text-amber-300 font-bold uppercase tracking-widest space-y-1">
@@ -51,7 +51,7 @@ export const Footer: React.FC<FooterProps> = ({ currentLang, onNavigate, onOpenL
             <li><button onClick={() => onNavigate('about')} className="hover:text-amber-300 transition-colors">About Company & Vision</button></li>
             <li><button onClick={() => onNavigate('projects')} className="hover:text-amber-300 transition-colors">Township Projects</button></li>
             <li><button onClick={() => onNavigate('plot-booking')} className="hover:text-amber-300 transition-colors">Plot Booking @ ₹10,000</button></li>
-            <li><button onClick={() => onNavigate('investment')} className="hover:text-amber-300 transition-colors">Risk-Free Investment Slabs</button></li>
+            <li><button onClick={() => onNavigate('investment')} className="hover:text-amber-300 transition-colors">Free Plot Scheme Slabs</button></li>
             <li><button onClick={() => onNavigate('commission')} className="hover:text-amber-300 transition-colors">Commission & Bonus Calculator</button></li>
             <li><button onClick={() => onNavigate('career')} className="hover:text-amber-300 transition-colors">Career & Agent Registration</button></li>
           </ul>

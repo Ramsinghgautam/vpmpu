@@ -139,7 +139,7 @@ export const UserRiskFreeInvestorView: React.FC<UserRiskFreeInvestorViewProps> =
   // Export current simulation as CSV
   const handleExportCSV = () => {
     const rows = [
-      ['RISK-FREE INVESTOR FINANCIAL SIMULATION REPORT'],
+      ['FREE PLOT SCHEME FINANCIAL SIMULATION REPORT'],
       ['Investor Name', investor.investorName, 'Investor ID', investor.id],
       ['Plot Rate', `INR ${simConfig.plotRateSqft}/sqft`, 'Plot Size', `${simConfig.plotSizeSqft} sqft`],
       ['Investment Amount', `INR ${simResult.investmentAmount}`, 'Commission Rate', `${simConfig.commissionRatePct}%`],
@@ -180,7 +180,7 @@ export const UserRiskFreeInvestorView: React.FC<UserRiskFreeInvestorViewProps> =
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl md:text-2xl font-black text-white">Risk-Free Investor Financial Simulation</h2>
+                <h2 className="text-xl md:text-2xl font-black text-white">Free Plot Scheme Financial Simulation</h2>
                 <span className="text-[10px] font-extrabold uppercase px-3 py-1 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">
                   32% Commission + 15.5% Interest Engine
                 </span>
@@ -703,7 +703,7 @@ export const UserRiskFreeInvestorView: React.FC<UserRiskFreeInvestorViewProps> =
                     <div key={s.id} className="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
                       <div>
                         <span className="font-bold text-white block">{s.projectName} ({s.plotNo})</span>
-                        <span className="text-[10px] text-slate-500">Risk-Free Investor: {s.buyerName} | Date: {s.date}</span>
+                        <span className="text-[10px] text-slate-500">Buyer / Customer: {s.buyerName} | Date: {s.date}</span>
                       </div>
                       <div className="text-right">
                         <span className="font-black text-emerald-400 block">₹{formatINR(s.commissionEarned)}</span>
@@ -845,17 +845,17 @@ export const UserRiskFreeInvestorView: React.FC<UserRiskFreeInvestorViewProps> =
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 font-bold mb-1">Risk-Free Investor Name</label>
+                  <label className="block text-slate-400 font-bold mb-1">Customer / Buyer Name</label>
                   <input 
                     type="text" 
-                    placeholder="Risk-Free Investor Name"
+                    placeholder="Customer / Buyer Name"
                     value={buyerName}
                     onChange={(e) => setBuyerName(e.target.value)}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-400 font-bold"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-400 font-bold mb-1">Risk-Free Investor Phone</label>
+                  <label className="block text-slate-400 font-bold mb-1">Customer / Buyer Phone</label>
                   <input 
                     type="text" 
                     placeholder="9876543210"

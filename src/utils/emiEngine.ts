@@ -308,7 +308,7 @@ export function generateAiRecommendations(
     recommendedTenureMonths: chosenTenure,
     recommendedEmiPlanLabel: `${matchedTenureObj.label} @ 10.5% p.a.`,
     recommendedPlotType: targetPlotPrice > 3000000 ? 'Corner Plot / Wide 40ft Road' : 'Standard Residential Plot',
-    recommendedInvestmentPlan: 'Risk-Free Investment @ ₹1,450 / sq.ft (22.5% Guaranteed ROI)',
+    recommendedInvestmentPlan: 'Free Plot Scheme @ ₹1,450 / sq.ft (22.5% Guaranteed ROI)',
     upsellOpportunity: 'Upgrade to Phase 2 High-Growth Commercial Plot for +3.5% higher annual appreciation.'
   };
 }

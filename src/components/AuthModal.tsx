@@ -256,7 +256,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
                 onClick={() => setSelectedRole('buyer')}
                 className={`py-1.5 rounded-lg transition-all ${selectedRole === 'buyer' ? 'bg-sky-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
               >
-                Risk-Free Investor
+                Free Plot Scheme
               </button>
 
               <button

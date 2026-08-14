@@ -170,8 +170,8 @@ export const MOCK_BLOG_POSTS: BlogPost[] = [
   },
   {
     id: "blog-2",
-    title: "How to Earn up to 15.5% Risk-Free Investor & 8% Agent Commissions Capped by VPM Transparency",
-    excerpt: "Understand Vigya Paurush Milestone's progressive plot slab structure designed to reward loyal property risk-free investors and dedicated sales agents.",
+    title: "How to Earn up to 15.5% Free Plot Scheme & 8% Agent Commissions Capped by VPM Transparency",
+    excerpt: "Understand Vigya Paurush Milestone's progressive plot slab structure designed to reward loyal property clients and dedicated sales agents.",
     category: "Commission & Earnings",
     date: "July 15, 2026",
     author: "VPM Advisory Desk",
@@ -180,7 +180,7 @@ export const MOCK_BLOG_POSTS: BlogPost[] = [
   },
   {
     id: "blog-3",
-    title: "Understanding Risk-Free Investor Plans: How Capped ROI Payouts Protect Your Capital",
+    title: "Understanding Free Plot Scheme Plans: How Capped ROI Payouts Protect Your Capital",
     excerpt: "A deep dive into VPM's investor slabs starting at ₹1050/sqft up to ₹2150/sqft, providing guaranteed returns safely backed by prime plot assets.",
     category: "Investment Strategy",
     date: "June 29, 2026",
@@ -194,7 +194,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
   {
     id: "test-1",
     name: "Dr. Ramesh Chandra Mishra",
-    role: "Property Risk-Free Investor",
+    role: "Free Plot Scheme Investor",
     location: "Civil Lines, Prayagraj",
     quote: "I booked a 1500 sq.ft plot in Milestone City Jhunsi with just ₹10,000 booking fee. The transparency in Dakhil Kharij and clear legal documents handled by Mr. Prabhat Gautam was unmatched!",
     rating: 5,
@@ -214,7 +214,7 @@ export const MOCK_TESTIMONIALS: Testimonial[] = [
     name: "Vikas Agarwal",
     role: "Investor",
     location: "Kanpur / Prayagraj",
-    quote: "I invested in 3000 sq.ft at ₹1450/sqft under VPM's risk-free investor plan. Receiving 22.5% ROI with land collateral peace of mind makes this the safest real estate growth model.",
+    quote: "I invested in 3000 sq.ft at ₹1450/sqft under VPM's Free Plot Scheme plan. Receiving 22.5% ROI with land collateral peace of mind makes this the safest real estate growth model.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80"
   }

@@ -668,7 +668,7 @@ export const AdminMlmTeamManager: React.FC = () => {
                 <option value="Customer">Customer</option>
                 <option value="Agent">Agent</option>
                 <option value="Investor">Investor</option>
-                <option value="RiskFreeInvestor">Risk Free Investor</option>
+                <option value="RiskFreeInvestor">Free Plot Scheme</option>
               </select>
             </div>
           </div>

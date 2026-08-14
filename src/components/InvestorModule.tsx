@@ -62,7 +62,7 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
         <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
           <div className="inline-flex items-center gap-2 bg-indigo-900 border border-indigo-800 text-amber-300 text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full">
             <TrendingUp className="w-4 h-4 text-amber-400" />
-            <span>{t.investmentSlabsHeading || "RISK-FREE INVESTOR ROI MODULE"}</span>
+            <span>{t.investmentSlabsHeading || "FREE PLOT SCHEME ROI MODULE"}</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-serif font-black text-white tracking-tight">
