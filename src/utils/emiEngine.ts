@@ -42,6 +42,11 @@ export const SUPPORTED_EMI_TENURES = [
   { months: 36, years: 3, label: '36 Months (3 Years)' },
   { months: 48, years: 4, label: '48 Months (4 Years)' },
   { months: 60, years: 5, label: '60 Months (5 Years)' },
+  { months: 72, years: 6, label: '72 Months (6 Years)' },
+  { months: 84, years: 7, label: '84 Months (7 Years)' },
+  { months: 96, years: 8, label: '96 Months (8 Years)' },
+  { months: 108, years: 9, label: '108 Months (9 Years)' },
+  { months: 120, years: 10, label: '120 Months (10 Years)' },
 ];
 
 /**

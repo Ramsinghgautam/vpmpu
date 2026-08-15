@@ -20,7 +20,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
   const [length, setLength] = useState<number>(40);
   const [width, setWidth] = useState<number>(25);
   const [rateSqft, setRateSqft] = useState<number>(1000);
-  const [selectedTotalOption, setSelectedTotalOption] = useState<number | 'auto'>('auto');
+  const [selectedTenure, setSelectedTenure] = useState<number>(12);
   const [copiedShare, setCopiedShare] = useState(false);
   const [receiptFile, setReceiptFile] = useState<{ name: string; url: string; size: string } | null>(null);
 
@@ -53,8 +53,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
 
   const calculatedSqft = length * width;
   const calculatedAutoTotal = calculatedSqft * rateSqft;
-  const effectiveTotalAmount = selectedTotalOption === 'auto' ? calculatedAutoTotal : selectedTotalOption;
-  const estimatedMonthlyEmi = Math.round(Math.max(0, effectiveTotalAmount - 10000) / 12);
+  const effectiveTotalAmount = calculatedAutoTotal;
+  const estimatedMonthlyEmi = Math.round(Math.max(0, effectiveTotalAmount - 10000) / selectedTenure);
 
   const handlePayEmiSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -327,10 +327,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                   </label>
                   <select
                     value={length}
-                    onChange={(e) => {
-                      setLength(Number(e.target.value));
-                      setSelectedTotalOption('auto');
-                    }}
+                    onChange={(e) => setLength(Number(e.target.value))}
                     className="w-full bg-indigo-950 border border-indigo-800 rounded-lg px-3 py-2.5 text-slate-100 font-bold focus:outline-none focus:border-amber-400 cursor-pointer text-xs"
                   >
                     <option value={20}>20 Feet</option>
@@ -351,10 +348,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                   </label>
                   <select
                     value={width}
-                    onChange={(e) => {
-                      setWidth(Number(e.target.value));
-                      setSelectedTotalOption('auto');
-                    }}
+                    onChange={(e) => setWidth(Number(e.target.value))}
                     className="w-full bg-indigo-950 border border-indigo-800 rounded-lg px-3 py-2.5 text-slate-100 font-bold focus:outline-none focus:border-amber-400 cursor-pointer text-xs"
                   >
                     <option value={15}>15 Feet</option>
@@ -374,10 +368,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                   </label>
                   <select
                     value={rateSqft}
-                    onChange={(e) => {
-                      setRateSqft(Number(e.target.value));
-                      setSelectedTotalOption('auto');
-                    }}
+                    onChange={(e) => setRateSqft(Number(e.target.value))}
                     className="w-full bg-indigo-950 border border-indigo-800 rounded-lg px-3 py-2.5 text-slate-100 font-bold focus:outline-none focus:border-amber-400 cursor-pointer text-xs"
                   >
                     <option value={1000}>₹1,000 / sq.ft (Base Rate)</option>
@@ -385,44 +376,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     <option value={1120}>₹1,120 / sq.ft</option>
                     <option value={1210}>₹1,210 / sq.ft</option>
                     <option value={1320}>₹1,320 / sq.ft</option>
-                    <option value={1450}>₹2,450 / sq.ft</option>
-                    <option value={1600}>₹2,600 / sq.ft</option>
+                    <option value={1450}>₹1,450 / sq.ft</option>
+                    <option value={1600}>₹1,600 / sq.ft</option>
                     <option value={1770}>₹1,770 / sq.ft</option>
                     <option value={1950}>₹1,950 / sq.ft</option>
                     <option value={2150}>₹2,150 / sq.ft</option>
                   </select>
                 </div>
 
-                {/* 4. Selection for Total Amount */}
+                {/* 4. Selection for EMI Tenure (Months) */}
                 <div>
                   <label className="block text-amber-300 font-bold uppercase tracking-wider text-[10px] mb-1 flex items-center justify-between">
-                    <span>4. Total Amount (₹)</span>
+                    <span>4. EMI Tenure</span>
                   </label>
                   <select
-                    value={selectedTotalOption === 'auto' ? 'auto' : selectedTotalOption}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === 'auto') {
-                        setSelectedTotalOption('auto');
-                      } else {
-                        setSelectedTotalOption(Number(val));
-                      }
-                    }}
-                    className="w-full bg-indigo-950 border border-indigo-800 rounded-lg px-2.5 py-2.5 text-amber-400 font-black focus:outline-none focus:border-amber-400 cursor-pointer text-xs"
+                    id="hero-emi-tenure-select"
+                    value={selectedTenure}
+                    onChange={(e) => setSelectedTenure(Number(e.target.value))}
+                    className="w-full bg-indigo-950 border border-amber-500/50 hover:border-amber-400 focus:border-amber-400 rounded-lg px-2 py-2.5 text-amber-300 font-black focus:outline-none focus:ring-1 focus:ring-amber-400 cursor-pointer text-xs transition-all shadow-inner"
                   >
-                    <option value="auto">
-                      Calc: {formatINR(calculatedAutoTotal)} ({calculatedSqft} sqft)
-                    </option>
-                    <option value={900000}>₹09,00,000 (₹09,00,000 Lakhs)</option>
-                    <option value={945000}>₹09,45,000 (₹09,45,000 Lakhs)</option>
-                    <option value={108000}>₹10,08,000 (₹10,08,000 Lakhs)</option>
-                    <option value={1089000}>₹10,89,000 (₹10,89,000 Lakhs)</option>
-                    <option value={1188000}>₹11,88,000 (₹11,88,000 Lakhs)</option>
-                    <option value={1305000}>₹13,05,000 (₹13,05,000 Lakhs)</option>
-                    <option value={1440000}>₹14,40,000 (₹14,40,000 Lakhs)</option>
-                    <option value={1593000}>₹15,93,000 (₹15,93,000 Lakhs)</option>
-                    <option value={1755000}>₹17,55,000 (₹17,55,000 Lakhs)</option>
-                    <option value={1935000}>₹19,35,000 (₹19,35,000 Lakhs)</option>
+                    <option value={12}>12 months (1 Year)</option>
+                    <option value={24}>24 months (2 Years)</option>
+                    <option value={36}>36 months (3 Years)</option>
+                    <option value={48}>48 months (4 Years)</option>
+                    <option value={60}>60 months (5 Years)</option>
+                    <option value={72}>72 months (6 Years)</option>
+                    <option value={84}>84 months (7 Years)</option>
+                    <option value={96}>96 months (8 Years)</option>
+                    <option value={108}>108 months (9 Years)</option>
+                    <option value={120}>120 months (10 Years)</option>
                   </select>
                 </div>
               </div>
@@ -457,7 +439,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                       Extra EMI:
                     </span>
                     <strong className="text-amber-300 font-bold text-[10px] bg-indigo-900/90 px-2 py-0.5 rounded border border-indigo-700/70">
-                      {emiBookingId ? `EMI #01 / 12 (${emiBookingId})` : 'EMI #01 / 12 (VPM-EMI-1001)'}
+                      {emiBookingId ? `EMI #01 / ${selectedTenure} (${emiBookingId})` : `EMI #01 / ${selectedTenure} (VPM-EMI-1001)`}
                     </strong>
                   </div>
 
@@ -489,7 +471,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                 <div className="flex justify-between items-center text-[11px] text-indigo-200 pt-1 border-t border-indigo-800/40">
                   <span className="flex items-center gap-1">
                     <CreditCard className="w-3 h-3 text-amber-400" />
-                    Est. 12-Month Easy EMI
+                    Est. {selectedTenure}-Month Easy EMI
                   </span>
                   <span className="font-extrabold text-amber-300">{formatINR(estimatedMonthlyEmi)} / mo</span>
                 </div>
@@ -554,31 +536,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     </div>
                   )}
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
-                <button
-                  type="submit"
-                  className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold uppercase tracking-wider py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-xs cursor-pointer active:scale-95"
-                >
-                  <span>Search Plots</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEmiReceiptData(null);
-                    setEmiTransactionId('');
-                    setEmiTransactionDate(new Date().toISOString().split('T')[0]);
-                    setEmiPaymentError(null);
-                    setShowEmiModal(true);
-                  }}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold uppercase tracking-wider py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 text-xs border border-emerald-400/50 cursor-pointer active:scale-95"
-                >
-                  <CreditCard className="w-4 h-4 text-emerald-200" />
-                  <span>Pay EMI</span>
-                </button>
               </div>
             </form>
           </div>

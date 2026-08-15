@@ -35,6 +35,11 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   const [userPhoto, setUserPhoto] = useState<string | null>(currentUser?.avatarUrl || null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  // Stakeholder Distributed Payout EMI Tenure States
+  const [customerEmiTenure, setCustomerEmiTenure] = useState<number>(12);
+  const [agentEmiTenure, setAgentEmiTenure] = useState<number>(12);
+  const [investorEmiTenure, setInvestorEmiTenure] = useState<number>(12);
+
   // EMI Interactive Payment States
   const [paidEmiNumbers, setPaidEmiNumbers] = useState<number[]>([1, 2]);
   const [showEmiModal, setShowEmiModal] = useState(false);
@@ -2740,25 +2745,65 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                     </span>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Total Customer Count:</span>
                       <strong className="text-white font-extrabold">142 Active Free Plot Scheme Clients</strong>
                     </div>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">Total Customer Payout Disbursed:</span>
-                      <strong className="text-amber-400 font-black text-sm">₹12,50,000</strong>
+
+                    {/* EMI Tenure Selector */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-amber-300 block mb-1">
+                        Select Customer EMI Tenure:
+                      </label>
+                      <select
+                        value={customerEmiTenure}
+                        onChange={(e) => setCustomerEmiTenure(Number(e.target.value))}
+                        className="w-full bg-slate-900 border border-amber-500/40 text-amber-300 rounded-xl px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-amber-400 cursor-pointer"
+                      >
+                        <option value={12}>12 Months EMI Tenure</option>
+                        <option value={24}>24 Months EMI Tenure</option>
+                        <option value={36}>36 Months EMI Tenure</option>
+                        <option value={48}>48 Months EMI Tenure</option>
+                        <option value={60}>60 Months EMI Tenure</option>
+                        <option value={72}>72 Months EMI Tenure</option>
+                        <option value={84}>84 Months EMI Tenure</option>
+                        <option value={96}>96 Months EMI Tenure</option>
+                        <option value={108}>108 Months EMI Tenure</option>
+                        <option value={120}>120 Months EMI Tenure</option>
+                        <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                      </select>
                     </div>
-                    <div className="bg-slate-900 p-2.5 rounded-xl text-[10px] text-slate-300 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Plot Refunds & Adjustments:</span>
-                        <span className="text-slate-200 font-semibold">₹8,00,000</span>
+
+                    {/* Conditional Payout Div */}
+                    {customerEmiTenure > 0 ? (
+                      <div className="bg-amber-950/40 p-3 rounded-xl border border-amber-500/30 text-xs space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-amber-200/90 font-semibold">Monthly Distributed Payout ({customerEmiTenure}M):</span>
+                          <strong className="text-amber-400 font-black text-sm">
+                            ₹{Math.round(1250000 / customerEmiTenure).toLocaleString('en-IN')} / mo
+                          </strong>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span>Total Customer Payout:</span>
+                          <span className="text-slate-200 font-bold">₹12,50,000 across {customerEmiTenure} months</span>
+                        </div>
+                        <div className="pt-1.5 border-t border-amber-500/20 text-[10px] text-slate-300 space-y-0.5">
+                          <div className="flex justify-between">
+                            <span>Plot Refunds (Monthly):</span>
+                            <span>₹{Math.round(800000 / customerEmiTenure).toLocaleString('en-IN')}/mo</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Cashbacks (Monthly):</span>
+                            <span>₹{Math.round(450000 / customerEmiTenure).toLocaleString('en-IN')}/mo</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Early Booking Cashbacks:</span>
-                        <span className="text-slate-200 font-semibold">₹4,50,000</span>
+                    ) : (
+                      <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 italic text-center">
+                        Payout hidden (Select customer EMI tenure above to display distributed monthly payout)
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 
@@ -2779,25 +2824,65 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                     </span>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Total Agent Network:</span>
                       <strong className="text-white font-extrabold">38 Active Agents</strong>
                     </div>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">Total Agent Payout Disbursed:</span>
-                      <strong className="text-indigo-400 font-black text-sm">₹28,40,000</strong>
+
+                    {/* EMI Tenure Selector */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-indigo-300 block mb-1">
+                        Select Agent EMI Tenure:
+                      </label>
+                      <select
+                        value={agentEmiTenure}
+                        onChange={(e) => setAgentEmiTenure(Number(e.target.value))}
+                        className="w-full bg-slate-900 border border-indigo-500/40 text-indigo-300 rounded-xl px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-400 cursor-pointer"
+                      >
+                        <option value={12}>12 Months EMI Tenure</option>
+                        <option value={24}>24 Months EMI Tenure</option>
+                        <option value={36}>36 Months EMI Tenure</option>
+                        <option value={48}>48 Months EMI Tenure</option>
+                        <option value={60}>60 Months EMI Tenure</option>
+                        <option value={72}>72 Months EMI Tenure</option>
+                        <option value={84}>84 Months EMI Tenure</option>
+                        <option value={96}>96 Months EMI Tenure</option>
+                        <option value={108}>108 Months EMI Tenure</option>
+                        <option value={120}>120 Months EMI Tenure</option>
+                        <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                      </select>
                     </div>
-                    <div className="bg-slate-900 p-2.5 rounded-xl text-[10px] text-slate-300 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Direct 8% Sales Commission:</span>
-                        <span className="text-slate-200 font-semibold">₹22,10,000</span>
+
+                    {/* Conditional Payout Div */}
+                    {agentEmiTenure > 0 ? (
+                      <div className="bg-indigo-950/40 p-3 rounded-xl border border-indigo-500/30 text-xs space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-indigo-200/90 font-semibold">Monthly Distributed Payout ({agentEmiTenure}M):</span>
+                          <strong className="text-indigo-300 font-black text-sm">
+                            ₹{Math.round(2840000 / agentEmiTenure).toLocaleString('en-IN')} / mo
+                          </strong>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span>Total Agent Commission:</span>
+                          <span className="text-slate-200 font-bold">₹28,40,000 across {agentEmiTenure} months</span>
+                        </div>
+                        <div className="pt-1.5 border-t border-indigo-500/20 text-[10px] text-slate-300 space-y-0.5">
+                          <div className="flex justify-between">
+                            <span>Direct 8% Commission:</span>
+                            <span>₹{Math.round(2210000 / agentEmiTenure).toLocaleString('en-IN')}/mo</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Downline Overrides:</span>
+                            <span>₹{Math.round(630000 / agentEmiTenure).toLocaleString('en-IN')}/mo</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Level Downline Overrides:</span>
-                        <span className="text-slate-200 font-semibold">₹6,30,000</span>
+                    ) : (
+                      <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 italic text-center">
+                        Payout hidden (Select agent EMI tenure above to display distributed monthly payout)
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 
@@ -2818,25 +2903,65 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                     </span>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-400">Total Investors Count:</span>
                       <strong className="text-white font-extrabold">19 Investors</strong>
                     </div>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-400">Total Investor ROI Payout:</span>
-                      <strong className="text-emerald-400 font-black text-sm">₹42,80,000</strong>
+
+                    {/* EMI Tenure Selector */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-emerald-300 block mb-1">
+                        Select Investor EMI Tenure:
+                      </label>
+                      <select
+                        value={investorEmiTenure}
+                        onChange={(e) => setInvestorEmiTenure(Number(e.target.value))}
+                        className="w-full bg-slate-900 border border-emerald-500/40 text-emerald-300 rounded-xl px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-emerald-400 cursor-pointer"
+                      >
+                        <option value={12}>12 Months EMI Tenure</option>
+                        <option value={24}>24 Months EMI Tenure</option>
+                        <option value={36}>36 Months EMI Tenure</option>
+                        <option value={48}>48 Months EMI Tenure</option>
+                        <option value={60}>60 Months EMI Tenure</option>
+                        <option value={72}>72 Months EMI Tenure</option>
+                        <option value={84}>84 Months EMI Tenure</option>
+                        <option value={96}>96 Months EMI Tenure</option>
+                        <option value={108}>108 Months EMI Tenure</option>
+                        <option value={120}>120 Months EMI Tenure</option>
+                        <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                      </select>
                     </div>
-                    <div className="bg-slate-900 p-2.5 rounded-xl text-[10px] text-slate-300 space-y-1">
-                      <div className="flex justify-between">
-                        <span>Total Capital Deposited:</span>
-                        <span className="text-slate-200 font-semibold">₹1,34,00,000</span>
+
+                    {/* Conditional Payout Div */}
+                    {investorEmiTenure > 0 ? (
+                      <div className="bg-emerald-950/40 p-3 rounded-xl border border-emerald-500/30 text-xs space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-emerald-200/90 font-semibold">Monthly Distributed ROI Payout ({investorEmiTenure}M):</span>
+                          <strong className="text-emerald-400 font-black text-sm">
+                            ₹{Math.round(4280000 / investorEmiTenure).toLocaleString('en-IN')} / mo
+                          </strong>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span>Total Investor ROI Payout:</span>
+                          <span className="text-slate-200 font-bold">₹42,80,000 across {investorEmiTenure} months</span>
+                        </div>
+                        <div className="pt-1.5 border-t border-emerald-500/20 text-[10px] text-slate-300 space-y-0.5">
+                          <div className="flex justify-between">
+                            <span>Deposited Capital:</span>
+                            <span>₹1,34,00,000</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Monthly Yield ({investorEmiTenure}M):</span>
+                            <span className="text-emerald-300 font-semibold">₹{Math.round(4280000 / investorEmiTenure).toLocaleString('en-IN')}/mo</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span>32% Guaranteed ROI Yield:</span>
-                        <span className="text-emerald-300 font-semibold">₹42,80,000</span>
+                    ) : (
+                      <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 italic text-center">
+                        Payout hidden (Select investor EMI tenure above to display distributed monthly payout)
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
 

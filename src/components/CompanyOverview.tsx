@@ -81,13 +81,15 @@ export const CompanyOverview: React.FC<CompanyOverviewProps> = ({ currentLang, o
                   <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <span><strong>Low Booking Amount:</strong> Lock your dream plot with flat ₹10,000 fee.</span>
                 </li>
-                <li className="flex items-start gap-2">
+                <li className="flex items-start gap-2 bg-emerald-50/80 -mx-2 px-2 py-1.5 rounded-lg border border-emerald-200/80">
                   <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>Legal Peace of Mind:</strong> 100% Freehold land with RERA compliance and quick registry.</span>
+                  <span id="buyer-free-plot-scheme-offer" className="text-slate-800 font-medium">
+                    <strong className="text-emerald-900 font-extrabold">Free Plot Scheme:</strong> Offer for limited time.
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span><strong>Easy EMI Plans:</strong> Flexible installment tenure over 12 or 24 or 36 or 48 or 60 months.</span>
+                  <span><strong>Easy EMI Plans:</strong> Flexible installment tenure over 12, 24, 36, 48, 60, 72, 84, 96, 108, or 120 months.</span>
                 </li>
               </ul>
               <button

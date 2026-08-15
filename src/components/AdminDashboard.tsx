@@ -56,6 +56,7 @@ import { AdminPermissionManager } from './admin/AdminPermissionManager';
 import { AdminEmiManager } from './admin/AdminEmiManager';
 import { AdminEmployeePromotionManager } from './admin/AdminEmployeePromotionManager';
 import { AdminItrManager } from './admin/AdminItrManager';
+import { AdminPayoutManager } from './admin/AdminPayoutManager';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
@@ -138,6 +139,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   ]);
 
   const [localBookings, setLocalBookings] = useState<Booking[]>(bookings);
+  const [customerEmiTenure, setCustomerEmiTenure] = useState<number>(12);
+  const [agentEmiTenure, setAgentEmiTenure] = useState<number>(12);
+  const [investorEmiTenure, setInvestorEmiTenure] = useState<number>(12);
   React.useEffect(() => {
     setLocalBookings(bookings);
   }, [bookings]);
@@ -333,16 +337,55 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </span>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="text-3xl font-black text-white">{customersList.length} Clients</div>
-                    <div className="text-xs text-slate-400 flex justify-between">
-                      <span>Total Customer Payout:</span>
-                      <strong className="text-amber-400 font-extrabold">{formatINR(totalCustomerPayout)}</strong>
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <div className="text-2xl font-black text-white">{customersList.length} Clients</div>
+                      <span className="text-emerald-400 text-xs font-bold">+18.4% Increase</span>
                     </div>
-                    <div className="text-xs text-slate-400 flex justify-between">
-                      <span>Monthly Growth Rate:</span>
-                      <strong className="text-emerald-400 font-extrabold">+18.4% Increase</strong>
+
+                    {/* EMI Tenure Selector */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-amber-300 block mb-1">
+                        Select Customer EMI Tenure:
+                      </label>
+                      <select
+                        value={customerEmiTenure}
+                        onChange={(e) => setCustomerEmiTenure(Number(e.target.value))}
+                        className="w-full bg-slate-950 border border-amber-500/40 text-amber-300 rounded-xl px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-amber-400 cursor-pointer"
+                      >
+                        <option value={12}>12 Months EMI Tenure</option>
+                        <option value={24}>24 Months EMI Tenure</option>
+                        <option value={36}>36 Months EMI Tenure</option>
+                        <option value={48}>48 Months EMI Tenure</option>
+                        <option value={60}>60 Months EMI Tenure</option>
+                        <option value={72}>72 Months EMI Tenure</option>
+                        <option value={84}>84 Months EMI Tenure</option>
+                        <option value={96}>96 Months EMI Tenure</option>
+                        <option value={108}>108 Months EMI Tenure</option>
+                        <option value={120}>120 Months EMI Tenure</option>
+                        <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                      </select>
                     </div>
+
+                    {/* Conditional Payout Div */}
+                    {customerEmiTenure > 0 ? (
+                      <div className="bg-amber-950/40 p-3 rounded-xl border border-amber-500/30 text-xs space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-amber-200/90 font-semibold">Monthly Distributed Payout ({customerEmiTenure}M):</span>
+                          <strong className="text-amber-400 font-black text-sm">
+                            {formatINR(Math.round(totalCustomerPayout / customerEmiTenure))} / mo
+                          </strong>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span>Total Customer Payout:</span>
+                          <span className="text-slate-200 font-bold">{formatINR(totalCustomerPayout)} across {customerEmiTenure} months</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 italic text-center">
+                        Payout hidden (Select customer EMI tenure above to display distributed monthly payout)
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
@@ -391,16 +434,55 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </span>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="text-3xl font-black text-white">{agentsList.length} Agents</div>
-                    <div className="text-xs text-slate-400 flex justify-between">
-                      <span>Agent Commission Payout:</span>
-                      <strong className="text-indigo-400 font-extrabold">{formatINR(totalAgentCommission)}</strong>
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <div className="text-2xl font-black text-white">{agentsList.length} Agents</div>
+                      <span className="text-emerald-400 text-xs font-bold">3 Active / 1 Inactive</span>
                     </div>
-                    <div className="text-xs text-slate-400 flex justify-between">
-                      <span>Active / Inactive Agents:</span>
-                      <strong className="text-emerald-400 font-extrabold">3 Active / 1 Inactive</strong>
+
+                    {/* EMI Tenure Selector */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-indigo-300 block mb-1">
+                        Select Agent EMI Tenure:
+                      </label>
+                      <select
+                        value={agentEmiTenure}
+                        onChange={(e) => setAgentEmiTenure(Number(e.target.value))}
+                        className="w-full bg-slate-950 border border-indigo-500/40 text-indigo-300 rounded-xl px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-indigo-400 cursor-pointer"
+                      >
+                        <option value={12}>12 Months EMI Tenure</option>
+                        <option value={24}>24 Months EMI Tenure</option>
+                        <option value={36}>36 Months EMI Tenure</option>
+                        <option value={48}>48 Months EMI Tenure</option>
+                        <option value={60}>60 Months EMI Tenure</option>
+                        <option value={72}>72 Months EMI Tenure</option>
+                        <option value={84}>84 Months EMI Tenure</option>
+                        <option value={96}>96 Months EMI Tenure</option>
+                        <option value={108}>108 Months EMI Tenure</option>
+                        <option value={120}>120 Months EMI Tenure</option>
+                        <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                      </select>
                     </div>
+
+                    {/* Conditional Payout Div */}
+                    {agentEmiTenure > 0 ? (
+                      <div className="bg-indigo-950/40 p-3 rounded-xl border border-indigo-500/30 text-xs space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-indigo-200/90 font-semibold">Monthly Distributed Payout ({agentEmiTenure}M):</span>
+                          <strong className="text-indigo-300 font-black text-sm">
+                            {formatINR(Math.round(totalAgentCommission / agentEmiTenure))} / mo
+                          </strong>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span>Total Commission Payout:</span>
+                          <span className="text-slate-200 font-bold">{formatINR(totalAgentCommission)} across {agentEmiTenure} months</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 italic text-center">
+                        Payout hidden (Select agent EMI tenure above to display distributed monthly payout)
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
@@ -449,16 +531,55 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </span>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="text-3xl font-black text-white">{investorsList.length} Investors</div>
-                    <div className="text-xs text-slate-400 flex justify-between">
-                      <span>Total Investor Payout:</span>
-                      <strong className="text-emerald-400 font-extrabold">{formatINR(totalInvestorPayout)}</strong>
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <div className="text-2xl font-black text-white">{investorsList.length} Investors</div>
+                      <span className="text-sky-400 text-xs font-bold">Cap: {formatINR(totalInvestedCapital)}</span>
                     </div>
-                    <div className="text-xs text-slate-400 flex justify-between">
-                      <span>Total Invested Capital:</span>
-                      <strong className="text-sky-400 font-extrabold">{formatINR(totalInvestedCapital)}</strong>
+
+                    {/* EMI Tenure Selector */}
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-emerald-300 block mb-1">
+                        Select Investor EMI Tenure:
+                      </label>
+                      <select
+                        value={investorEmiTenure}
+                        onChange={(e) => setInvestorEmiTenure(Number(e.target.value))}
+                        className="w-full bg-slate-950 border border-emerald-500/40 text-emerald-300 rounded-xl px-2.5 py-1.5 text-xs font-bold focus:outline-none focus:border-emerald-400 cursor-pointer"
+                      >
+                        <option value={12}>12 Months EMI Tenure</option>
+                        <option value={24}>24 Months EMI Tenure</option>
+                        <option value={36}>36 Months EMI Tenure</option>
+                        <option value={48}>48 Months EMI Tenure</option>
+                        <option value={60}>60 Months EMI Tenure</option>
+                        <option value={72}>72 Months EMI Tenure</option>
+                        <option value={84}>84 Months EMI Tenure</option>
+                        <option value={96}>96 Months EMI Tenure</option>
+                        <option value={108}>108 Months EMI Tenure</option>
+                        <option value={120}>120 Months EMI Tenure</option>
+                        <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                      </select>
                     </div>
+
+                    {/* Conditional Payout Div */}
+                    {investorEmiTenure > 0 ? (
+                      <div className="bg-emerald-950/40 p-3 rounded-xl border border-emerald-500/30 text-xs space-y-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-emerald-200/90 font-semibold">Monthly Distributed ROI Payout ({investorEmiTenure}M):</span>
+                          <strong className="text-emerald-400 font-black text-sm">
+                            {formatINR(Math.round(totalInvestorPayout / investorEmiTenure))} / mo
+                          </strong>
+                        </div>
+                        <div className="flex justify-between text-[10px] text-slate-400">
+                          <span>Total Investor ROI Payout:</span>
+                          <span className="text-slate-200 font-bold">{formatINR(totalInvestorPayout)} across {investorEmiTenure} months</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 italic text-center">
+                        Payout hidden (Select investor EMI tenure above to display distributed monthly payout)
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
@@ -749,6 +870,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               />
 
             </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB: EMI TENURE-BASED PAYOUT DISTRIBUTION & FINANCIAL AUDIT LEDGER */}
+          {/* ========================================================================= */}
+          {activeTab === 'payouts' && (
+            <AdminPayoutManager />
           )}
 
           {/* ========================================================================= */}

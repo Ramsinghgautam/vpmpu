@@ -31,7 +31,7 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
   const [plotNo, setPlotNo] = useState<string>(initialPlot?.plotNo || 'A-02');
   const [plotSizeSqft, setPlotSizeSqft] = useState<number>(initialPlot?.sizeSqft || 1200);
   const [ratePerSqft, setRatePerSqft] = useState<number>(initialPlot?.ratePerSqft || 1250);
-  const [installmentPlan, setInstallmentPlan] = useState<'12 Months EMI' | '24 Months EMI' | 'Full Payment (5% Discount)'>('12 Months EMI');
+  const [installmentPlan, setInstallmentPlan] = useState<string>('12 Months EMI');
 
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -601,13 +601,18 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
                   <select
                     value={installmentPlan}
                     onChange={(e: any) => setInstallmentPlan(e.target.value)}
-                    className="w-full border border-slate-300 rounded-lg p-2.5 focus:border-sky-600 focus:outline-none font-medium"
+                    className="w-full border border-slate-300 rounded-lg p-2.5 focus:border-sky-600 focus:outline-none font-medium text-slate-800 bg-white"
                   >
                     <option value="12 Months EMI">12 Months Flexible EMI</option>
                     <option value="24 Months EMI">24 Months Flexible EMI</option>
                     <option value="36 Months EMI">36 Months Flexible EMI</option>
                     <option value="48 Months EMI">48 Months Flexible EMI</option>
                     <option value="60 Months EMI">60 Months Flexible EMI</option>
+                    <option value="72 Months EMI">72 Months Flexible EMI</option>
+                    <option value="84 Months EMI">84 Months Flexible EMI</option>
+                    <option value="96 Months EMI">96 Months Flexible EMI</option>
+                    <option value="108 Months EMI">108 Months Flexible EMI</option>
+                    <option value="120 Months EMI">120 Months Flexible EMI</option>
                     <option value="Full Payment (5% Discount)">Full One-Time Payment (5% Discount)</option>
                   </select>
                 </div>

@@ -986,20 +986,6 @@ export const RiskFreeInvestorTable3: React.FC = () => {
                         >
                           + Pay
                         </button>
-
-                        {/* Delete Investor */}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setInvestorToDelete(r);
-                          }}
-                          className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold transition-colors border border-rose-200 cursor-pointer flex items-center gap-1"
-                          title="Delete Investor Record"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-rose-600" />
-                        </button>
-
                       </div>
                     </td>
 

@@ -4,6 +4,7 @@ import { InvestmentRecord, Language } from '../types';
 import { TrendingUp, ShieldAlert, CheckCircle2, Calculator, Landmark, ShieldCheck, ArrowRight, DollarSign } from 'lucide-react';
 import { TRANSLATIONS } from '../utils/translations';
 import { RiskFreeInvestorPublicView } from './RiskFreeInvestorPublicView';
+import { PayoutDiv } from './common/PayoutDiv';
 
 interface InvestorModuleProps {
   currentLang: Language;
@@ -21,7 +22,8 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
 
   // Interactive Calculator State
   const [selectedRate, setSelectedRate] = useState<number>(1450); // Default 22.5%
-  const [sqftArea, setSqftArea] = useState<number>(2000); // 2000 sq.ft default
+  const [sqftArea, setSqftArea] = useState<number>(1050); // 1050 sq.ft default standard plot
+  const [investorEmiTenure, setInvestorEmiTenure] = useState<number>(12); // Default 12 months tenure
 
   const [investorName, setInvestorName] = useState('');
   const [investorPhone, setInvestorPhone] = useState('');
@@ -134,23 +136,94 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
 
             <div className="space-y-4">
               <div>
-                <div className="flex justify-between text-xs font-bold uppercase tracking-wider text-slate-200 mb-1.5">
-                  <span>Investment Area Size (Sq.Ft)</span>
-                  <span className="text-amber-400 font-mono text-sm">{sqftArea} sq.ft</span>
+                <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-slate-200 mb-2">
+                  <span>Investment Area Size</span>
+                  <span className="text-amber-400 font-mono text-sm bg-indigo-950 px-2.5 py-1 rounded-md border border-indigo-800 font-extrabold">{sqftArea} sq.ft</span>
                 </div>
-                <input
-                  type="range"
-                  min="450"
-                  max="10000"
-                  step="500"
-                  value={sqftArea}
-                  onChange={(e) => setSqftArea(Number(e.target.value))}
-                  className="w-full h-2 bg-indigo-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
-                />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-wider">
-                  <span>450 sq.ft</span>
-                  <span>5,000 sq.ft</span>
-                  <span>10,000 sq.ft</span>
+
+                {/* Dropdown with requested standard sizes */}
+                <div className="mb-3">
+                  <label className="block text-[11px] text-amber-300 font-bold uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                    <span>Select Plot Area (Sq.Ft Dropdown)</span>
+                    <span className="text-[10px] text-slate-400 font-normal normal-case">Choose standard dimensions</span>
+                  </label>
+                  <select
+                    id="plot-size-dropdown"
+                    value={sqftArea}
+                    onChange={(e) => setSqftArea(Number(e.target.value))}
+                    className="w-full bg-indigo-950 border border-amber-500/40 hover:border-amber-400 focus:border-amber-400 rounded-xl px-4 py-3 text-sm text-white font-bold focus:outline-none focus:ring-2 focus:ring-amber-400/50 cursor-pointer transition-all shadow-inner"
+                  >
+                    <option value={1050}>1050 sq.ft (Standard Compact Plot)</option>
+                    <option value={1120}>1120 sq.ft (Standard Villa Plot)</option>
+                    <option value={1210}>1210 sq.ft (Corner / Premium Plot)</option>
+                    <option value={1320}>1320 sq.ft (Executive Residential Plot)</option>
+                    <option value={1450}>1450 sq.ft (Deluxe Residential Plot)</option>
+                    <option value={1600}>1600 sq.ft (Luxury Villa Plot)</option>
+                    <option value={1770}>1770 sq.ft (Grand Estate Plot)</option>
+                    <option value={1950}>1950 sq.ft (Commercial Frontage Plot)</option>
+                    <option value={2150}>2150 sq.ft (Palatial Highway Plot)</option>
+                  </select>
+                </div>
+
+                {/* Quick preset chips */}
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 mb-3">
+                  {[1050, 1120, 1210, 1320, 1450, 1600, 1770, 1950, 2150].map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setSqftArea(size)}
+                      className={`text-[10px] font-mono font-bold py-1.5 px-1 rounded-lg text-center transition-all ${
+                        sqftArea === size
+                          ? 'bg-amber-400 text-slate-950 shadow-md font-black ring-2 ring-amber-300 scale-[1.02]'
+                          : 'bg-indigo-950/80 text-slate-300 border border-indigo-800 hover:border-amber-400/60 hover:text-white'
+                      }`}
+                    >
+                      {size} sq.ft
+                    </button>
+                  ))}
+                </div>
+
+                {/* Fine-tuning slider */}
+                <div className="pt-1">
+                  <input
+                    type="range"
+                    min="1050"
+                    max="2150"
+                    step="10"
+                    value={sqftArea}
+                    onChange={(e) => setSqftArea(Number(e.target.value))}
+                    className="w-full h-2 bg-indigo-950 rounded-lg appearance-none cursor-pointer accent-amber-400"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-bold uppercase tracking-wider">
+                    <span>1050 sq.ft</span>
+                    <span className="text-amber-300 font-mono">Current: {sqftArea} sq.ft</span>
+                    <span>2150 sq.ft</span>
+                  </div>
+                </div>
+
+                {/* EMI Tenure Selector */}
+                <div className="mt-3">
+                  <label className="block text-[11px] text-amber-300 font-bold uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                    <span>Select Investor EMI Tenure</span>
+                    <span className="text-[10px] text-slate-400 font-normal normal-case">Distribute payout across months</span>
+                  </label>
+                  <select
+                    value={investorEmiTenure}
+                    onChange={(e) => setInvestorEmiTenure(Number(e.target.value))}
+                    className="w-full bg-indigo-950 border border-amber-500/40 hover:border-amber-400 focus:border-amber-400 rounded-xl px-4 py-2.5 text-xs text-amber-300 font-bold focus:outline-none cursor-pointer"
+                  >
+                    <option value={12}>12 Months EMI Tenure</option>
+                    <option value={24}>24 Months EMI Tenure</option>
+                    <option value={36}>36 Months EMI Tenure</option>
+                    <option value={48}>48 Months EMI Tenure</option>
+                    <option value={60}>60 Months EMI Tenure</option>
+                    <option value={72}>72 Months EMI Tenure</option>
+                    <option value={84}>84 Months EMI Tenure</option>
+                    <option value={96}>96 Months EMI Tenure</option>
+                    <option value={108}>108 Months EMI Tenure</option>
+                    <option value={120}>120 Months EMI Tenure</option>
+                    <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                  </select>
                 </div>
               </div>
 
@@ -171,15 +244,24 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
                   <span className="font-bold text-slate-300">{formatINR(roiCalc.baseCost)}</span>
                 </div>
 
-                <div className="flex justify-between border-b border-indigo-900 pb-2">
-                  <span className="text-slate-300">Calculated ROI</span>
-                  <span className="font-extrabold text-emerald-400 text-sm">{formatINR(roiCalc.cappedRoiPayout)}</span>
+                {/* Reusable Core PayoutDiv with Real-Time Tenure Distribution */}
+                <div className="pt-2">
+                  <PayoutDiv
+                    totalPayout={roiCalc.cappedRoiPayout}
+                    userCategory="Investor"
+                    initialTenure={investorEmiTenure}
+                    onTenureChange={(months) => setInvestorEmiTenure(months)}
+                    showScheduleToggle={true}
+                    className="border-indigo-800 shadow-md"
+                  />
                 </div>
 
-                <div className="flex justify-between pt-1">
-                  <span className="text-slate-200 font-bold uppercase tracking-wider text-[11px]">Total Maturity</span>
-                  <span className="font-black font-serif text-amber-400 text-xl">{formatINR(roiCalc.totalReturn)}</span>
-                </div>
+                {investorEmiTenure > 0 && (
+                  <div className="flex justify-between pt-1 border-t border-indigo-900">
+                    <span className="text-slate-200 font-bold uppercase tracking-wider text-[11px]">Total Maturity ({investorEmiTenure}M)</span>
+                    <span className="font-black font-serif text-amber-400 text-xl">{formatINR(roiCalc.totalReturn)}</span>
+                  </div>
+                )}
               </div>
 
               {/* Rules Notice */}

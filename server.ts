@@ -663,6 +663,362 @@ app.get("/api/mlm/export/csv", (req, res) => {
   res.send(csvHeaders + mockCsvRows);
 });
 
+// =============================================================================
+// EMI TENURE-BASED PAYOUT DISTRIBUTION & MANAGEMENT REST APIS
+// =============================================================================
+
+interface ServerPayoutEntity {
+  id: string;
+  userId: string;
+  userName: string;
+  userPhone: string;
+  userType: 'Customer' | 'Agent' | 'Investor' | 'Risk-Free Investor';
+  totalPayout: number;
+  emiTenureMonths: number;
+  monthlyPayout: number;
+  monthsDisbursed: number;
+  totalDisbursed: number;
+  remainingBalance: number;
+  status: 'Active Distribution' | 'Pending Tenure Selection' | 'Fully Disbursed' | 'Paused';
+  lastDisbursedDate?: string;
+  nextDisbursementDate?: string;
+  plotNo?: string;
+  projectName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+const payoutsCollectionStore: ServerPayoutEntity[] = [
+  {
+    id: "PAYOUT-101",
+    userId: "USR-901",
+    userName: "Rajesh Sharma",
+    userPhone: "9876543210",
+    userType: "Customer",
+    totalPayout: 1250000,
+    emiTenureMonths: 60, // 5 Years
+    monthlyPayout: Math.round(1250000 / 60), // ₹20,833/mo
+    monthsDisbursed: 6,
+    totalDisbursed: Math.round(1250000 / 60) * 6, // ₹1,24,998
+    remainingBalance: 1250000 - Math.round(1250000 / 60) * 6,
+    status: "Active Distribution",
+    lastDisbursedDate: "2026-07-15",
+    nextDisbursementDate: "2026-08-15",
+    plotNo: "C-101",
+    projectName: "Milestone City Prayagraj",
+    createdAt: "2026-01-15",
+    updatedAt: "2026-08-15"
+  },
+  {
+    id: "PAYOUT-102",
+    userId: "USR-903",
+    userName: "Amit Verma",
+    userPhone: "9812345678",
+    userType: "Agent",
+    totalPayout: 2840000,
+    emiTenureMonths: 48, // 4 Years
+    monthlyPayout: Math.round(2840000 / 48), // ₹59,167/mo
+    monthsDisbursed: 8,
+    totalDisbursed: Math.round(2840000 / 48) * 8, // ₹4,73,336
+    remainingBalance: 2840000 - Math.round(2840000 / 48) * 8,
+    status: "Active Distribution",
+    lastDisbursedDate: "2026-07-20",
+    nextDisbursementDate: "2026-08-20",
+    plotNo: "A-08",
+    projectName: "Vigya Paradise Jhunsi",
+    createdAt: "2025-11-20",
+    updatedAt: "2026-08-15"
+  },
+  {
+    id: "PAYOUT-103",
+    userId: "USR-902",
+    userName: "Sanjay Gupta",
+    userPhone: "9988776655",
+    userType: "Investor",
+    totalPayout: 4280000,
+    emiTenureMonths: 36, // 3 Years
+    monthlyPayout: Math.round(4280000 / 36), // ₹1,18,889/mo
+    monthsDisbursed: 12,
+    totalDisbursed: Math.round(4280000 / 36) * 12,
+    remainingBalance: 4280000 - Math.round(4280000 / 36) * 12,
+    status: "Active Distribution",
+    lastDisbursedDate: "2026-07-10",
+    nextDisbursementDate: "2026-08-10",
+    plotNo: "INV-B-14",
+    projectName: "VPM Prime County",
+    createdAt: "2025-07-10",
+    updatedAt: "2026-08-15"
+  },
+  {
+    id: "PAYOUT-104",
+    userId: "USR-906",
+    userName: "Meenakshi Devi",
+    userPhone: "9711223344",
+    userType: "Risk-Free Investor",
+    totalPayout: 1800000,
+    emiTenureMonths: 24, // 2 Years
+    monthlyPayout: Math.round(1800000 / 24), // ₹75,000/mo
+    monthsDisbursed: 4,
+    totalDisbursed: 300000,
+    remainingBalance: 1500000,
+    status: "Active Distribution",
+    lastDisbursedDate: "2026-07-25",
+    nextDisbursementDate: "2026-08-25",
+    plotNo: "RFI-12",
+    projectName: "Milestone Heights",
+    createdAt: "2026-03-25",
+    updatedAt: "2026-08-15"
+  },
+  {
+    id: "PAYOUT-105",
+    userId: "USR-907",
+    userName: "Kavita Srivastava",
+    userPhone: "9823456789",
+    userType: "Customer",
+    totalPayout: 450000,
+    emiTenureMonths: 0, // Unselected
+    monthlyPayout: 0,
+    monthsDisbursed: 0,
+    totalDisbursed: 0,
+    remainingBalance: 450000,
+    status: "Pending Tenure Selection",
+    plotNo: "D-19",
+    projectName: "Milestone City Prayagraj",
+    createdAt: "2026-08-01",
+    updatedAt: "2026-08-01"
+  }
+];
+
+const payoutAuditLogsStore: Array<{
+  id: string;
+  payoutId: string;
+  userName: string;
+  userType: string;
+  action: string;
+  details: string;
+  timestamp: string;
+  adminUser: string;
+}> = [
+  {
+    id: "AUD-PO-001",
+    payoutId: "PAYOUT-101",
+    userName: "Rajesh Sharma",
+    userType: "Customer",
+    action: "TENURE_ASSIGNED",
+    details: "60 Months (5 Years) EMI tenure selected. Distributed monthly payout calculated at ₹20,833/mo.",
+    timestamp: "2026-01-15T10:30:00Z",
+    adminUser: "Director Desk"
+  },
+  {
+    id: "AUD-PO-002",
+    payoutId: "PAYOUT-102",
+    userName: "Amit Verma",
+    userType: "Agent",
+    action: "MONTHLY_DISBURSED",
+    details: "Month #8 EMI installment (₹59,167) disbursed successfully.",
+    timestamp: "2026-07-20T14:15:00Z",
+    adminUser: "System Automated Cron"
+  }
+];
+
+// 1. Get All Payout Records & System Summary Stats
+app.get("/api/payouts", (req, res) => {
+  const { userType, search } = req.query;
+  let list = [...payoutsCollectionStore];
+
+  if (userType && userType !== "all") {
+    list = list.filter(p => p.userType.toLowerCase() === (userType as string).toLowerCase());
+  }
+
+  if (search) {
+    const q = (search as string).toLowerCase();
+    list = list.filter(p =>
+      p.userName.toLowerCase().includes(q) ||
+      p.userPhone.includes(q) ||
+      p.id.toLowerCase().includes(q)
+    );
+  }
+
+  const totalPayoutLiability = payoutsCollectionStore.reduce((sum, p) => sum + p.totalPayout, 0);
+  const totalDisbursed = payoutsCollectionStore.reduce((sum, p) => sum + p.totalDisbursed, 0);
+  const totalRemainingLiability = payoutsCollectionStore.reduce((sum, p) => sum + p.remainingBalance, 0);
+  const totalMonthlyOutflow = payoutsCollectionStore
+    .filter(p => p.emiTenureMonths > 0 && p.status === "Active Distribution")
+    .reduce((sum, p) => sum + p.monthlyPayout, 0);
+
+  res.json({
+    success: true,
+    count: list.length,
+    payouts: list,
+    summary: {
+      totalPayoutLiability,
+      totalDisbursed,
+      totalRemainingLiability,
+      totalMonthlyOutflow,
+      activeTenuresCount: payoutsCollectionStore.filter(p => p.emiTenureMonths > 0).length,
+      pendingTenuresCount: payoutsCollectionStore.filter(p => p.emiTenureMonths === 0).length
+    }
+  });
+});
+
+// 2. Real-Time Calculation API with Validation
+app.post("/api/payouts/calculate", (req, res) => {
+  const { totalPayout, emiTenureMonths, userCategory = "Customer" } = req.body;
+
+  if (typeof totalPayout !== "number" || totalPayout < 0) {
+    return res.status(400).json({
+      success: false,
+      error: "Invalid total payout amount. Amount cannot be negative."
+    });
+  }
+
+  if (!emiTenureMonths || emiTenureMonths <= 0) {
+    return res.json({
+      success: true,
+      isValid: false,
+      message: "Please select an EMI tenure to view payout distribution.",
+      totalPayout,
+      emiTenureMonths: 0,
+      monthlyPayout: 0,
+      userCategory
+    });
+  }
+
+  const monthlyPayout = Math.round(totalPayout / emiTenureMonths);
+
+  res.json({
+    success: true,
+    isValid: true,
+    totalPayout,
+    emiTenureMonths,
+    monthlyPayout,
+    userCategory,
+    formulaApplied: `₹${totalPayout.toLocaleString('en-IN')} ÷ ${emiTenureMonths} Months = ₹${monthlyPayout.toLocaleString('en-IN')}/mo`
+  });
+});
+
+// 3. Update User EMI Tenure
+app.put("/api/payouts/:id/tenure", (req, res) => {
+  const { id } = req.params;
+  const { emiTenureMonths, adminUser = "Director Desk" } = req.body;
+
+  const payout = payoutsCollectionStore.find(p => p.id === id);
+  if (!payout) {
+    return res.status(404).json({ success: false, error: "Payout record not found." });
+  }
+
+  const oldTenure = payout.emiTenureMonths;
+  const oldMonthly = payout.monthlyPayout;
+
+  const validTenure = Number(emiTenureMonths) || 0;
+  payout.emiTenureMonths = validTenure;
+
+  if (validTenure > 0) {
+    payout.monthlyPayout = Math.round(payout.totalPayout / validTenure);
+    payout.status = "Active Distribution";
+    payout.remainingBalance = Math.max(0, payout.totalPayout - payout.totalDisbursed);
+  } else {
+    payout.monthlyPayout = 0;
+    payout.status = "Pending Tenure Selection";
+  }
+
+  payout.updatedAt = new Date().toISOString();
+
+  // Audit Log
+  const logEntry = {
+    id: "AUD-PO-" + Math.floor(1000 + Math.random() * 9000),
+    payoutId: payout.id,
+    userName: payout.userName,
+    userType: payout.userType,
+    action: "TENURE_ASSIGNED",
+    details: `EMI Tenure updated from ${oldTenure}M to ${validTenure}M. New monthly payout: ₹${payout.monthlyPayout.toLocaleString('en-IN')}/mo.`,
+    timestamp: new Date().toISOString(),
+    adminUser
+  };
+  payoutAuditLogsStore.unshift(logEntry);
+
+  res.json({
+    success: true,
+    message: `Tenure updated to ${validTenure} Months. Monthly payout recalculated successfully.`,
+    payout
+  });
+});
+
+// 4. Disburse Monthly Installment
+app.post("/api/payouts/:id/disburse-monthly", (req, res) => {
+  const { id } = req.params;
+  const { adminUser = "Director Desk", paymentReference } = req.body;
+
+  const payout = payoutsCollectionStore.find(p => p.id === id);
+  if (!payout) {
+    return res.status(404).json({ success: false, error: "Payout record not found." });
+  }
+
+  if (payout.emiTenureMonths <= 0) {
+    return res.status(400).json({ success: false, error: "Cannot disburse payout. No EMI tenure selected." });
+  }
+
+  if (payout.remainingBalance <= 0) {
+    return res.status(400).json({ success: false, error: "Payout is already fully disbursed." });
+  }
+
+  const disburseAmount = Math.min(payout.monthlyPayout, payout.remainingBalance);
+  payout.monthsDisbursed += 1;
+  payout.totalDisbursed += disburseAmount;
+  payout.remainingBalance = Math.max(0, payout.totalPayout - payout.totalDisbursed);
+  payout.lastDisbursedDate = new Date().toISOString().split("T")[0];
+
+  const nextDate = new Date();
+  nextDate.setMonth(nextDate.getMonth() + 1);
+  payout.nextDisbursementDate = nextDate.toISOString().split("T")[0];
+
+  if (payout.remainingBalance === 0 || payout.monthsDisbursed >= payout.emiTenureMonths) {
+    payout.status = "Fully Disbursed";
+  }
+
+  payout.updatedAt = new Date().toISOString();
+
+  // Audit Log
+  const logEntry = {
+    id: "AUD-PO-" + Math.floor(1000 + Math.random() * 9000),
+    payoutId: payout.id,
+    userName: payout.userName,
+    userType: payout.userType,
+    action: "MONTHLY_DISBURSED",
+    details: `Disbursed Month #${payout.monthsDisbursed} installment of ₹${disburseAmount.toLocaleString('en-IN')}. Remaining: ₹${payout.remainingBalance.toLocaleString('en-IN')}. Ref: ${paymentReference || 'BANK-DIRECT-NEFT'}`,
+    timestamp: new Date().toISOString(),
+    adminUser
+  };
+  payoutAuditLogsStore.unshift(logEntry);
+
+  res.json({
+    success: true,
+    message: `Month #${payout.monthsDisbursed} payout installment disbursed successfully!`,
+    payout
+  });
+});
+
+// 5. Export Payouts CSV
+app.get("/api/payouts/export/csv", (req, res) => {
+  const headers = "Payout_ID,User_Name,Phone,User_Type,Total_Payout_INR,EMI_Tenure_Months,Monthly_Payout_INR,Total_Disbursed_INR,Remaining_Balance_INR,Status,Last_Disbursed,Next_Due\n";
+  const rows = payoutsCollectionStore.map(p =>
+    `"${p.id}","${p.userName}","${p.userPhone}","${p.userType}",${p.totalPayout},${p.emiTenureMonths},${p.monthlyPayout},${p.totalDisbursed},${p.remainingBalance},"${p.status}","${p.lastDisbursedDate || 'N/A'}","${p.nextDisbursementDate || 'N/A'}"`
+  ).join("\n");
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=VigyaPaurush_Payout_Distribution_Report.csv");
+  res.send(headers + rows);
+});
+
+// 6. Get Payout Audit Logs
+app.get("/api/payouts/audit-logs", (req, res) => {
+  res.json({
+    success: true,
+    count: payoutAuditLogsStore.length,
+    logs: payoutAuditLogsStore
+  });
+});
+
 // Mock Auth OTP verify
 app.post("/api/auth/send-otp", (req, res) => {
   const { phone, gateway = "Fast2SMS", purpose = "Verification" } = req.body;

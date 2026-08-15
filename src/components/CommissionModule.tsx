@@ -24,6 +24,7 @@ export const CommissionModule: React.FC<CommissionModuleProps> = ({ currentLang,
   const [calcRole, setCalcRole] = useState<'buyer' | 'agent'>('buyer');
   const [numPlots, setNumPlots] = useState<number>(3);
   const [avgPlotPrice, setAvgPlotPrice] = useState<number>(1500000); // 15 Lakhs default
+  const [emiTenureMonths, setEmiTenureMonths] = useState<number>(12); // Default 12 months tenure
 
   const buyerResult = calculateCumulativeBuyerCommission(numPlots, avgPlotPrice);
   const agentResult = calculateCumulativeAgentCommission(numPlots, avgPlotPrice);
@@ -205,12 +206,55 @@ export const CommissionModule: React.FC<CommissionModuleProps> = ({ currentLang,
                 />
               </div>
 
-              <div className="bg-indigo-900/90 p-4 rounded-xl border border-indigo-800">
-                <span className="text-slate-300 text-[10px] font-bold uppercase tracking-wider">Total Calculated Commission Payout</span>
-                <p className="text-3xl font-serif font-black text-emerald-400 mt-1">
-                  {formatINR(activeResult.totalCommission)}
-                </p>
+              {/* EMI Tenure Selector */}
+              <div>
+                <label className="block text-slate-200 font-bold uppercase tracking-wider text-[10px] mb-1">
+                  Select {calcRole === 'buyer' ? 'Customer' : 'Agent'} EMI Tenure:
+                </label>
+                <select
+                  value={emiTenureMonths}
+                  onChange={(e) => setEmiTenureMonths(Number(e.target.value))}
+                  className="w-full bg-indigo-900/80 border border-indigo-700 text-white rounded-lg p-2.5 text-xs font-bold focus:outline-none focus:border-amber-400 cursor-pointer"
+                >
+                  <option value={12}>12 Months EMI Tenure</option>
+                  <option value={24}>24 Months EMI Tenure</option>
+                  <option value={36}>36 Months EMI Tenure</option>
+                  <option value={48}>48 Months EMI Tenure</option>
+                  <option value={60}>60 Months EMI Tenure</option>
+                  <option value={72}>72 Months EMI Tenure</option>
+                  <option value={84}>84 Months EMI Tenure</option>
+                  <option value={96}>96 Months EMI Tenure</option>
+                  <option value={108}>108 Months EMI Tenure</option>
+                  <option value={120}>120 Months EMI Tenure</option>
+                  <option value={0}>No EMI Tenure Selected (Hide Payout)</option>
+                </select>
               </div>
+
+              {/* Conditional Payout Div */}
+              {emiTenureMonths > 0 ? (
+                <div className="bg-indigo-900/90 p-4 rounded-xl border border-indigo-700 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-300 text-[10px] font-bold uppercase tracking-wider">
+                      Distributed Monthly Payout ({emiTenureMonths} Months)
+                    </span>
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded">
+                      {emiTenureMonths}M Distribution
+                    </span>
+                  </div>
+                  <p className="text-2xl sm:text-3xl font-serif font-black text-emerald-400">
+                    {formatINR(Math.round(activeResult.totalCommission / emiTenureMonths))}
+                    <span className="text-xs font-normal text-slate-300 font-sans ml-1">/ month</span>
+                  </p>
+                  <div className="flex justify-between text-[11px] text-slate-300 pt-1.5 border-t border-indigo-800">
+                    <span>Total Cumulative Payout:</span>
+                    <strong className="text-white font-extrabold">{formatINR(activeResult.totalCommission)}</strong>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-indigo-950/80 p-4 rounded-xl border border-indigo-800 text-[11px] text-slate-400 italic text-center">
+                  Payout hidden. Please select an EMI tenure above to calculate and display the distributed monthly payout.
+                </div>
+              )}
             </div>
 
             {/* Breakdown List */}

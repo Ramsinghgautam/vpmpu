@@ -254,14 +254,31 @@ export const RiskFreeInvestorPublicView: React.FC<RiskFreeInvestorPublicViewProp
           {/* Controls */}
           <div className="space-y-4 md:col-span-1">
             <div>
-              <label className="text-xs font-bold text-slate-300 block mb-1.5">
-                Plot Size (SqFt):
+              <label className="text-xs font-bold text-slate-300 block mb-1.5 flex justify-between items-center">
+                <span>Select Plot Size (Sq.Ft):</span>
+                <span className="text-[10px] text-amber-400 font-mono">{customSqft} sq.ft</span>
               </label>
+              <select
+                value={customSqft}
+                onChange={(e) => setCustomSqft(parseInt(e.target.value))}
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-bold text-xs focus:outline-none focus:border-amber-400 cursor-pointer mb-2"
+              >
+                <option value={1050}>1050 sq.ft (Standard Compact Plot)</option>
+                <option value={1120}>1120 sq.ft (Standard Villa Plot)</option>
+                <option value={1210}>1210 sq.ft (Corner / Premium Plot)</option>
+                <option value={1320}>1320 sq.ft (Executive Residential Plot)</option>
+                <option value={1450}>1450 sq.ft (Deluxe Residential Plot)</option>
+                <option value={1600}>1600 sq.ft (Luxury Villa Plot)</option>
+                <option value={1770}>1770 sq.ft (Grand Estate Plot)</option>
+                <option value={1950}>1950 sq.ft (Commercial Frontage Plot)</option>
+                <option value={2150}>2150 sq.ft (Palatial Highway Plot)</option>
+              </select>
               <input
                 type="number"
                 value={customSqft}
-                onChange={(e) => setCustomSqft(Math.max(100, parseInt(e.target.value) || 900))}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-bold text-sm focus:outline-none focus:border-amber-400"
+                onChange={(e) => setCustomSqft(Math.max(100, parseInt(e.target.value) || 1050))}
+                className="w-full px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-white font-bold text-xs focus:outline-none focus:border-amber-400"
+                placeholder="Or type custom sqft"
               />
             </div>
 

@@ -684,5 +684,50 @@ export interface MlmSystemSummary {
   pendingWithdrawalsCount: number;
   pendingWithdrawalsAmount: number;
 }
+
+// =============================================================================
+// EMI TENURE-BASED PAYOUT DISTRIBUTION SYSTEM TYPES
+// =============================================================================
+
+export type PayoutCategory = 'Customer' | 'Agent' | 'Investor' | 'Risk-Free Investor';
+
+export interface PayoutRecordItem {
+  id: string;
+  userId: string;
+  userName: string;
+  userPhone: string;
+  userType: PayoutCategory;
+  totalPayout: number;
+  emiTenureMonths: number;
+  monthlyPayout: number;
+  monthsDisbursed: number;
+  totalDisbursed: number;
+  remainingBalance: number;
+  status: 'Active Distribution' | 'Pending Tenure Selection' | 'Fully Disbursed' | 'Paused';
+  lastDisbursedDate?: string;
+  nextDisbursementDate?: string;
+  plotNo?: string;
+  projectName?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PayoutAuditLogEntry {
+  id: string;
+  payoutId: string;
+  userName: string;
+  userType: PayoutCategory;
+  action: 'TENURE_ASSIGNED' | 'PAYOUT_RECALCULATED' | 'MONTHLY_DISBURSED' | 'STATUS_CHANGED';
+  oldTenure?: number;
+  newTenure?: number;
+  oldMonthlyPayout?: number;
+  newMonthlyPayout?: number;
+  disbursedAmount?: number;
+  remainingBalanceAfter?: number;
+  timestamp: string;
+  adminUser: string;
+  notes: string;
+}
+
 export * from './permissions';
 

@@ -27,6 +27,7 @@ import {
 
 export type AdminTabType = 
   | 'dashboard'
+  | 'payouts'
   | 'customers'
   | 'agents'
   | 'investors'
@@ -78,6 +79,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       title: 'CORE MANAGEMENT',
       items: [
         { id: 'dashboard' as AdminTabType, label: 'Dashboard', icon: LayoutDashboard, badge: null },
+        { id: 'payouts' as AdminTabType, label: 'EMI Tenure Payouts', icon: Calculator, badge: 'Distributed' },
         { id: 'mlm_team' as AdminTabType, label: 'Multi-Level Team Bonus', icon: GitMerge, badge: '9 Levels' },
         { id: 'customers' as AdminTabType, label: 'Customers', icon: Users, badge: `${counts.customersCount}` },
         { id: 'agents' as AdminTabType, label: 'Agents', icon: Award, badge: `${counts.agentsCount}` },
