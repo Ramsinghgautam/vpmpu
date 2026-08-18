@@ -57,6 +57,8 @@ import { AdminEmiManager } from './admin/AdminEmiManager';
 import { AdminEmployeePromotionManager } from './admin/AdminEmployeePromotionManager';
 import { AdminItrManager } from './admin/AdminItrManager';
 import { AdminPayoutManager } from './admin/AdminPayoutManager';
+import { AdminLumpSumSchemeManager } from './admin/AdminLumpSumSchemeManager';
+import { AdminEmiFreePlotSchemeManager } from './admin/AdminEmiFreePlotSchemeManager';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, BarChart, Bar } from 'recharts';
@@ -870,6 +872,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               />
 
             </div>
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB: फ्री प्लॉट स्कीम (EMI / किस्त योजना) MODULE */}
+          {/* ========================================================================= */}
+          {activeTab === 'free_plot_emi_scheme' && (
+            <AdminEmiFreePlotSchemeManager isDarkMode={isDarkMode} />
+          )}
+
+          {/* ========================================================================= */}
+          {/* TAB: एकमुश्त फ्री प्लॉट स्कीम (LUMP-SUM FREE PLOT SCHEME) MODULE */}
+          {/* ========================================================================= */}
+          {activeTab === 'lump_sum_scheme' && (
+            <AdminLumpSumSchemeManager isDarkMode={isDarkMode} />
           )}
 
           {/* ========================================================================= */}

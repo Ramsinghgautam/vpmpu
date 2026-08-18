@@ -4,6 +4,7 @@ import { InvestmentRecord, Language } from '../types';
 import { TrendingUp, ShieldAlert, CheckCircle2, Calculator, Landmark, ShieldCheck, ArrowRight, DollarSign } from 'lucide-react';
 import { TRANSLATIONS } from '../utils/translations';
 import { RiskFreeInvestorPublicView } from './RiskFreeInvestorPublicView';
+import { EmiFreePlotSchemePublicView } from './EmiFreePlotSchemePublicView';
 import { PayoutDiv } from './common/PayoutDiv';
 
 interface InvestorModuleProps {
@@ -350,6 +351,11 @@ export const InvestorModule: React.FC<InvestorModuleProps> = ({
             )}
           </div>
 
+        </div>
+
+        {/* Dedicated Free Plot Scheme EMI Module */}
+        <div className="mt-16 pt-12 border-t border-indigo-900/80">
+          <EmiFreePlotSchemePublicView />
         </div>
 
         {/* Dedicated Risk Free Investor System Module */}

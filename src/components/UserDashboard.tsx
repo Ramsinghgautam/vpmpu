@@ -11,6 +11,8 @@ import { CustomerPaymentHistory } from './CustomerPaymentHistory';
 import { UserRiskFreeInvestorView } from './UserRiskFreeInvestorView';
 import { UserAgentPortalView } from './UserAgentPortalView';
 import { UserEmployeePortalView } from './UserEmployeePortalView';
+import { UserLumpSumSchemeView } from './UserLumpSumSchemeView';
+import { UserEmiFreePlotSchemeView } from './UserEmiFreePlotSchemeView';
 
 interface UserDashboardProps {
   currentUser: User | null;
@@ -27,7 +29,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   onLogout,
   onNavigate
 }) => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial' | 'media' | 'risk_free_investor' | 'agent_portal' | 'employee_portal'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'free_plot_emi_scheme' | 'lump_sum_scheme' | 'bookings' | 'investments' | 'commissions' | 'team' | 'docs' | 'payments' | 'emi' | 'financial' | 'media' | 'risk_free_investor' | 'agent_portal' | 'employee_portal'>('profile');
   const [financialTimeframe, setFinancialTimeframe] = useState<'monthly' | 'quarterly' | 'sixMonthly' | 'annually'>('monthly');
   const [copiedRef, setCopiedRef] = useState(false);
   const [showICardModal, setShowICardModal] = useState(false);
@@ -1494,6 +1496,22 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
           </button>
 
           <button
+            onClick={() => setActiveTab('free_plot_emi_scheme')}
+            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'free_plot_emi_scheme' ? 'bg-gradient-to-r from-purple-700 to-indigo-800 text-white shadow-md font-black ring-2 ring-purple-400/50' : 'text-purple-900 bg-purple-50 hover:bg-purple-100 border border-purple-400/50 font-bold'}`}
+          >
+            <ShieldCheck className="w-4 h-4 text-amber-400" />
+            <span>फ्री प्लॉट EMI योजना</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('lump_sum_scheme')}
+            className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'lump_sum_scheme' ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md font-black ring-2 ring-amber-400/50' : 'text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-500/40 font-bold'}`}
+          >
+            <ShieldCheck className="w-4 h-4 text-amber-600" />
+            <span>एकमुश्त फ्री प्लॉट स्कीम</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('risk_free_investor')}
             className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-1.5 ${activeTab === 'risk_free_investor' ? 'bg-amber-500 text-slate-950 shadow-md font-black' : 'text-slate-700 hover:bg-amber-50 border border-amber-500/30 font-bold'}`}
           >
@@ -1517,6 +1535,16 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             <span>Employee Promotion & Honorarium Portal</span>
           </button>
         </div>
+
+        {/* Tab: Free Plot Scheme EMI Module (फ्री प्लॉट स्कीम EMI मॉड्यूल) */}
+        {activeTab === 'free_plot_emi_scheme' && (
+          <UserEmiFreePlotSchemeView isDarkMode={false} />
+        )}
+
+        {/* Tab: Lump-Sum Free Plot Scheme (एकमुश्त फ्री प्लॉट स्कीम) */}
+        {activeTab === 'lump_sum_scheme' && (
+          <UserLumpSumSchemeView isDarkMode={false} />
+        )}
 
         {/* Tab: Employee Promotion & Honorarium Portal */}
         {activeTab === 'employee_portal' && (

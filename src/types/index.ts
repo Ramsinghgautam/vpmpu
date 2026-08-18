@@ -729,5 +729,304 @@ export interface PayoutAuditLogEntry {
   notes: string;
 }
 
+// =============================================================================
+// एकमुश्त फ्री प्लॉट स्कीम (LUMP-SUM FREE PLOT SCHEME) TYPES & INTERFACES
+// =============================================================================
+
+export interface LumpSumSchemeSlab {
+  slNo: number;
+  purchaseRate: number; // ₹/sqft: 1050, 1120, 1210, 1320, 1450, 1600, 1770, 1950, 2150
+  plotAreaSqft: number; // Standard base: 900 sqft
+  totalInvestmentAmount: number; // plotAreaSqft * purchaseRate
+  interestRatePercent: number; // 16.5%, 17.5%, 19.0%, 20.5%, 22.5%, 24.5%, 27.0%, 29.5%, 32.0%
+  totalPayableAmount: number; // totalInvestmentAmount + (totalInvestmentAmount * interestRatePercent / 100)
+  label: string;
+  conditionATenureYears: number; // 12 Years
+  conditionBTargetPlots: number; // 7 Plots
+}
+
+export interface LumpSumSoldPlotRecord {
+  id: string;
+  plotNo: string;
+  projectName: string;
+  buyerName: string;
+  buyerPhone: string;
+  saleAmount: number;
+  saleDate: string;
+  registeredBy: string;
+  status: 'Verified' | 'Pending Verification';
+}
+
+export interface LumpSumNomineeDetails {
+  nomineeName: string;
+  nomineeRelation: string;
+  nomineeAge: number;
+  nomineePhone: string;
+  nomineeAadhar?: string;
+}
+
+export type LumpSumEligibilityStatus =
+  | 'In Progress (Condition A / B)'
+  | 'Eligible - Condition B (7 Plots Sold!)'
+  | 'Eligible - Condition A (12 Years Matured)'
+  | 'Disbursed / Completed'
+  | 'Pending Approval'
+  | 'Non-Active';
+
+export interface LumpSumInvestorRecord {
+  id: string; // Auto-generated e.g. "LFPS-2026-001"
+  investorName: string;
+  phone: string;
+  email: string;
+  seniorName: string;
+  seniorId: string;
+  address: string;
+  plotNo?: string;
+  plotSizeSqft: number; // 900 sqft default
+  purchaseRateSqft: number; // e.g. 2150
+  interestRatePercent: number; // e.g. 32.0%
+  totalInvestmentAmount: number; // plotSizeSqft * purchaseRateSqft
+  totalReturnAmount: number; // totalInvestmentAmount * (interestRatePercent / 100)
+  totalPayableAmount: number; // totalInvestmentAmount + totalReturnAmount
+  joiningDate: string; // ISO date string e.g. "2026-01-15"
+  maturityDateConditionA: string; // joiningDate + 12 years
+  nominee: LumpSumNomineeDetails;
+  
+  // Plots Sold Tracking (Condition B: 7 Plots)
+  plotsSoldTarget: number; // 7
+  plotsSoldCount: number; // e.g. 0 to 7
+  soldPlotsList: LumpSumSoldPlotRecord[];
+  
+  // Eligibility & Payout State
+  status: LumpSumEligibilityStatus;
+  isConditionAMet: boolean; // 12 years elapsed
+  isConditionBMet: boolean; // >= 7 plots sold
+  isPayoutEligible: boolean; // Condition A or B reached
+  isPayoutDisbursed: boolean;
+  payoutDisbursedDate?: string;
+  payoutTxnReference?: string;
+  payoutDisbursedAmount?: number;
+  payoutMode?: 'Bank Transfer (RTGS/NEFT)' | 'Cheque' | 'Direct Deposit';
+  
+  // Audit Trail
+  auditLogs: {
+    id: string;
+    timestamp: string;
+    actor: string;
+    action: string;
+    details: string;
+  }[];
+  
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LumpSumSchemeSummary {
+  totalInvestors: number;
+  totalInvestmentAmount: number;
+  totalPayableAmount: number;
+  totalReturnLiability: number;
+  eligibleInvestorsCount: number;
+  eligiblePayableAmount: number;
+  pendingMaturityCount: number;
+  pendingMaturityAmount: number;
+  completedPayoutsCount: number;
+  completedDisbursedAmount: number;
+  totalPlotsSold: number;
+  conditionBAchieversCount: number;
+  conditionAAchieversCount: number;
+}
+
+// =============================================================================
+// 24.5% फ्री प्लॉट स्कीम (EMI / किस्तों में प्लॉट) TYPES & INTERFACES
+// =============================================================================
+
+export interface EmiFreePlotSchemePlan {
+  id?: string;
+  schemeName?: string;
+  tenureMonths: number; // 12, 24, 36, 48, 60, 72, 84, 96, 108, 120
+  monthlyInstallment: number; // e.g. 120000, 60000, 40000...
+  monthlyReturn: number; // e.g. 149400, 74700, 49800...
+  requiredPlotSales: number; // 6 for 12-72m, 5 for 84-120m
+  bonusReturnPerPlot: number; // e.g. 29294, 29294, 9764...
+  plotSizeSqft: number; // 900 sq.ft.
+  interestRatePercent: number; // 24.5%
+  totalTenureInvestment: number; // monthlyInstallment * tenureMonths
+  totalTenureReturn: number; // monthlyReturn * tenureMonths
+  isActive?: boolean;
+  startDate?: string;
+  endDate?: string;
+  notes?: string;
+}
+
+export interface EmiPaymentRecord {
+  installmentNo: number;
+  dueDate: string;
+  paidDate?: string;
+  amount: number;
+  status: 'Paid' | 'Due' | 'Overdue' | 'Upcoming';
+  paymentMode?: 'UPI' | 'Net Banking' | 'Cheque' | 'Cash' | 'Auto-Debit' | 'RTGS/NEFT';
+  txnRef?: string;
+  receiptNumber?: string;
+  notes?: string;
+}
+
+export interface EmiSoldPlotRecord {
+  id: string; // e.g. "SP-2026-001"
+  investorId?: string;
+  buyerId?: string;
+  plotId?: string;
+  plotNo: string;
+  projectName: string;
+  buyerName: string;
+  buyerPhone: string;
+  saleAmount: number;
+  saleDate: string;
+  monthlyBonusRate: number; // from plan's bonusReturnPerPlot
+  registeredBy: string;
+  agentId?: string;
+  seniorId?: string;
+  status: 'Verified' | 'Pending Verification' | 'Rejected';
+  verifiedBy?: string;
+  verificationDate?: string;
+  rejectionReason?: string;
+}
+
+export interface EmiMasterConfigAuditLog {
+  id: string;
+  changedBy: string;
+  tenureMonths: number;
+  parameterName: string;
+  oldValue: string | number;
+  newValue: string | number;
+  timestamp: string;
+  reason: string;
+}
+
+export interface EmiCollectionLedgerEntry {
+  id: string;
+  date: string;
+  investorId: string;
+  investorName: string;
+  installmentNo: number;
+  amount: number;
+  paymentMethod: string;
+  txnRef: string;
+  receiptNumber: string;
+  status: 'Paid' | 'Pending' | 'Failed';
+}
+
+export interface EmiPayoutLedgerEntry {
+  id: string;
+  investorId: string;
+  investorName: string;
+  scheme: string;
+  eligiblePlotSales: number;
+  monthlyReturn: number;
+  payoutPeriod: string;
+  amount: number;
+  approvalStatus: 'Approved' | 'Pending' | 'Rejected' | 'Disbursed';
+  paidDate?: string;
+  transactionReference?: string;
+  payoutMode?: string;
+}
+
+export interface EmiNomineeDetails {
+  nomineeName: string;
+  nomineeRelation: string;
+  nomineeAge: number;
+  nomineePhone: string;
+  nomineeAadhar?: string;
+}
+
+export type EmiInvestorStatus =
+  | 'None Active'
+  | 'Active'
+  | 'Eligible'
+  | 'Disbursed'
+  | 'Completed';
+
+export interface EmiInvestorRecord {
+  id: string; // e.g. "INV-205-2026-001"
+  investorName: string;
+  phone: string;
+  email: string;
+  seniorName: string;
+  seniorId: string;
+  address: string;
+  plotNo?: string;
+  plotSizeSqft: number; // 900 sqft default
+  tenureMonths: number; // 12, 24, 36, 48, 60, 72, 84, 96, 108, 120
+  monthlyEmi: number;
+  monthlyReturn: number;
+  bonusReturnPerPlot: number;
+  requiredPlotSales: number;
+  interestRatePercent: number; // 20.5%
+  totalInvestment: number; // monthlyEmi * tenureMonths
+  totalExpectedReturn: number; // monthlyReturn * tenureMonths
+  joiningDate: string;
+  maturityDate: string;
+  nominee: EmiNomineeDetails;
+
+  // Status & Progress
+  status: EmiInvestorStatus;
+  paidInstallmentsCount: number;
+  totalPaidAmount: number;
+  remainingInstallmentsCount: number;
+  remainingAmount: number;
+  nextEmiDueDate: string;
+
+  // Plot Sales & Bonus
+  plotsSoldCount: number;
+  soldPlotsList: EmiSoldPlotRecord[];
+  monthlyBonusAmount: number; // verified plots * bonusReturnPerPlot
+  totalCurrentMonthlyReturn: number; // monthlyReturn + monthlyBonusAmount
+
+  // Eligibility & Payout
+  isPlotTargetMet: boolean; // plotsSoldCount >= requiredPlotSales
+  isTenureCompleted: boolean; // paidInstallmentsCount >= tenureMonths
+  isPayoutEligible: boolean; // isPlotTargetMet || isTenureCompleted
+  isPayoutDisbursed: boolean;
+  payoutDisbursedDate?: string;
+  payoutTxnReference?: string;
+  payoutDisbursedAmount?: number;
+  payoutMode?: 'Bank Transfer (RTGS/NEFT)' | 'Cheque' | 'Direct Deposit';
+
+  // Bank & Payment Details
+  bankName?: string;
+  accountNumber?: string;
+  ifscCode?: string;
+  panNumber?: string;
+  aadharNumber?: string;
+
+  // Ledgers & Audit
+  emiLedger: EmiPaymentRecord[];
+  auditLogs: {
+    id: string;
+    timestamp: string;
+    actor: string;
+    action: string;
+    details: string;
+  }[];
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface EmiSchemeAnalytics {
+  totalInvestors: number;
+  activeInvestors: number;
+  eligibleInvestors: number;
+  completedInvestors: number;
+  totalInvestmentAmount?: number;
+  totalEmiCollection: number;
+  totalOutstandingEmi?: number;
+  totalExpectedLiability: number;
+  totalSoldPlots: number;
+  monthlyCashflow: number;
+  yearlyCashflow: number;
+  totalPayoutAmount: number;
+}
+
 export * from './permissions';
 

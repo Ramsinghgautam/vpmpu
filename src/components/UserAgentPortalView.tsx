@@ -36,6 +36,10 @@ import {
   getSlabForSaleNumber,
   calculateAgentSaleCommission
 } from '../data/agentCommissionEngine';
+import {
+  loadEmiInvestorsFromStorage,
+  loadEmiPlansFromStorage
+} from '../utils/freePlotEmiSchemeEngine';
 import { formatINR } from '../utils/calculators';
 import { AgentCommissionCalculatorView } from './AgentCommissionCalculatorView';
 
@@ -542,6 +546,122 @@ export const UserAgentPortalView: React.FC<UserAgentPortalViewProps> = ({ curren
                       </span>
                     </td>
                     <td className="p-3 font-mono text-slate-400">{wd.transactionId || '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* 24.5% Free Plot Scheme Portfolio Network */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                24.5% Scheme Network
+              </span>
+              <span className="text-xs text-emerald-400 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" /> 6/5 Plot Target Tracking
+              </span>
+            </div>
+            <h2 className="text-xl font-black text-white mt-1 flex items-center gap-2">
+              <Award className="w-5 h-5 text-amber-400" />
+              24.5% फ्री प्लॉट स्कीम – Enrolled Investors Portfolio
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Active investors enrolled under 24.5% Scheme, tenure completion, verified plot sales progress, and maturity status.
+            </p>
+          </div>
+
+          <div className="bg-slate-950 px-4 py-2.5 rounded-xl border border-slate-800 text-right">
+            <span className="text-[10px] text-slate-400 font-bold uppercase block">Total Managed Volume</span>
+            <span className="text-lg font-black text-amber-400">
+              {formatINR(
+                loadEmiInvestorsFromStorage().reduce((acc, inv) => acc + inv.totalInvestment, 0)
+              )}
+            </span>
+          </div>
+        </div>
+
+        {loadEmiInvestorsFromStorage().length === 0 ? (
+          <p className="text-xs text-slate-400 text-center py-6">No 24.5% scheme investors enrolled yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-800/80 text-slate-300 border-b border-slate-700">
+                  <th className="p-3">Investor ID</th>
+                  <th className="p-3">Name & Phone</th>
+                  <th className="p-3">Tenure / EMI</th>
+                  <th className="p-3">Total Investment</th>
+                  <th className="p-3">EMI Paid Status</th>
+                  <th className="p-3">Plot Sales (Target)</th>
+                  <th className="p-3">Monthly Return</th>
+                  <th className="p-3 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {loadEmiInvestorsFromStorage().map((inv) => (
+                  <tr key={inv.id} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="p-3 font-mono font-bold text-amber-300">{inv.id}</td>
+                    <td className="p-3">
+                      <div className="font-bold text-white">{inv.investorName}</div>
+                      <div className="text-[10px] text-slate-400 font-mono">{inv.phone}</div>
+                    </td>
+                    <td className="p-3">
+                      <div className="font-bold text-slate-200">{inv.tenureMonths} Months</div>
+                      <div className="text-[10px] text-amber-400 font-mono">₹{formatINR(inv.monthlyEmi)}/mo</div>
+                    </td>
+                    <td className="p-3 font-mono font-bold text-white">
+                      ₹{formatINR(inv.totalInvestment)}
+                    </td>
+                    <td className="p-3">
+                      <div className="text-emerald-400 font-mono font-bold">
+                        {inv.paidInstallmentsCount} / {inv.tenureMonths} Paid
+                      </div>
+                      <div className="w-24 bg-slate-800 rounded-full h-1.5 mt-1 overflow-hidden">
+                        <div
+                          className="bg-emerald-500 h-full rounded-full"
+                          style={{
+                            width: `${Math.min(100, (inv.paidInstallmentsCount / inv.tenureMonths) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className={`font-black font-mono px-2 py-0.5 rounded text-[11px] ${
+                            inv.plotsSoldCount >= inv.requiredPlotSales
+                              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                              : 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
+                          }`}
+                        >
+                          {inv.plotsSoldCount} / {inv.requiredPlotSales} Plots
+                        </span>
+                        {inv.plotsSoldCount >= inv.requiredPlotSales && (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-3 font-mono font-bold text-purple-300">
+                      ₹{formatINR(inv.totalCurrentMonthlyReturn)}/mo
+                    </td>
+                    <td className="p-3 text-right">
+                      <span
+                        className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          inv.status === 'Disbursed'
+                            ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                            : inv.status === 'Completed' || inv.status === 'Eligible'
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        }`}
+                      >
+                        {inv.status}
+                      </span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

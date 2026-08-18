@@ -2020,6 +2020,879 @@ app.get("/api/agents/export/csv", (req, res) => {
   res.send(headers + rows);
 });
 
+// =============================================================================
+// एकमुश्त फ्री प्लॉट स्कीम (LUMP-SUM FREE PLOT SCHEME) BACKEND API
+// =============================================================================
+
+let lumpSumSlabsStore = [
+  { slNo: 1, purchaseRate: 1050, plotAreaSqft: 900, totalInvestmentAmount: 945000, interestRatePercent: 16.5, totalPayableAmount: 1100925, label: 'Slab 1 (₹1,050/sqft - 16.5%)' },
+  { slNo: 2, purchaseRate: 1120, plotAreaSqft: 900, totalInvestmentAmount: 1008000, interestRatePercent: 17.5, totalPayableAmount: 1184400, label: 'Slab 2 (₹1,120/sqft - 17.5%)' },
+  { slNo: 3, purchaseRate: 1210, plotAreaSqft: 900, totalInvestmentAmount: 1089000, interestRatePercent: 19.0, totalPayableAmount: 1295910, label: 'Slab 3 (₹1,210/sqft - 19.0%)' },
+  { slNo: 4, purchaseRate: 1320, plotAreaSqft: 900, totalInvestmentAmount: 1188000, interestRatePercent: 20.5, totalPayableAmount: 1431540, label: 'Slab 4 (₹1,320/sqft - 20.5%)' },
+  { slNo: 5, purchaseRate: 1450, plotAreaSqft: 900, totalInvestmentAmount: 1305000, interestRatePercent: 22.5, totalPayableAmount: 1598625, label: 'Slab 5 (₹1,450/sqft - 22.5%)' },
+  { slNo: 6, purchaseRate: 1600, plotAreaSqft: 900, totalInvestmentAmount: 1440000, interestRatePercent: 24.5, totalPayableAmount: 1792800, label: 'Slab 6 (₹1,600/sqft - 24.5%)' },
+  { slNo: 7, purchaseRate: 1770, plotAreaSqft: 900, totalInvestmentAmount: 1593000, interestRatePercent: 27.0, totalPayableAmount: 2023110, label: 'Slab 7 (₹1,770/sqft - 27.0%)' },
+  { slNo: 8, purchaseRate: 1950, plotAreaSqft: 900, totalInvestmentAmount: 1755000, interestRatePercent: 29.5, totalPayableAmount: 2272725, label: 'Slab 8 (₹1,950/sqft - 29.5%)' },
+  { slNo: 9, purchaseRate: 2150, plotAreaSqft: 900, totalInvestmentAmount: 1935000, interestRatePercent: 32.0, totalPayableAmount: 2554200, label: 'Slab 9 (₹2,150/sqft - 32.0%)' },
+];
+
+let lumpSumInvestorsStore: any[] = [
+  {
+    id: 'LFPS-2026-001',
+    investorName: 'Er. Rameshwar Dayal Tiwari',
+    phone: '9839123450',
+    email: 'rd.tiwari@example.com',
+    seniorName: 'Vikram Singh (Director Desk)',
+    seniorId: 'DIR-001',
+    address: '14/B, Stanley Road, Civil Lines, Prayagraj',
+    plotNo: 'PLT-FPS-901',
+    plotSizeSqft: 900,
+    purchaseRateSqft: 2150,
+    interestRatePercent: 32.0,
+    totalInvestmentAmount: 1935000,
+    totalReturnAmount: 619200,
+    totalPayableAmount: 2554200,
+    joiningDate: '2026-01-10',
+    maturityDateConditionA: '2038-01-10',
+    nominee: { nomineeName: 'Mrs. Sunita Tiwari', nomineeRelation: 'Spouse', nomineeAge: 48, nomineePhone: '9839123451' },
+    plotsSoldTarget: 7,
+    plotsSoldCount: 7,
+    soldPlotsList: [
+      { id: 'SOLD-101', plotNo: 'A-101', projectName: 'Milestone City', buyerName: 'Anil Mishra', buyerPhone: '9811122233', saleAmount: 1200000, saleDate: '2026-01-20', registeredBy: 'Er. Rameshwar', status: 'Verified' },
+      { id: 'SOLD-102', plotNo: 'A-102', projectName: 'Milestone City', buyerName: 'Pooja Pandey', buyerPhone: '9822233344', saleAmount: 1150000, saleDate: '2026-01-28', registeredBy: 'Er. Rameshwar', status: 'Verified' },
+      { id: 'SOLD-103', plotNo: 'B-205', projectName: 'Prayag Vihar', buyerName: 'Sanjay Srivastava', buyerPhone: '9833344455', saleAmount: 1400000, saleDate: '2026-02-05', registeredBy: 'Er. Rameshwar', status: 'Verified' },
+      { id: 'SOLD-104', plotNo: 'B-206', projectName: 'Prayag Vihar', buyerName: 'Dr. R. K. Gupta', buyerPhone: '9844455566', saleAmount: 1350000, saleDate: '2026-02-14', registeredBy: 'Er. Rameshwar', status: 'Verified' },
+      { id: 'SOLD-105', plotNo: 'C-301', projectName: 'Ganga Enclave', buyerName: 'Deepak Shukla', buyerPhone: '9855566677', saleAmount: 1600000, saleDate: '2026-02-22', registeredBy: 'Er. Rameshwar', status: 'Verified' },
+      { id: 'SOLD-106', plotNo: 'C-302', projectName: 'Ganga Enclave', buyerName: 'Vikas Maurya', buyerPhone: '9866677788', saleAmount: 1550000, saleDate: '2026-03-01', registeredBy: 'Er. Rameshwar', status: 'Verified' },
+      { id: 'SOLD-107', plotNo: 'D-401', projectName: 'Sangam Greens', buyerName: 'Mahendra Yadav', buyerPhone: '9877788899', saleAmount: 1750000, saleDate: '2026-03-10', registeredBy: 'Er. Rameshwar', status: 'Verified' },
+    ],
+    status: 'Eligible - Condition B (7 Plots Sold!)',
+    isConditionAMet: false,
+    isConditionBMet: true,
+    isPayoutEligible: true,
+    isPayoutDisbursed: false,
+    auditLogs: [
+      { id: 'LOG-01', timestamp: '2026-01-10 10:30 AM', actor: 'Admin Desk', action: 'Enrollment', details: 'Enrolled in 32% Slab @ ₹2,150/sqft for ₹19,35,000.' },
+      { id: 'LOG-02', timestamp: '2026-03-10 04:15 PM', actor: 'Sales Engine', action: '7th Plot Sale Recorded', details: 'Milestone reached. Payout unlocked under Condition B!' }
+    ],
+    createdAt: '2026-01-10',
+    updatedAt: '2026-03-10'
+  },
+  {
+    id: 'LFPS-2026-002',
+    investorName: 'Dr. Anand Kumar Saxena',
+    phone: '9415012345',
+    email: 'dr.anand@example.com',
+    seniorName: 'Manish Pandey (Sr. Manager)',
+    seniorId: 'MGR-204',
+    address: '52, Tagore Town, Prayagraj',
+    plotNo: 'PLT-FPS-702',
+    plotSizeSqft: 900,
+    purchaseRateSqft: 1770,
+    interestRatePercent: 27.0,
+    totalInvestmentAmount: 1593000,
+    totalReturnAmount: 430110,
+    totalPayableAmount: 2023110,
+    joiningDate: '2026-01-18',
+    maturityDateConditionA: '2038-01-18',
+    nominee: { nomineeName: 'Shashank Saxena', nomineeRelation: 'Son', nomineeAge: 24, nomineePhone: '9415012346' },
+    plotsSoldTarget: 7,
+    plotsSoldCount: 4,
+    soldPlotsList: [
+      { id: 'SOLD-201', plotNo: 'A-201', projectName: 'Milestone City', buyerName: 'Sunil Jaiswal', buyerPhone: '9450011223', saleAmount: 1100000, saleDate: '2026-01-25', registeredBy: 'Dr. Anand', status: 'Verified' },
+      { id: 'SOLD-202', plotNo: 'A-202', projectName: 'Milestone City', buyerName: 'Kavita Singh', buyerPhone: '9450022334', saleAmount: 1120000, saleDate: '2026-02-08', registeredBy: 'Dr. Anand', status: 'Verified' },
+      { id: 'SOLD-203', plotNo: 'B-304', projectName: 'Prayag Vihar', buyerName: 'Neeraj Dubey', buyerPhone: '9450033445', saleAmount: 1250000, saleDate: '2026-02-18', registeredBy: 'Dr. Anand', status: 'Verified' },
+      { id: 'SOLD-204', plotNo: 'B-305', projectName: 'Prayag Vihar', buyerName: 'Alok Tripathi', buyerPhone: '9450044556', saleAmount: 1300000, saleDate: '2026-03-02', registeredBy: 'Dr. Anand', status: 'Verified' },
+    ],
+    status: 'In Progress (Condition A / B)',
+    isConditionAMet: false,
+    isConditionBMet: false,
+    isPayoutEligible: false,
+    isPayoutDisbursed: false,
+    auditLogs: [{ id: 'LOG-11', timestamp: '2026-01-18', actor: 'Admin', action: 'Enrollment', details: 'Enrolled in 27% Slab @ ₹1,770/sqft.' }],
+    createdAt: '2026-01-18',
+    updatedAt: '2026-03-02'
+  },
+  {
+    id: 'LFPS-2026-003',
+    investorName: 'Adv. Brijeshwar Nath Shukla',
+    phone: '9838055667',
+    email: 'bn.shukla@example.com',
+    seniorName: 'Vikram Singh (Director)',
+    seniorId: 'DIR-001',
+    address: '88, George Town, Prayagraj',
+    plotNo: 'PLT-FPS-805',
+    plotSizeSqft: 900,
+    purchaseRateSqft: 1950,
+    interestRatePercent: 29.5,
+    totalInvestmentAmount: 1755000,
+    totalReturnAmount: 517725,
+    totalPayableAmount: 2272725,
+    joiningDate: '2026-01-05',
+    maturityDateConditionA: '2038-01-05',
+    nominee: { nomineeName: 'Mrs. Vandana Shukla', nomineeRelation: 'Spouse', nomineeAge: 52, nomineePhone: '9838055668' },
+    plotsSoldTarget: 7,
+    plotsSoldCount: 7,
+    soldPlotsList: [
+      { id: 'SOLD-301', plotNo: 'P-11', projectName: 'Ganga Enclave', buyerName: 'Vivek Srivastava', buyerPhone: '9839911223', saleAmount: 1350000, saleDate: '2026-01-12', registeredBy: 'Adv. Brijeshwar', status: 'Verified' },
+      { id: 'SOLD-302', plotNo: 'P-12', projectName: 'Ganga Enclave', buyerName: 'Ritu Agrawal', buyerPhone: '9839922334', saleAmount: 1400000, saleDate: '2026-01-19', registeredBy: 'Adv. Brijeshwar', status: 'Verified' },
+      { id: 'SOLD-303', plotNo: 'P-13', projectName: 'Ganga Enclave', buyerName: 'Dinesh Chandra', buyerPhone: '9839933445', saleAmount: 1380000, saleDate: '2026-01-26', registeredBy: 'Adv. Brijeshwar', status: 'Verified' },
+      { id: 'SOLD-304', plotNo: 'Q-01', projectName: 'Milestone City', buyerName: 'Mukesh Kumar', buyerPhone: '9839944556', saleAmount: 1450000, saleDate: '2026-02-02', registeredBy: 'Adv. Brijeshwar', status: 'Verified' },
+      { id: 'SOLD-305', plotNo: 'Q-02', projectName: 'Milestone City', buyerName: 'Smt. Sarojini Devi', buyerPhone: '9839955667', saleAmount: 1420000, saleDate: '2026-02-11', registeredBy: 'Adv. Brijeshwar', status: 'Verified' },
+      { id: 'SOLD-306', plotNo: 'R-05', projectName: 'Sangam Greens', buyerName: 'Gaurav Bind', buyerPhone: '9839966778', saleAmount: 1500000, saleDate: '2026-02-20', registeredBy: 'Adv. Brijeshwar', status: 'Verified' },
+      { id: 'SOLD-307', plotNo: 'R-06', projectName: 'Sangam Greens', buyerName: 'Harishankar Pal', buyerPhone: '9839977889', saleAmount: 1550000, saleDate: '2026-02-28', registeredBy: 'Adv. Brijeshwar', status: 'Verified' },
+    ],
+    status: 'Disbursed / Completed',
+    isConditionAMet: false,
+    isConditionBMet: true,
+    isPayoutEligible: true,
+    isPayoutDisbursed: true,
+    payoutDisbursedDate: '2026-03-05',
+    payoutTxnReference: 'RTGS-VPM-20260305-9910',
+    payoutDisbursedAmount: 2272725,
+    payoutMode: 'Bank Transfer (RTGS/NEFT)',
+    auditLogs: [
+      { id: 'LOG-21', timestamp: '2026-01-05', actor: 'Admin', action: 'Enrollment', details: 'Enrolled in 29.5% Slab.' },
+      { id: 'LOG-22', timestamp: '2026-03-05', actor: 'Finance Officer', action: 'Payout Disbursed', details: 'Full ₹22,72,725 disbursed via RTGS-VPM-20260305-9910.' }
+    ],
+    createdAt: '2026-01-05',
+    updatedAt: '2026-03-05'
+  }
+];
+
+// Helper to compute summary
+function getLumpSumSummaryData() {
+  let totalInvestmentAmount = 0;
+  let totalPayableAmount = 0;
+  let totalReturnLiability = 0;
+  let eligibleInvestorsCount = 0;
+  let eligiblePayableAmount = 0;
+  let pendingMaturityCount = 0;
+  let pendingMaturityAmount = 0;
+  let completedPayoutsCount = 0;
+  let completedDisbursedAmount = 0;
+  let totalPlotsSold = 0;
+  let conditionBAchieversCount = 0;
+  let conditionAAchieversCount = 0;
+
+  lumpSumInvestorsStore.forEach(r => {
+    totalInvestmentAmount += r.totalInvestmentAmount;
+    totalPayableAmount += r.totalPayableAmount;
+    totalReturnLiability += r.totalReturnAmount;
+    totalPlotsSold += r.plotsSoldCount || 0;
+
+    if (r.isConditionBMet) conditionBAchieversCount++;
+    if (r.isConditionAMet) conditionAAchieversCount++;
+
+    if (r.isPayoutDisbursed) {
+      completedPayoutsCount++;
+      completedDisbursedAmount += r.payoutDisbursedAmount || r.totalPayableAmount;
+    } else if (r.isPayoutEligible) {
+      eligibleInvestorsCount++;
+      eligiblePayableAmount += r.totalPayableAmount;
+    } else {
+      pendingMaturityCount++;
+      pendingMaturityAmount += r.totalPayableAmount;
+    }
+  });
+
+  return {
+    totalInvestors: lumpSumInvestorsStore.length,
+    totalInvestmentAmount,
+    totalPayableAmount,
+    totalReturnLiability,
+    eligibleInvestorsCount,
+    eligiblePayableAmount,
+    pendingMaturityCount,
+    pendingMaturityAmount,
+    completedPayoutsCount,
+    completedDisbursedAmount,
+    totalPlotsSold,
+    conditionBAchieversCount,
+    conditionAAchieversCount,
+  };
+}
+
+// 1. Get all investors and summary
+app.get("/api/lump-sum-scheme/investors", (req, res) => {
+  res.json({
+    success: true,
+    investors: lumpSumInvestorsStore,
+    summary: getLumpSumSummaryData(),
+    slabs: lumpSumSlabsStore
+  });
+});
+
+// 2. Get Slabs
+app.get("/api/lump-sum-scheme/slabs", (req, res) => {
+  res.json({ success: true, slabs: lumpSumSlabsStore });
+});
+
+// 3. Update Slabs
+app.put("/api/lump-sum-scheme/slabs", (req, res) => {
+  try {
+    const { slabs } = req.body;
+    if (Array.isArray(slabs)) {
+      lumpSumSlabsStore = slabs;
+    }
+    res.json({ success: true, slabs: lumpSumSlabsStore, message: "Slabs updated successfully!" });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 4. Create new Investor
+app.post("/api/lump-sum-scheme/investors", (req, res) => {
+  try {
+    const data = req.body;
+    const plotSize = Number(data.plotSizeSqft) || 900;
+    const rate = Number(data.purchaseRateSqft) || 1050;
+    const slab = lumpSumSlabsStore.find(s => s.purchaseRate === rate) || lumpSumSlabsStore[0];
+    const interestRate = Number(data.interestRatePercent) || slab.interestRatePercent;
+    const investAmt = Math.round(plotSize * rate);
+    const returnAmt = Math.round((investAmt * interestRate) / 100);
+    const payableAmt = investAmt + returnAmt;
+
+    const joiningDate = data.joiningDate || new Date().toISOString().split('T')[0];
+    const jDate = new Date(joiningDate);
+    const mDate = new Date(jDate.setFullYear(jDate.getFullYear() + 12)).toISOString().split('T')[0];
+
+    const newId = `LFPS-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+
+    const newRecord = {
+      id: newId,
+      investorName: data.investorName || 'Valued Investor',
+      phone: data.phone || '9876543210',
+      email: data.email || 'investor@example.com',
+      seniorName: data.seniorName || 'VPM Office Desk',
+      seniorId: data.seniorId || 'SNR-101',
+      address: data.address || 'Prayagraj, UP',
+      plotNo: data.plotNo || `PLT-FPS-${Math.floor(100 + Math.random() * 900)}`,
+      plotSizeSqft: plotSize,
+      purchaseRateSqft: rate,
+      interestRatePercent: interestRate,
+      totalInvestmentAmount: investAmt,
+      totalReturnAmount: returnAmt,
+      totalPayableAmount: payableAmt,
+      joiningDate,
+      maturityDateConditionA: mDate,
+      nominee: data.nominee || {
+        nomineeName: 'Nominee Name',
+        nomineeRelation: 'Spouse',
+        nomineeAge: 35,
+        nomineePhone: '9876543210',
+      },
+      plotsSoldTarget: 7,
+      plotsSoldCount: 0,
+      soldPlotsList: [],
+      status: 'In Progress (Condition A / B)',
+      isConditionAMet: false,
+      isConditionBMet: false,
+      isPayoutEligible: false,
+      isPayoutDisbursed: false,
+      auditLogs: [
+        {
+          id: `LOG-${Date.now()}`,
+          timestamp: new Date().toLocaleString('en-IN'),
+          actor: data.adminUser || 'Admin Desk',
+          action: 'Investor Registration',
+          details: `Enrolled in Lump-Sum Free Plot Scheme @ ₹${rate}/sqft (${interestRate}% return). Total Payable: ₹${payableAmt.toLocaleString('en-IN')}`
+        }
+      ],
+      createdAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date().toISOString().split('T')[0]
+    };
+
+    lumpSumInvestorsStore.unshift(newRecord);
+
+    res.json({
+      success: true,
+      investor: newRecord,
+      summary: getLumpSumSummaryData(),
+      message: `Investor ${newRecord.investorName} successfully registered in Lump-Sum Free Plot Scheme!`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 5. Record Plot Sale for Investor (Condition B: 7 Plots)
+app.post("/api/lump-sum-scheme/investors/:id/record-sale", (req, res) => {
+  try {
+    const { id } = req.params;
+    const { plotNo, projectName, buyerName, buyerPhone, saleAmount, adminUser } = req.body;
+
+    const investor = lumpSumInvestorsStore.find(inv => inv.id === id);
+    if (!investor) {
+      return res.status(404).json({ success: false, error: "Investor record not found." });
+    }
+
+    const newSaleItem = {
+      id: `SOLD-${Date.now()}`,
+      plotNo: plotNo || `PLT-${Math.floor(100 + Math.random() * 900)}`,
+      projectName: projectName || 'Milestone City Prayagraj',
+      buyerName: buyerName || 'Direct Buyer',
+      buyerPhone: buyerPhone || '9876543210',
+      saleAmount: Number(saleAmount) || 1200000,
+      saleDate: new Date().toISOString().split('T')[0],
+      registeredBy: investor.investorName,
+      status: 'Verified'
+    };
+
+    investor.soldPlotsList.unshift(newSaleItem);
+    investor.plotsSoldCount = investor.soldPlotsList.length;
+
+    // Check Condition B
+    if (investor.plotsSoldCount >= investor.plotsSoldTarget) {
+      investor.isConditionBMet = true;
+      investor.isPayoutEligible = true;
+      if (!investor.isPayoutDisbursed) {
+        investor.status = 'Eligible - Condition B (7 Plots Sold!)';
+      }
+    }
+
+    investor.auditLogs.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toLocaleString('en-IN'),
+      actor: adminUser || 'Sales Desk',
+      action: 'Plot Sale Recorded',
+      details: `Plot ${newSaleItem.plotNo} (${newSaleItem.projectName}) sold to ${newSaleItem.buyerName} for ₹${newSaleItem.saleAmount.toLocaleString('en-IN')}. Progress: ${investor.plotsSoldCount}/${investor.plotsSoldTarget} plots.`
+    });
+
+    investor.updatedAt = new Date().toISOString().split('T')[0];
+
+    res.json({
+      success: true,
+      investor,
+      summary: getLumpSumSummaryData(),
+      milestoneAchieved: investor.isConditionBMet,
+      message: investor.isConditionBMet
+        ? `CONGRATULATIONS! 7-Plot Milestone Reached for ${investor.investorName}. Condition B Payout of ₹${investor.totalPayableAmount.toLocaleString('en-IN')} is now UNLOCKED!`
+        : `Plot sale recorded! Current progress: ${investor.plotsSoldCount}/7 plots.`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 6. Disburse Lump-Sum Payout
+app.post("/api/lump-sum-scheme/investors/:id/disburse", (req, res) => {
+  try {
+    const { id } = req.params;
+    const { txnReference, payoutMode, adminUser } = req.body;
+
+    const investor = lumpSumInvestorsStore.find(inv => inv.id === id);
+    if (!investor) {
+      return res.status(404).json({ success: false, error: "Investor record not found." });
+    }
+
+    investor.isPayoutDisbursed = true;
+    investor.status = 'Disbursed / Completed';
+    investor.payoutDisbursedDate = new Date().toISOString().split('T')[0];
+    investor.payoutTxnReference = txnReference || `RTGS-VPM-${Date.now()}`;
+    investor.payoutDisbursedAmount = investor.totalPayableAmount;
+    investor.payoutMode = payoutMode || 'Bank Transfer (RTGS/NEFT)';
+
+    investor.auditLogs.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toLocaleString('en-IN'),
+      actor: adminUser || 'Finance Officer',
+      action: 'Payout Settlement Disbursed',
+      details: `Full lump-sum payout of ₹${investor.totalPayableAmount.toLocaleString('en-IN')} disbursed via ${investor.payoutMode}. Ref: ${investor.payoutTxnReference}`
+    });
+
+    investor.updatedAt = new Date().toISOString().split('T')[0];
+
+    res.json({
+      success: true,
+      investor,
+      summary: getLumpSumSummaryData(),
+      message: `Lump-sum payout of ₹${investor.totalPayableAmount.toLocaleString('en-IN')} successfully settled for ${investor.investorName}!`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 7. Delete Investor
+app.delete("/api/lump-sum-scheme/investors/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    lumpSumInvestorsStore = lumpSumInvestorsStore.filter(i => i.id !== id);
+    res.json({ success: true, summary: getLumpSumSummaryData(), message: "Investor record removed successfully." });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 8. Export CSV
+app.get("/api/lump-sum-scheme/export/csv", (req, res) => {
+  const headers = "Investor ID,Investor Name,Phone,Email,Plot No,Plot Size,Purchase Rate,Total Investment,Interest %,Total Return,Total Payable,Joining Date,Maturity Date,Plots Sold,Status,Payout Disbursed,Txn Ref\n";
+  const rows = lumpSumInvestorsStore.map(r =>
+    `"${r.id}","${r.investorName}","${r.phone}","${r.email}","${r.plotNo}","${r.plotSizeSqft}","${r.purchaseRateSqft}","${r.totalInvestmentAmount}","${r.interestRatePercent}%","${r.totalReturnAmount}","${r.totalPayableAmount}","${r.joiningDate}","${r.maturityDateConditionA}","${r.plotsSoldCount}/7","${r.status}","${r.isPayoutDisbursed ? 'YES' : 'NO'}","${r.payoutTxnReference || ''}"`
+  ).join("\n");
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8;");
+  res.setHeader("Content-Disposition", `attachment; filename=VPM_Ek_Musht_Free_Plot_Scheme_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+  res.send(headers + rows);
+});
+
+// =============================================================================
+// फ्री प्लॉट स्कीम (EMI / किस्त योजना) REST API ENDPOINTS
+// =============================================================================
+
+let emiSchemePlansStore: any[] = [
+  { tenureMonths: 12, monthlyInstallment: 78725, monthlyReturn: 91743, requiredPlotSales: 7, bonusReturnPerPlot: 13106, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 944700, totalTenureReturn: 1100916 },
+  { tenureMonths: 24, monthlyInstallment: 39375, monthlyReturn: 45871, requiredPlotSales: 7, bonusReturnPerPlot: 6553, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945000, totalTenureReturn: 1100904 },
+  { tenureMonths: 36, monthlyInstallment: 26250, monthlyReturn: 35997, requiredPlotSales: 7, bonusReturnPerPlot: 5142, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945000, totalTenureReturn: 1295892 },
+  { tenureMonths: 48, monthlyInstallment: 19688, monthlyReturn: 22935, requiredPlotSales: 6, bonusReturnPerPlot: 3276, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945024, totalTenureReturn: 1100880 },
+  { tenureMonths: 60, monthlyInstallment: 15750, monthlyReturn: 18348, requiredPlotSales: 6, bonusReturnPerPlot: 2621, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945000, totalTenureReturn: 1100880 },
+  { tenureMonths: 72, monthlyInstallment: 13125, monthlyReturn: 15290, requiredPlotSales: 6, bonusReturnPerPlot: 2184, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945000, totalTenureReturn: 1100880 },
+  { tenureMonths: 84, monthlyInstallment: 11250, monthlyReturn: 13106, requiredPlotSales: 5, bonusReturnPerPlot: 1872, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945000, totalTenureReturn: 1100904 },
+  { tenureMonths: 96, monthlyInstallment: 9840, monthlyReturn: 11467, requiredPlotSales: 5, bonusReturnPerPlot: 1638, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 944640, totalTenureReturn: 1100832 },
+  { tenureMonths: 108, monthlyInstallment: 8750, monthlyReturn: 10193, requiredPlotSales: 5, bonusReturnPerPlot: 1456, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945000, totalTenureReturn: 1100844 },
+  { tenureMonths: 120, monthlyInstallment: 7875, monthlyReturn: 9174, requiredPlotSales: 5, bonusReturnPerPlot: 1310, plotSizeSqft: 900, interestRatePercent: 16.5, totalTenureInvestment: 945000, totalTenureReturn: 1100880 },
+];
+
+function generateServerEmiSchedule(tenureMonths: number, monthlyInstallment: number, joiningDateStr: string, paidCount: number = 0) {
+  const schedule: any[] = [];
+  const baseDate = new Date(joiningDateStr);
+  for (let i = 1; i <= tenureMonths; i++) {
+    const dueDate = new Date(baseDate);
+    dueDate.setMonth(dueDate.getMonth() + i);
+    const dueDateFormatted = dueDate.toISOString().split('T')[0];
+    const isPaid = i <= paidCount;
+    schedule.push({
+      installmentNo: i,
+      dueDate: dueDateFormatted,
+      paidDate: isPaid ? new Date(dueDate.getTime() - 2 * 86400000).toISOString().split('T')[0] : undefined,
+      amount: monthlyInstallment,
+      status: isPaid ? 'Paid' : i === paidCount + 1 ? 'Due' : 'Upcoming',
+      paymentMode: isPaid ? 'UPI' : undefined,
+      txnRef: isPaid ? `TXN-EMI-${1000 + i}-${Math.floor(Math.random() * 9000 + 1000)}` : undefined,
+      receiptNumber: isPaid ? `REC-EMI-2026-${100 + i}` : undefined,
+    });
+  }
+  return schedule;
+}
+
+let emiInvestorsStore: any[] = [
+  {
+    id: 'FPS-EMI-2026-001',
+    investorName: 'विजय सिंह राजपूत (Vijay Singh Rajput)',
+    phone: '+91 98390 12345',
+    email: 'vijay.rajput@gmail.com',
+    seniorName: 'राजेश कुमार मिश्रा (VP)',
+    seniorId: 'VP-AGT-101',
+    address: 'फ्लैट 402, गंगा हाइट्स, सिविल लाइन्स, प्रयागराज (UP)',
+    plotNo: 'PLOT-FPS-104',
+    plotSizeSqft: 900,
+    tenureMonths: 12,
+    monthlyEmi: 78725,
+    monthlyReturn: 91743,
+    bonusReturnPerPlot: 13106,
+    requiredPlotSales: 7,
+    interestRatePercent: 16.5,
+    totalInvestment: 944700,
+    totalExpectedReturn: 1100916,
+    joiningDate: '2025-08-10',
+    maturityDate: '2026-08-10',
+    nominee: { nomineeName: 'सुनीता राजपूत', nomineeRelation: 'पत्नी (Wife)', nomineeAge: 38, nomineePhone: '+91 98390 12346' },
+    status: 'Eligible',
+    paidInstallmentsCount: 12,
+    totalPaidAmount: 944700,
+    remainingInstallmentsCount: 0,
+    remainingAmount: 0,
+    nextEmiDueDate: 'Completed',
+    plotsSoldCount: 7,
+    soldPlotsList: [
+      { id: 'SP-01', plotNo: 'P-101', projectName: 'Vigya City Phase 1', buyerName: 'अनिल वर्मा', buyerPhone: '9876543210', saleAmount: 950000, saleDate: '2025-10-15', monthlyBonusRate: 13106, registeredBy: 'Vijay Singh', status: 'Verified' },
+      { id: 'SP-02', plotNo: 'P-102', projectName: 'Vigya City Phase 1', buyerName: 'सुधीर यादव', buyerPhone: '9876543211', saleAmount: 950000, saleDate: '2025-11-20', monthlyBonusRate: 13106, registeredBy: 'Vijay Singh', status: 'Verified' },
+      { id: 'SP-03', plotNo: 'P-103', projectName: 'Vigya City Phase 1', buyerName: 'कमल तिवारी', buyerPhone: '9876543212', saleAmount: 980000, saleDate: '2025-12-05', monthlyBonusRate: 13106, registeredBy: 'Vijay Singh', status: 'Verified' },
+      { id: 'SP-04', plotNo: 'P-104', projectName: 'Vigya City Phase 1', buyerName: 'आशीष गुप्ता', buyerPhone: '9876543213', saleAmount: 950000, saleDate: '2026-01-18', monthlyBonusRate: 13106, registeredBy: 'Vijay Singh', status: 'Verified' },
+      { id: 'SP-05', plotNo: 'P-105', projectName: 'Vigya City Phase 2', buyerName: 'मनोज सिंह', buyerPhone: '9876543214', saleAmount: 975000, saleDate: '2026-03-10', monthlyBonusRate: 13106, registeredBy: 'Vijay Singh', status: 'Verified' },
+      { id: 'SP-06', plotNo: 'P-106', projectName: 'Vigya City Phase 2', buyerName: 'दिनेश शुक्ला', buyerPhone: '9876543215', saleAmount: 950000, saleDate: '2026-05-14', monthlyBonusRate: 13106, registeredBy: 'Vijay Singh', status: 'Verified' },
+      { id: 'SP-07', plotNo: 'P-107', projectName: 'Vigya City Phase 2', buyerName: 'रोहित मौर्या', buyerPhone: '9876543216', saleAmount: 1000000, saleDate: '2026-07-22', monthlyBonusRate: 13106, registeredBy: 'Vijay Singh', status: 'Verified' },
+    ],
+    monthlyBonusAmount: 13106 * 7,
+    totalCurrentMonthlyReturn: 91743 + 13106 * 7,
+    isPlotTargetMet: true,
+    isTenureCompleted: true,
+    isPayoutEligible: true,
+    isPayoutDisbursed: false,
+    emiLedger: generateServerEmiSchedule(12, 78725, '2025-08-10', 12),
+    auditLogs: [
+      { id: 'LOG-01', timestamp: '2025-08-10 10:30', actor: 'System', action: 'Enrollment', details: 'Enrolled in 12-Month Free Plot Scheme' },
+      { id: 'LOG-02', timestamp: '2026-07-22 16:45', actor: 'Admin Desk', action: 'Target Achieved', details: 'Achieved 7/7 plot sales milestone. Payment eligibility unlocked.' },
+    ],
+    createdAt: '2025-08-10T10:30:00Z',
+    updatedAt: '2026-08-18T10:00:00Z',
+  },
+  {
+    id: 'FPS-EMI-2026-002',
+    investorName: 'अमृता प्रकाश (Amrita Prakash)',
+    phone: '+91 94150 98765',
+    email: 'amrita.p@outlook.com',
+    seniorName: 'विपिन शर्मा (SVP)',
+    seniorId: 'VP-AGT-104',
+    address: 'मकान नं. 12/B, टैगोर टाउन, प्रयागराज (UP)',
+    plotNo: 'PLOT-FPS-208',
+    plotSizeSqft: 900,
+    tenureMonths: 36,
+    monthlyEmi: 26250,
+    monthlyReturn: 35997,
+    bonusReturnPerPlot: 5142,
+    requiredPlotSales: 7,
+    interestRatePercent: 16.5,
+    totalInvestment: 945000,
+    totalExpectedReturn: 1295892,
+    joiningDate: '2025-02-01',
+    maturityDate: '2028-02-01',
+    nominee: { nomineeName: 'आदित्य प्रकाश', nomineeRelation: 'पुत्र (Son)', nomineeAge: 19, nomineePhone: '+91 94150 98766' },
+    status: 'Active',
+    paidInstallmentsCount: 18,
+    totalPaidAmount: 26250 * 18,
+    remainingInstallmentsCount: 18,
+    remainingAmount: 26250 * 18,
+    nextEmiDueDate: '2026-09-01',
+    plotsSoldCount: 4,
+    soldPlotsList: [
+      { id: 'SP-201', plotNo: 'P-211', projectName: 'Vigya City Phase 2', buyerName: 'पूनम मिश्रा', buyerPhone: '9415011111', saleAmount: 960000, saleDate: '2025-06-12', monthlyBonusRate: 5142, registeredBy: 'Amrita Prakash', status: 'Verified' },
+      { id: 'SP-202', plotNo: 'P-212', projectName: 'Vigya City Phase 2', buyerName: 'विकास पांडे', buyerPhone: '9415011112', saleAmount: 960000, saleDate: '2025-09-18', monthlyBonusRate: 5142, registeredBy: 'Amrita Prakash', status: 'Verified' },
+      { id: 'SP-203', plotNo: 'P-213', projectName: 'Vigya City Phase 3', buyerName: 'रेनू यादव', buyerPhone: '9415011113', saleAmount: 980000, saleDate: '2025-12-04', monthlyBonusRate: 5142, registeredBy: 'Amrita Prakash', status: 'Verified' },
+      { id: 'SP-204', plotNo: 'P-214', projectName: 'Vigya City Phase 3', buyerName: 'संजय द्विवेदी', buyerPhone: '9415011114', saleAmount: 980000, saleDate: '2026-04-20', monthlyBonusRate: 5142, registeredBy: 'Amrita Prakash', status: 'Verified' },
+    ],
+    monthlyBonusAmount: 5142 * 4,
+    totalCurrentMonthlyReturn: 35997 + 5142 * 4,
+    isPlotTargetMet: false,
+    isTenureCompleted: false,
+    isPayoutEligible: false,
+    isPayoutDisbursed: false,
+    emiLedger: generateServerEmiSchedule(36, 26250, '2025-02-01', 18),
+    auditLogs: [
+      { id: 'LOG-11', timestamp: '2025-02-01 11:00', actor: 'System', action: 'Enrollment', details: 'Enrolled in 36-Month Free Plot Scheme' },
+      { id: 'LOG-12', timestamp: '2026-04-20 14:10', actor: 'Amrita Prakash', action: 'Plot Sale Added', details: 'Sold Plot P-214 credited to target' },
+    ],
+    createdAt: '2025-02-01T11:00:00Z',
+    updatedAt: '2026-08-18T10:00:00Z',
+  }
+];
+
+function getEmiSchemeAnalyticsData() {
+  let totalCollection = 0;
+  let totalLiability = 0;
+  let totalSoldPlots = 0;
+  let totalPayoutAmount = 0;
+  let activeCount = 0;
+  let eligibleCount = 0;
+  let completedCount = 0;
+  let monthlyCashflow = 0;
+
+  emiInvestorsStore.forEach(inv => {
+    totalCollection += (inv.totalPaidAmount || 0);
+    totalLiability += (inv.totalExpectedReturn || 0);
+    totalSoldPlots += (inv.plotsSoldCount || 0);
+    if (inv.isPayoutDisbursed && inv.payoutDisbursedAmount) {
+      totalPayoutAmount += inv.payoutDisbursedAmount;
+    }
+    if (inv.status === 'Active') {
+      activeCount++;
+      monthlyCashflow += inv.monthlyEmi;
+    }
+    if (inv.status === 'Eligible') eligibleCount++;
+    if (inv.status === 'Completed' || inv.status === 'Disbursed') completedCount++;
+  });
+
+  return {
+    totalInvestors: emiInvestorsStore.length,
+    activeInvestors: activeCount,
+    eligibleInvestors: eligibleCount,
+    completedInvestors: completedCount,
+    totalEmiCollection: totalCollection,
+    totalExpectedLiability: totalLiability,
+    totalSoldPlots: totalSoldPlots,
+    monthlyCashflow: monthlyCashflow,
+    yearlyCashflow: monthlyCashflow * 12,
+    totalPayoutAmount: totalPayoutAmount,
+  };
+}
+
+// 1. Get Plans
+app.get("/api/emi-free-plot-scheme/plans", (req, res) => {
+  res.json({ success: true, plans: emiSchemePlansStore });
+});
+
+// 2. Update Plans
+app.put("/api/emi-free-plot-scheme/plans", (req, res) => {
+  try {
+    const { plans } = req.body;
+    if (Array.isArray(plans) && plans.length > 0) {
+      emiSchemePlansStore = plans;
+    }
+    res.json({ success: true, plans: emiSchemePlansStore, message: "EMI Scheme Plans updated successfully." });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 3. Get All Investors & Analytics
+app.get("/api/emi-free-plot-scheme/investors", (req, res) => {
+  res.json({
+    success: true,
+    investors: emiInvestorsStore,
+    analytics: getEmiSchemeAnalyticsData(),
+    plans: emiSchemePlansStore
+  });
+});
+
+// 4. Register New Investor
+app.post("/api/emi-free-plot-scheme/investors", (req, res) => {
+  try {
+    const data = req.body;
+    const plan = emiSchemePlansStore.find(p => p.tenureMonths === Number(data.tenureMonths)) || emiSchemePlansStore[0];
+    const generatedId = `FPS-EMI-2026-${String(emiInvestorsStore.length + 1).padStart(3, '0')}`;
+    const joiningDate = data.joiningDate || new Date().toISOString().split('T')[0];
+    
+    // Maturity date
+    const matDate = new Date(joiningDate);
+    matDate.setMonth(matDate.getMonth() + plan.tenureMonths);
+    const maturityDate = matDate.toISOString().split('T')[0];
+
+    const initialSchedule = generateServerEmiSchedule(plan.tenureMonths, plan.monthlyInstallment, joiningDate, 1);
+
+    const newInvestor: any = {
+      id: generatedId,
+      investorName: data.investorName,
+      phone: data.phone,
+      email: data.email || `${data.investorName.toLowerCase().replace(/\s+/g, '')}@example.com`,
+      seniorName: data.seniorName || 'राजेश कुमार मिश्रा (VP)',
+      seniorId: data.seniorId || 'VP-AGT-101',
+      address: data.address || 'Civil Lines, Prayagraj, UP',
+      plotNo: data.plotNo || `PLOT-FPS-${100 + emiInvestorsStore.length + 1}`,
+      plotSizeSqft: 900,
+      tenureMonths: plan.tenureMonths,
+      monthlyEmi: plan.monthlyInstallment,
+      monthlyReturn: plan.monthlyReturn,
+      bonusReturnPerPlot: plan.bonusReturnPerPlot,
+      requiredPlotSales: plan.requiredPlotSales,
+      interestRatePercent: 16.5,
+      totalInvestment: plan.totalTenureInvestment,
+      totalExpectedReturn: plan.totalTenureReturn,
+      joiningDate: joiningDate,
+      maturityDate: maturityDate,
+      nominee: {
+        nomineeName: data.nomineeName || 'Nominee',
+        nomineeRelation: data.nomineeRelation || 'Spouse',
+        nomineeAge: Number(data.nomineeAge) || 30,
+        nomineePhone: data.nomineePhone || data.phone,
+      },
+      status: 'Active',
+      paidInstallmentsCount: 1,
+      totalPaidAmount: plan.monthlyInstallment,
+      remainingInstallmentsCount: plan.tenureMonths - 1,
+      remainingAmount: plan.totalTenureInvestment - plan.monthlyInstallment,
+      nextEmiDueDate: initialSchedule[1]?.dueDate || maturityDate,
+      plotsSoldCount: 0,
+      soldPlotsList: [],
+      monthlyBonusAmount: 0,
+      totalCurrentMonthlyReturn: plan.monthlyReturn,
+      isPlotTargetMet: false,
+      isTenureCompleted: false,
+      isPayoutEligible: false,
+      isPayoutDisbursed: false,
+      emiLedger: initialSchedule,
+      auditLogs: [
+        {
+          id: `LOG-${Date.now()}`,
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          actor: 'Admin Portal',
+          action: 'Investor Registration',
+          details: `Enrolled into ${plan.tenureMonths}-Month Free Plot Scheme with 1st EMI (₹${plan.monthlyInstallment}) received.`
+        }
+      ],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    emiInvestorsStore.unshift(newInvestor);
+
+    res.json({
+      success: true,
+      investor: newInvestor,
+      analytics: getEmiSchemeAnalyticsData(),
+      message: `Investor ${newInvestor.investorName} successfully registered under ${plan.tenureMonths} Months EMI Scheme!`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 5. Pay EMI Installment
+app.post("/api/emi-free-plot-scheme/investors/:id/pay-emi", (req, res) => {
+  try {
+    const { id } = req.params;
+    const { installmentNo, amount, paymentMode, txnRef } = req.body;
+    const investor = emiInvestorsStore.find(i => i.id === id);
+    if (!investor) return res.status(404).json({ success: false, message: "Investor not found" });
+
+    const item = investor.emiLedger.find((e: any) => e.installmentNo === Number(installmentNo));
+    if (item) {
+      item.status = 'Paid';
+      item.paidDate = new Date().toISOString().split('T')[0];
+      item.paymentMode = paymentMode || 'UPI';
+      item.txnRef = txnRef || `TXN-EMI-${Date.now()}`;
+      item.receiptNumber = `REC-EMI-2026-${Math.floor(Math.random() * 90000 + 10000)}`;
+    }
+
+    const paidList = investor.emiLedger.filter((e: any) => e.status === 'Paid');
+    investor.paidInstallmentsCount = paidList.length;
+    investor.totalPaidAmount = paidList.reduce((sum: number, x: any) => sum + x.amount, 0);
+    investor.remainingInstallmentsCount = Math.max(0, investor.tenureMonths - investor.paidInstallmentsCount);
+    investor.remainingAmount = Math.max(0, investor.totalInvestment - investor.totalPaidAmount);
+
+    if (investor.paidInstallmentsCount >= investor.tenureMonths) {
+      investor.isTenureCompleted = true;
+      investor.isPayoutEligible = true;
+      if (!investor.isPayoutDisbursed) investor.status = 'Eligible';
+    }
+
+    const nextDue = investor.emiLedger.find((e: any) => e.status === 'Due' || e.status === 'Upcoming');
+    if (nextDue) {
+      nextDue.status = 'Due';
+      investor.nextEmiDueDate = nextDue.dueDate;
+    } else {
+      investor.nextEmiDueDate = 'Completed';
+    }
+
+    investor.auditLogs.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      actor: 'Finance Desk',
+      action: 'EMI Payment Recorded',
+      details: `Installment #${installmentNo} of ₹${amount || investor.monthlyEmi} verified and marked as Paid.`
+    });
+
+    res.json({
+      success: true,
+      investor,
+      analytics: getEmiSchemeAnalyticsData(),
+      message: `EMI Installment #${installmentNo} successfully recorded.`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 6. Record Sold Plot
+app.post("/api/emi-free-plot-scheme/investors/:id/sold-plots", (req, res) => {
+  try {
+    const { id } = req.params;
+    const { plotNo, projectName, buyerName, buyerPhone, saleAmount } = req.body;
+    const investor = emiInvestorsStore.find(i => i.id === id);
+    if (!investor) return res.status(404).json({ success: false, message: "Investor not found" });
+
+    const newSoldPlot = {
+      id: `SP-${Date.now().toString().slice(-4)}`,
+      plotNo: plotNo || `P-${100 + investor.soldPlotsList.length + 1}`,
+      projectName: projectName || 'Vigya City Phase 2',
+      buyerName: buyerName || 'Buyer Name',
+      buyerPhone: buyerPhone || '9876543210',
+      saleAmount: Number(saleAmount) || 950000,
+      saleDate: new Date().toISOString().split('T')[0],
+      monthlyBonusRate: investor.bonusReturnPerPlot,
+      registeredBy: investor.investorName,
+      status: 'Verified'
+    };
+
+    investor.soldPlotsList.push(newSoldPlot);
+    investor.plotsSoldCount = investor.soldPlotsList.filter((p: any) => p.status === 'Verified').length;
+    investor.monthlyBonusAmount = investor.plotsSoldCount * investor.bonusReturnPerPlot;
+    investor.totalCurrentMonthlyReturn = investor.monthlyReturn + investor.monthlyBonusAmount;
+
+    if (investor.plotsSoldCount >= investor.requiredPlotSales) {
+      investor.isPlotTargetMet = true;
+      investor.isPayoutEligible = true;
+      if (!investor.isPayoutDisbursed) {
+        investor.status = 'Eligible';
+      }
+    }
+
+    investor.auditLogs.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      actor: 'Admin Desk',
+      action: 'Plot Sale Verified',
+      details: `Plot ${newSoldPlot.plotNo} verified for buyer ${newSoldPlot.buyerName}. Target count is now ${investor.plotsSoldCount}/${investor.requiredPlotSales}.`
+    });
+
+    res.json({
+      success: true,
+      investor,
+      analytics: getEmiSchemeAnalyticsData(),
+      message: `Plot ${newSoldPlot.plotNo} recorded towards investor milestone!`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 7. Disburse Payout
+app.post("/api/emi-free-plot-scheme/investors/:id/disburse-payout", (req, res) => {
+  try {
+    const { id } = req.params;
+    const { payoutMode, txnReference, notes } = req.body;
+    const investor = emiInvestorsStore.find(i => i.id === id);
+    if (!investor) return res.status(404).json({ success: false, message: "Investor not found" });
+
+    investor.isPayoutDisbursed = true;
+    investor.status = 'Disbursed';
+    investor.payoutDisbursedDate = new Date().toISOString().split('T')[0];
+    investor.payoutMode = payoutMode || 'Bank Transfer (RTGS/NEFT)';
+    investor.payoutTxnReference = txnReference || `RTGS-VPM-${Date.now()}`;
+    investor.payoutDisbursedAmount = investor.totalExpectedReturn;
+
+    investor.auditLogs.unshift({
+      id: `LOG-${Date.now()}`,
+      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      actor: 'Finance Director',
+      action: 'Maturity Payout Disbursed',
+      details: `Disbursed ₹${investor.totalExpectedReturn.toLocaleString('en-IN')} via ${investor.payoutMode}. Ref: ${investor.payoutTxnReference}`
+    });
+
+    res.json({
+      success: true,
+      investor,
+      analytics: getEmiSchemeAnalyticsData(),
+      message: `Payout of ₹${investor.totalExpectedReturn.toLocaleString('en-IN')} successfully disbursed!`
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 8. Delete Investor
+app.delete("/api/emi-free-plot-scheme/investors/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+    emiInvestorsStore = emiInvestorsStore.filter(i => i.id !== id);
+    res.json({ success: true, analytics: getEmiSchemeAnalyticsData(), message: "Investor record removed." });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 9. Export CSV
+app.get("/api/emi-free-plot-scheme/export/csv", (req, res) => {
+  const headers = "Investor ID,Investor Name,Phone,Email,Plot No,Plot Size,Tenure (Months),Monthly EMI,Monthly Return,Bonus Per Plot,Paid EMIs,Total Paid,Remaining EMIs,Sold Plots,Status,Payout Disbursed,Txn Ref\n";
+  const rows = emiInvestorsStore.map(r =>
+    `"${r.id}","${r.investorName}","${r.phone}","${r.email}","${r.plotNo}","${r.plotSizeSqft}","${r.tenureMonths}","${r.monthlyEmi}","${r.monthlyReturn}","${r.bonusReturnPerPlot}","${r.paidInstallmentsCount}","${r.totalPaidAmount}","${r.remainingInstallmentsCount}","${r.plotsSoldCount}/${r.requiredPlotSales}","${r.status}","${r.isPayoutDisbursed ? 'YES' : 'NO'}","${r.payoutTxnReference || ''}"`
+  ).join("\n");
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8;");
+  res.setHeader("Content-Disposition", `attachment; filename=VPM_Free_Plot_EMI_Scheme_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+  res.send(headers + rows);
+});
+
 
 async function startServer() {
   // Vite middleware for development

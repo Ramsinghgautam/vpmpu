@@ -27,6 +27,8 @@ import {
 
 export type AdminTabType = 
   | 'dashboard'
+  | 'free_plot_emi_scheme'
+  | 'lump_sum_scheme'
   | 'payouts'
   | 'customers'
   | 'agents'
@@ -79,6 +81,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       title: 'CORE MANAGEMENT',
       items: [
         { id: 'dashboard' as AdminTabType, label: 'Dashboard', icon: LayoutDashboard, badge: null },
+        { id: 'free_plot_emi_scheme' as AdminTabType, label: 'फ्री प्लॉट EMI योजना', icon: ShieldCheck, badge: '12-120 Months' },
+        { id: 'lump_sum_scheme' as AdminTabType, label: 'एकमुश्त फ्री प्लॉट स्कीम', icon: Award, badge: '9 Slabs (16.5-32%)' },
         { id: 'payouts' as AdminTabType, label: 'EMI Tenure Payouts', icon: Calculator, badge: 'Distributed' },
         { id: 'mlm_team' as AdminTabType, label: 'Multi-Level Team Bonus', icon: GitMerge, badge: '9 Levels' },
         { id: 'customers' as AdminTabType, label: 'Customers', icon: Users, badge: `${counts.customersCount}` },
