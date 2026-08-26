@@ -25,6 +25,7 @@ import { TestimonialsSection } from './components/TestimonialsSection';
 import { LegalModal } from './components/LegalModal';
 import { WhatsAppWidget } from './components/WhatsAppWidget';
 import { Footer } from './components/Footer';
+import { RealEstateAiVoiceHub } from './components/ai-voice/RealEstateAiVoiceHub';
 
 function MainAppContent() {
   const { language, setLanguage } = useLanguage();
@@ -251,7 +252,13 @@ function MainAppContent() {
           />
         )}
 
-        {activeSection !== 'dashboard' && activeSection !== 'admin-dashboard' && (
+        {activeSection === 'ai-voice' && (
+          <RealEstateAiVoiceHub
+            onBackToMain={() => setActiveSection('home')}
+          />
+        )}
+
+        {activeSection !== 'dashboard' && activeSection !== 'admin-dashboard' && activeSection !== 'ai-voice' && (
           <>
             {/* Hero Section */}
             <HeroSection currentLang={language} onNavigate={handleNavigate} currentUser={currentUser} />

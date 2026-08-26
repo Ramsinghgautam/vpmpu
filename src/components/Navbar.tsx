@@ -46,6 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'commission', label: t.commissionPlans },
     { id: 'career', label: t.careerAgent },
     { id: 'gallery', label: t.gallery || 'Media Gallery' },
+    { id: 'ai-voice', label: '🤖 AI Voice SaaS' },
     { id: 'faq', label: t.faq },
     { id: 'contact', label: t.contactUs }
   ];
