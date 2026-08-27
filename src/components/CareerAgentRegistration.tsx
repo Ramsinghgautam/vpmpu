@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Language } from '../types';
-import { Award, Briefcase, CheckCircle2, Copy, ShieldCheck, Sparkles, UserPlus, ArrowRight } from 'lucide-react';
+import { Award, Briefcase, CheckCircle2, Copy, ShieldCheck, Sparkles, UserPlus, ArrowRight, Camera, FileText, CreditCard, PenTool, Upload, X } from 'lucide-react';
 import { TRANSLATIONS } from '../utils/translations';
 
 interface CareerAgentRegistrationProps {
@@ -22,6 +22,11 @@ export const CareerAgentRegistration: React.FC<CareerAgentRegistrationProps> = (
   const [address, setAddress] = useState('');
   const [qualification, setQualification] = useState('Graduate');
   const [sponsorId, setSponsorId] = useState('');
+
+  const [photoFile, setPhotoFile] = useState<{ name: string; url: string } | null>(null);
+  const [aadharFile, setAadharFile] = useState<{ name: string; url: string } | null>(null);
+  const [panFile, setPanFile] = useState<{ name: string; url: string } | null>(null);
+  const [signatureFile, setSignatureFile] = useState<{ name: string; url: string } | null>(null);
 
   const [registeredUser, setRegisteredUser] = useState<User | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -231,6 +236,189 @@ export const CareerAgentRegistration: React.FC<CareerAgentRegistrationProps> = (
                     placeholder="e.g. Phaphamau, Prayagraj"
                     className="w-full bg-white border border-slate-300 rounded-lg p-2.5 focus:border-indigo-950 focus:outline-none font-medium text-slate-800"
                   />
+                </div>
+
+                {/* Document Upload Section */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-200">
+                  {/* Photo Upload */}
+                  <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col justify-between">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg">
+                        <Camera className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[11px] text-slate-900">1. Passport Photo</p>
+                        <p className="text-[9px] text-slate-500">JPG, PNG (Optional)</p>
+                      </div>
+                    </div>
+                    <div className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1.5 px-2 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                      <label htmlFor="reg-photo-input" className="flex items-center gap-1.5 truncate cursor-pointer flex-1">
+                        <Upload className="w-3 h-3 text-amber-600 shrink-0" />
+                        <span className="truncate max-w-[120px]">{photoFile ? photoFile.name : 'Choose Photo'}</span>
+                      </label>
+                      {photoFile && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPhotoFile(null);
+                          }}
+                          className="text-red-500 hover:text-red-700 p-0.5 ml-2 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <input
+                        id="reg-photo-input"
+                        type="file"
+                        accept="image/*"
+                        className="sr-only"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => setPhotoFile({ name: file.name, url: ev.target?.result as string });
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Aadhar Upload */}
+                  <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col justify-between">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[11px] text-slate-900">2. Aadhar Card</p>
+                        <p className="text-[9px] text-slate-500">PDF / Image (Optional)</p>
+                      </div>
+                    </div>
+                    <div className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1.5 px-2 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                      <label htmlFor="reg-aadhar-input" className="flex items-center gap-1.5 truncate cursor-pointer flex-1">
+                        <Upload className="w-3 h-3 text-indigo-600 shrink-0" />
+                        <span className="truncate max-w-[120px]">{aadharFile ? aadharFile.name : 'Choose Aadhar'}</span>
+                      </label>
+                      {aadharFile && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAadharFile(null);
+                          }}
+                          className="text-red-500 hover:text-red-700 p-0.5 ml-2 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <input
+                        id="reg-aadhar-input"
+                        type="file"
+                        accept="image/*,.pdf"
+                        className="sr-only"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => setAadharFile({ name: file.name, url: ev.target?.result as string });
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* PAN Upload */}
+                  <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col justify-between">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg">
+                        <CreditCard className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[11px] text-slate-900">3. PAN Card</p>
+                        <p className="text-[9px] text-slate-500">PDF / Image (Optional)</p>
+                      </div>
+                    </div>
+                    <div className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1.5 px-2 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                      <label htmlFor="reg-pan-input" className="flex items-center gap-1.5 truncate cursor-pointer flex-1">
+                        <Upload className="w-3 h-3 text-emerald-600 shrink-0" />
+                        <span className="truncate max-w-[120px]">{panFile ? panFile.name : 'Choose PAN'}</span>
+                      </label>
+                      {panFile && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPanFile(null);
+                          }}
+                          className="text-red-500 hover:text-red-700 p-0.5 ml-2 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <input
+                        id="reg-pan-input"
+                        type="file"
+                        accept="image/*,.pdf"
+                        className="sr-only"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => setPanFile({ name: file.name, url: ev.target?.result as string });
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Signature Upload */}
+                  <div className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col justify-between">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 bg-purple-50 text-purple-600 rounded-lg">
+                        <PenTool className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[11px] text-slate-900">4. Signature Scan</p>
+                        <p className="text-[9px] text-slate-500">JPG, PNG (Optional)</p>
+                      </div>
+                    </div>
+                    <div className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1.5 px-2 rounded-lg cursor-pointer flex items-center justify-between transition-colors">
+                      <label htmlFor="reg-sig-input" className="flex items-center gap-1.5 truncate cursor-pointer flex-1">
+                        <Upload className="w-3 h-3 text-purple-600 shrink-0" />
+                        <span className="truncate max-w-[120px]">{signatureFile ? signatureFile.name : 'Choose Signature'}</span>
+                      </label>
+                      {signatureFile && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSignatureFile(null);
+                          }}
+                          className="text-red-500 hover:text-red-700 p-0.5 ml-2 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <input
+                        id="reg-sig-input"
+                        type="file"
+                        accept="image/*"
+                        className="sr-only"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => setSignatureFile({ name: file.name, url: ev.target?.result as string });
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <button

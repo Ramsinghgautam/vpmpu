@@ -250,19 +250,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
           {/* Role Selector Tabs */}
           <div className="space-y-1.5">
             <label className="block font-bold text-slate-800">Select Role Portal</label>
-            <div className="grid grid-cols-4 gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px] font-bold">
+            <div className="grid grid-cols-5 gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-[10px] font-bold">
               <button
                 type="button"
                 onClick={() => setSelectedRole('buyer')}
-                className={`py-1.5 rounded-lg transition-all ${selectedRole === 'buyer' ? 'bg-sky-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`py-1.5 px-1 rounded-lg transition-all ${selectedRole === 'buyer' ? 'bg-sky-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
               >
-                Free Plot Scheme
+                Free Plot
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedRole('associate_partner')}
+                className={`py-1.5 px-1 rounded-lg transition-all ${selectedRole === 'associate_partner' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+              >
+                Associate Partner
               </button>
 
               <button
                 type="button"
                 onClick={() => setSelectedRole('agent')}
-                className={`py-1.5 rounded-lg transition-all ${selectedRole === 'agent' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`py-1.5 px-1 rounded-lg transition-all ${selectedRole === 'agent' ? 'bg-amber-500 text-slate-950 shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
               >
                 Agent
               </button>
@@ -270,7 +278,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
               <button
                 type="button"
                 onClick={() => setSelectedRole('investor')}
-                className={`py-1.5 rounded-lg transition-all ${selectedRole === 'investor' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`py-1.5 px-1 rounded-lg transition-all ${selectedRole === 'investor' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
               >
                 Investor
               </button>
@@ -278,7 +286,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onLoginSuccess })
               <button
                 type="button"
                 onClick={() => setSelectedRole('admin')}
-                className={`py-1.5 rounded-lg transition-all ${selectedRole === 'admin' ? 'bg-slate-900 text-amber-400 shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+                className={`py-1.5 px-1 rounded-lg transition-all ${selectedRole === 'admin' ? 'bg-slate-900 text-amber-400 shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
               >
                 Admin
               </button>

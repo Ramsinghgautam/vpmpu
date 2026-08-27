@@ -178,21 +178,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
               </div>
             </div>
 
-            {/* Value Highlights Pill Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-xs font-bold text-slate-200 uppercase tracking-wider">
-              <div className="flex items-center gap-2 bg-indigo-900/60 border border-indigo-800 p-3 rounded-xl">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>{t.flat10kBooking || "Flat ₹10,000 Booking"}</span>
-              </div>
-              <div className="flex items-center gap-2 bg-indigo-900/60 border border-indigo-800 p-3 rounded-xl">
-                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>{t.upTo32Roi || "Up to 32% Investor ROI"}</span>
-              </div>
-              <div className="flex items-center gap-2 bg-indigo-900/60 border border-indigo-800 p-3 rounded-xl">
-                <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0" />
-                <span>{t.upTo15BuyerCash || "Up to 15.5% Buyer Cash"}</span>
-              </div>
-            </div>
+
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-4 pt-4">

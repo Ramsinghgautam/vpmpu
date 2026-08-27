@@ -647,13 +647,14 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
                         <Camera className="w-3.5 h-3.5" />
                       </div>
                       <p className="font-bold text-[11px] text-slate-900">1. Photo</p>
-                      <label className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
+                      <label htmlFor="booking-photo-input" className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
                         <Upload className="w-3 h-3 text-amber-600" />
                         <span className="truncate max-w-[70px]">{photoFile ? photoFile.name : 'Choose'}</span>
                         <input
+                          id="booking-photo-input"
                           type="file"
                           accept="image/*"
-                          className="hidden"
+                          className="sr-only"
                           onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
                         />
                       </label>
@@ -681,13 +682,14 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
                         <FileText className="w-3.5 h-3.5" />
                       </div>
                       <p className="font-bold text-[11px] text-slate-900">2. Aadhar Card</p>
-                      <label className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
+                      <label htmlFor="booking-aadhar-input" className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
                         <Upload className="w-3 h-3 text-indigo-600" />
                         <span className="truncate max-w-[70px]">{aadharFile ? aadharFile.name : 'Choose'}</span>
                         <input
+                          id="booking-aadhar-input"
                           type="file"
                           accept="image/*,.pdf"
-                          className="hidden"
+                          className="sr-only"
                           onChange={(e) => setAadharFile(e.target.files?.[0] || null)}
                         />
                       </label>
@@ -715,13 +717,14 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
                         <CreditCard className="w-3.5 h-3.5" />
                       </div>
                       <p className="font-bold text-[11px] text-slate-900">3. PAN Card</p>
-                      <label className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
+                      <label htmlFor="booking-pan-input" className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
                         <Upload className="w-3 h-3 text-emerald-600" />
                         <span className="truncate max-w-[70px]">{panFile ? panFile.name : 'Choose'}</span>
                         <input
+                          id="booking-pan-input"
                           type="file"
                           accept="image/*,.pdf"
-                          className="hidden"
+                          className="sr-only"
                           onChange={(e) => setPanFile(e.target.files?.[0] || null)}
                         />
                       </label>
@@ -749,13 +752,14 @@ export const PlotBookingModal: React.FC<PlotBookingModalProps> = ({
                         <PenTool className="w-3.5 h-3.5" />
                       </div>
                       <p className="font-bold text-[11px] text-slate-900">4. Signature</p>
-                      <label className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
+                      <label htmlFor="booking-sig-input" className="w-full mt-0.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-800 text-[10px] font-bold py-1 px-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1 transition-colors shadow-2xs">
                         <Upload className="w-3 h-3 text-purple-600" />
                         <span className="truncate max-w-[70px]">{signatureFile ? signatureFile.name : 'Choose'}</span>
                         <input
+                          id="booking-sig-input"
                           type="file"
                           accept="image/*"
-                          className="hidden"
+                          className="sr-only"
                           onChange={(e) => setSignatureFile(e.target.files?.[0] || null)}
                         />
                       </label>

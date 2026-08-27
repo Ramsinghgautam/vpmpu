@@ -31,17 +31,21 @@ export const AiVoiceLiveSimulator: React.FC<AiVoiceLiveSimulatorProps> = ({
   const [leadScoreCalculated, setLeadScoreCalculated] = useState<'HOT' | 'WARM' | 'COLD'>('WARM');
   const [callDuration, setCallDuration] = useState(0);
 
+  const [callIntentStage, setCallIntentStage] = useState<'INITIAL' | 'DETERMINING_INTENT' | 'SELLER_QUALIFICATION' | 'PARTNER_QUALIFICATION' | 'OBJECTION_HANDLING' | 'HUMAN_TRANSFER_READY'>('INITIAL');
+  const [leadCategory, setLeadCategory] = useState<'SELLER' | 'ASSOCIATE_PARTNER' | 'BOTH' | 'UNKNOWN'>('UNKNOWN');
+
   const startCall = () => {
     setCallActive(true);
     setCallDuration(0);
-    const greetingText = currentAgent?.greeting || `Namaste! Welcome to ${currentProperty?.name}. How can I help you today?`;
+    setCallIntentStage('DETERMINING_INTENT');
+    const greetingText = `नमस्कार! मैं Vigya Paurush Milestone Realty से ${currentAgent?.agentName || 'AI Calling Agent'} बोल रहा हूँ। आपने अपनी property को sell करने या Associate Partner के रूप में जुड़ने में interest दिखाया था। क्या अभी 2 मिनट बात करना convenient है?`;
     const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     
     setTranscript([
       { speaker: 'system', text: `Call session initiated (ID: CALL-${Math.floor(Math.random() * 900000 + 100000)})`, timestamp: nowTime },
       { speaker: 'ai', text: greetingText, timestamp: nowTime }
     ]);
-    setKbChunksUsed(['chunk_greeting_intro']);
+    setKbChunksUsed(['chunk_greeting_intro', 'chunk_associates_partner_intro']);
   };
 
   const endCall = () => {
@@ -116,33 +120,70 @@ export const AiVoiceLiveSimulator: React.FC<AiVoiceLiveSimulatorProps> = ({
       setIsAiThinking(false);
       const queryLower = userText.toLowerCase();
       let aiResponse = '';
-      let chunks = ['chunk_general_property_info'];
-      let score: 'HOT' | 'WARM' | 'COLD' = 'WARM';
+      let chunks = ['chunk_general_kb'];
+      let score: 'HOT' | 'WARM' | 'COLD' = leadScoreCalculated;
 
-      if (queryLower.includes('price') || queryLower.includes('rate') || queryLower.includes('kitna') || queryLower.includes('cost')) {
-        aiResponse = `Ji, ${currentProperty.name} mein starting price ${currentProperty.priceRange} hai. Aap hamari 29.5% Free Plot scheme ke antargat installments bhi select kar sakte hain.`;
-        chunks = ['chunk_pricing_schedule_1200sqft', 'chunk_29.5_scheme_slabs'];
+      if (callIntentStage === 'DETERMINING_INTENT') {
+        if (queryLower.includes('sell') || queryLower.includes('property') || queryLower.includes('zameen') || queryLower.includes('plot') || queryLower.includes('bechni')) {
+          setLeadCategory('SELLER');
+          setCallIntentStage('SELLER_QUALIFICATION');
+          aiResponse = `बहुत बढ़िया। आप अपनी खुद की property हमारी कंपनी के माध्यम से sell करना चाहते हैं। कृपया बताएं, आपकी property किस location में है और plot/land का total area कितना है?`;
+          chunks = ['chunk_property_seller_qualification_flow'];
+          score = 'HOT';
+          setLeadScoreCalculated('HOT');
+        } else if (queryLower.includes('partner') || queryLower.includes('associate') || queryLower.includes('broker') || queryLower.includes('dealer') || queryLower.includes('kaam')) {
+          setLeadCategory('ASSOCIATE_PARTNER');
+          setCallIntentStage('PARTNER_QUALIFICATION');
+          aiResponse = `Associate Partner वह व्यक्ति होता है जो कंपनी के साथ जुड़कर उपलब्ध प्लॉट या प्रॉपर्टी की बिक्री में सहयोग करता है। क्या आप पहले से real estate में काम करते हैं और आपका working area कौन सा है?`;
+          chunks = ['chunk_associate_partner_definition_model'];
+          score = 'HOT';
+          setLeadScoreCalculated('HOT');
+        } else if (queryLower.includes('19%') || queryLower.includes('scheme') || queryLower.includes('installment') || queryLower.includes('plan') || queryLower.includes('emi') || queryLower.includes('mahine') || queryLower.includes('maah') || queryLower.includes('kitस्त') || queryLower.includes('₹') || queryLower.includes('rs') || queryLower.includes('hazar')) {
+          aiResponse = `हमारी 19% Free Plot / Installment Scheme में 12 महीने से 120 महीने तक के plans उपलब्ध हैं। उदाहरण के लिए, 72 महीने के plan में मासिक किस्त ₹15,125 है (कुल भुगतान ₹10,89,000)। 6 plots के विक्रय के बाद ₹17,998 की वापसी राशि बताई गई है। आप लगभग कितनी monthly installment या अवधि (12 से 120 महीने) रखना चाहते हैं?`;
+          chunks = ['chunk_19_percent_free_plot_scheme_plans', 'chunk_quick_plan_selection'];
+          score = 'HOT';
+          setLeadScoreCalculated('HOT');
+        } else if (queryLower.includes('nahi') || queryLower.includes('no') || queryLower.includes('busy')) {
+          aiResponse = `कोई बात नहीं! आपका समय देने के लिए धन्यवाद। आपका दिन शुभ हो।`;
+          chunks = ['chunk_polite_exit'];
+          score = 'COLD';
+          setLeadScoreCalculated('COLD');
+        } else {
+          aiResponse = `मैं समझ नहीं पाया। क्या आप अपनी खुद की property sell करना चाहते हैं, Associate Partner के रूप में जुड़ना चाहते हैं, या हमारी 19% Free Plot Installment Scheme की जानकारी लेना चाहते हैं?`;
+          chunks = ['chunk_clarify_intent'];
+        }
+      } 
+      else if (callIntentStage === 'SELLER_QUALIFICATION') {
+        setCallIntentStage('HUMAN_TRANSFER_READY');
+        aiResponse = `ठीक है, आपकी expected price और location note कर ली गई है। Final valuation और market suitability property documents की verification के बाद संबंधित team confirm करेगी। इस point पर हमारी concerned team (Pooja Sharma) आपको exact information और आगे की process समझाएगी। मैं आपकी request priority follow-up के लिए note कर रहा हूँ।`;
+        chunks = ['chunk_human_agent_transfer_protocol'];
         score = 'HOT';
         setLeadScoreCalculated('HOT');
-      } else if (queryLower.includes('rera') || queryLower.includes('legal') || queryLower.includes('approved')) {
-        aiResponse = `Haan ji, yeh project 100% RERA approved hai aur RERA Registration Number ${currentProperty.reraNumber} hai. Title deed bilkul clear hai.`;
-        chunks = ['chunk_rera_certificate_legal'];
+      }
+      else if (callIntentStage === 'PARTNER_QUALIFICATION') {
+        setCallIntentStage('HUMAN_TRANSFER_READY');
+        aiResponse = `आपकी जानकारी नोट हो गई है। Associate Partner बनने के लिए हमारे relationship manager आपको official agreement और commission guidelines समझाने के लिए कॉल करेंगे।`;
+        chunks = ['chunk_partner_transfer'];
         score = 'HOT';
         setLeadScoreCalculated('HOT');
-      } else if (queryLower.includes('visit') || queryLower.includes('sunday') || queryLower.includes('location')) {
-        aiResponse = `Aapka site visit ${currentProperty.name} ke liye bilkul arrange ho jayega. Address hai: ${currentProperty.address}. Kya main is weekend aapka visit confirm karoon?`;
-        chunks = ['chunk_location_address_phaphamau', 'chunk_amenities'];
-        score = 'HOT';
-        setLeadScoreCalculated('HOT');
-      } else {
-        aiResponse = `I don't have verified information about that right now regarding ${currentProperty.name}. I can arrange for our property advisor to confirm it and call you back immediately.`;
-        chunks = ['chunk_fallback_guardrail'];
-        score = 'WARM';
+      }
+      else {
+        if (queryLower.includes('commission') || queryLower.includes('brokerage')) {
+          aiResponse = `Commission की exact जानकारी आपकी category और applicable company policy पर depend करती है। मैं बिना verify किए कोई amount नहीं बताना चाहूंगा। हमारी concerned team आपको exact structure confirm कर सकती है।`;
+          chunks = ['chunk_guardrail_commission'];
+        } else if (queryLower.includes('guarantee') || queryLower.includes('return')) {
+          aiResponse = `इसकी सही जानकारी मैं अपने उपलब्ध रिकॉर्ड में verify नहीं कर पा रहा हूँ। मैं आपकी query संबंधित team तक भेज देता हूँ।`;
+          chunks = ['chunk_fallback_guardrail'];
+        } else {
+          aiResponse = `आपकी बात मैंने नोट कर ली है। इस point पर हमारी concerned team आपको exact information और आगे की process समझाएगी।`;
+          chunks = ['chunk_human_agent_transfer_protocol'];
+          setCallIntentStage('HUMAN_TRANSFER_READY');
+        }
       }
 
       setKbChunksUsed(prev => Array.from(new Set([...prev, ...chunks])));
       setTranscript(prev => [...prev, { speaker: 'ai', text: aiResponse, timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) }]);
-    }, 1000);
+    }, 900);
   };
 
   return (

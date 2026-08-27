@@ -442,7 +442,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
 
     ctx.fillStyle = '#fbbf24';
     ctx.font = 'bold 15px sans-serif';
-    const displayRole = role === 'buyer' ? 'AUTHORISED FREE PLOT SCHEME / PARTNER' : `${role.toUpperCase()} AGENT`;
+    const displayRole = role === 'buyer' ? 'AUTHORISED FREE PLOT SCHEME / PARTNER' : role === 'associate_partner' ? 'ASSOCIATE PARTNER' : `${role.toUpperCase()} AGENT`;
     ctx.fillText(displayRole, 160, 178);
 
     ctx.fillStyle = '#94a3b8';
@@ -1564,7 +1564,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
         {/* Tab: Media Upload Manager */}
         {activeTab === 'media' && (
           <MediaUploadManager
-            currentUserRole={role === 'buyer' ? 'customer' : (role as any)}
+            currentUserRole={role === 'buyer' || role === 'associate_partner' ? 'customer' : (role as any)}
             currentUserId={currentUser?.id}
             currentUserName={currentUser?.name || userName}
             isDarkMode={true}

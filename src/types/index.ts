@@ -1,4 +1,4 @@
-export type UserRole = 'buyer' | 'agent' | 'investor' | 'admin';
+export type UserRole = 'buyer' | 'agent' | 'associate_partner' | 'investor' | 'admin';
 
 export type Language = 'en' | 'hi' | 'bn' | 'mr' | 'gu';
 
