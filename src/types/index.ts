@@ -17,6 +17,8 @@ export interface User {
   totalCommissionsEarned?: number;
   totalPlotsBooked?: number;
   totalInvested?: number;
+  seniorName?: string;
+  seniorId?: string;
 }
 
 export interface Plot {

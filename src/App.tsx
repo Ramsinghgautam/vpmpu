@@ -34,6 +34,7 @@ function MainAppContent() {
   // Application Data States
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [selectedLocationFilter, setSelectedLocationFilter] = useState<string>('all');
 
   const [userBookings, setUserBookings] = useState<Booking[]>([
     {
@@ -261,7 +262,13 @@ function MainAppContent() {
         {activeSection !== 'dashboard' && activeSection !== 'admin-dashboard' && activeSection !== 'ai-voice' && (
           <>
             {/* Hero Section */}
-            <HeroSection currentLang={language} onNavigate={handleNavigate} currentUser={currentUser} />
+            <HeroSection
+              currentLang={language}
+              onNavigate={handleNavigate}
+              currentUser={currentUser}
+              projects={projects}
+              onSelectProjectFilter={setSelectedLocationFilter}
+            />
 
             {/* About Company & Vision */}
             <CompanyOverview currentLang={language} onNavigate={handleNavigate} />
@@ -269,6 +276,8 @@ function MainAppContent() {
             {/* Featured Projects & Plot System */}
             <FeaturedProjects
               currentLang={language}
+              projects={projects}
+              selectedLocationFilter={selectedLocationFilter}
               onSelectPlotForBooking={handleSelectPlotForBooking}
               onOpenPlotMatrix={(proj) => setMatrixProject(proj)}
               onBookSiteVisit={(proj) => {

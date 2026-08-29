@@ -14,7 +14,7 @@ export const PAYOUT_TENURE_OPTIONS: PayoutTenureOption[] = [
   { months: 24, years: 2, label: '2 Years (24 Months)', shortLabel: '24M' },
   { months: 36, years: 3, label: '3 Years (36 Months)', shortLabel: '36M' },
   { months: 48, years: 4, label: '4 Years (48 Months)', shortLabel: '48M' },
-  { months: 50, years: 5, label: '5 Years (60 Months)', shortLabel: '60M' },
+  { months: 50, years: 4.2, label: '4.2 Years (50 Months)', shortLabel: '50M' },
   { months: 60, years: 5, label: '5 Years (60 Months)', shortLabel: '60M' },
   { months: 72, years: 6, label: '6 Years (72 Months)', shortLabel: '72M' },
   { months: 84, years: 7, label: '7 Years (84 Months)', shortLabel: '84M' },

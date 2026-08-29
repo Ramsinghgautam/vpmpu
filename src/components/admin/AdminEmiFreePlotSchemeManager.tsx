@@ -953,7 +953,7 @@ export const AdminEmiFreePlotSchemeManager: React.FC<AdminEmiFreePlotSchemeManag
                     className="w-full mt-1 p-2.5 rounded-xl border bg-slate-800 border-slate-700 text-amber-400 font-bold"
                   >
                     {plans.map((p) => (
-                      <option key={p.tenureMonths} value={p.tenureMonths}>
+                      <option key={p.id} value={p.tenureMonths}>
                         {p.tenureMonths} Months — EMI: {formatINR(p.monthlyInstallment)}/mo (Req: {p.requiredPlotSales} Plots)
                       </option>
                     ))}

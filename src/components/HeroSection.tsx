@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ShieldCheck, ArrowRight, TrendingUp, Building2, MapPin, Search, Award, CheckCircle2, Calculator, Share2, Send, Check, Copy, MessageCircle, CreditCard, X, Receipt, QrCode, IndianRupee, Lock, Printer, User as UserIcon, Upload, Paperclip, FileText, Trash2 } from 'lucide-react';
-import { Language, User } from '../types';
+import { Language, User, Project } from '../types';
 import { TRANSLATIONS } from '../utils/translations';
 import { formatINR } from '../utils/calculators';
 import { isTransactionIdAlreadyUsed, registerCompletedTransactionId } from '../utils/transactionRegistry';
@@ -10,9 +10,10 @@ interface HeroSectionProps {
   onNavigate: (section: string) => void;
   onSelectProjectFilter?: (location: string) => void;
   currentUser?: User | null;
+  projects?: Project[];
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigate, currentUser }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigate, onSelectProjectFilter, currentUser, projects }) => {
   const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
   const isHi = currentLang === 'hi';
 
@@ -23,6 +24,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
   const [selectedTenure, setSelectedTenure] = useState<number>(12);
   const [copiedShare, setCopiedShare] = useState(false);
   const [receiptFile, setReceiptFile] = useState<{ name: string; url: string; size: string } | null>(null);
+  const [locationConfirmed, setLocationConfirmed] = useState(false);
+  const [showEmailSentToast, setShowEmailSentToast] = useState(false);
+
+  const locationsList = projects && projects.length > 0
+    ? Array.from(new Set(projects.map(p => p.location)))
+    : ["New Jhunsi, Near GT Road Highway", "4/199 EWS AVC New Jhunsi Area", "Jhunsi", "Ganga Expressway Belt, Phaphamau", "Civil Lines, Prayagraj"];
 
   const handleReceiptUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,6 +42,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
         url,
       });
     }
+  };
+
+  const handleConfirmLocation = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!receiptFile) return;
+    setLocationConfirmed(true);
+    setShowEmailSentToast(true);
+    if (onSelectProjectFilter && preferredLocation !== 'all') {
+      onSelectProjectFilter(preferredLocation);
+    }
+    setTimeout(() => {
+      setShowEmailSentToast(false);
+    }, 6000);
+  };
+
+  const handlePrintReceipt = () => {
+    window.print();
+  };
+
+  const handleDownloadReceipt = () => {
+    const receiptText = `VIGYA PAURUSH MILESTONE - PLOT LOCATION CONFIRMATION & RECEIPT\n------------------------------------------------------------\nUser: ${currentUser?.name || 'Rajesh Sharma'}\nUser ID: ${currentUser?.id || 'VPM-USR-8821'}\nPreferred Location: ${preferredLocation}\nPlot Size: ${length}ft × ${width}ft (${calculatedSqft} Sq.Ft)\nRate: ₹${rateSqft}/sq.ft\nTotal Amount: ${formatINR(effectiveTotalAmount)}\nToken Booking Fee: ₹10,000\nReceipt File: ${receiptFile?.name || 'receipt.pdf'}\nStatus: LOCATION CONFIRMED & VERIFIED (Email Sent)\nDate: ${new Date().toLocaleDateString()}`;
+    const blob = new Blob([receiptText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `VPM_Plot_Location_Confirmation_${currentUser?.id || '8821'}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   // Pay EMI Modal State
@@ -283,6 +319,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+                if (onSelectProjectFilter && preferredLocation !== 'all') {
+                  onSelectProjectFilter(preferredLocation);
+                }
                 onNavigate('projects');
               }}
               className="space-y-4 text-xs font-sans"
@@ -297,9 +336,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                     className="w-full bg-indigo-950 border border-indigo-800 rounded-lg pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-amber-400 font-medium cursor-pointer"
                   >
                     <option value="all">All Locations (Prayagraj)</option>
-                    <option value="jhunsi">New Jhunsi (GT Road Corridor)</option>
-                    <option value="naini">Naini ADA Industrial Zone</option>
-                    <option value="phaphamau">Phaphamau Ganga Expressway</option>
+                    {locationsList.map((loc, idx) => (
+                      <option key={idx} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -521,6 +562,63 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ currentLang, onNavigat
                       </div>
                     </div>
                   )}
+                </div>
+
+                {/* Submit / Confirm Plot Location Button & Print/Download Options */}
+                <div className="pt-3 border-t border-indigo-800/80 space-y-2.5">
+                  {showEmailSentToast && (
+                    <div className="bg-emerald-950/90 border border-emerald-500 text-emerald-300 p-2.5 rounded-xl text-[11px] flex items-center gap-2 animate-fade-in">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div>
+                        <strong>Location Confirmed!</strong> A confirmation email with plot details and token receipt has been dispatched to your registered email address.
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleConfirmLocation}
+                    disabled={!receiptFile}
+                    className={`w-full py-3 px-4 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all shadow-lg cursor-pointer ${
+                      receiptFile
+                        ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 border border-amber-300 shadow-amber-500/20 active:scale-98'
+                        : 'bg-indigo-950 text-indigo-400/50 border border-indigo-800/50 cursor-not-allowed opacity-60'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>{locationConfirmed ? '✓ Plot Location Confirmed & Email Sent' : 'Confirm Plot Location'}</span>
+                  </button>
+
+                  {/* Print and Download Receipt Options */}
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={handlePrintReceipt}
+                      disabled={!locationConfirmed}
+                      className={`py-2 px-3 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all ${
+                        locationConfirmed
+                          ? 'bg-indigo-800 hover:bg-indigo-700 text-white border border-indigo-600 cursor-pointer'
+                          : 'bg-indigo-950/60 text-slate-500 border border-indigo-900 cursor-not-allowed opacity-50'
+                      }`}
+                    >
+                      <Printer className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Print Receipt</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleDownloadReceipt}
+                      disabled={!locationConfirmed}
+                      className={`py-2 px-3 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all ${
+                        locationConfirmed
+                          ? 'bg-emerald-900/80 hover:bg-emerald-900 text-emerald-200 border border-emerald-700 cursor-pointer'
+                          : 'bg-indigo-950/60 text-slate-500 border border-indigo-900 cursor-not-allowed opacity-50'
+                      }`}
+                    >
+                      <Upload className="w-3.5 h-3.5 text-emerald-400 rotate-180" />
+                      <span>Download Receipt</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </form>

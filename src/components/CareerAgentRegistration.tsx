@@ -22,6 +22,8 @@ export const CareerAgentRegistration: React.FC<CareerAgentRegistrationProps> = (
   const [address, setAddress] = useState('');
   const [qualification, setQualification] = useState('Graduate');
   const [sponsorId, setSponsorId] = useState('');
+  const [seniorName, setSeniorName] = useState('Prabhat Gautam');
+  const [seniorId, setSeniorId] = useState('TM-001');
 
   const [photoFile, setPhotoFile] = useState<{ name: string; url: string } | null>(null);
   const [aadharFile, setAadharFile] = useState<{ name: string; url: string } | null>(null);
@@ -51,7 +53,9 @@ export const CareerAgentRegistration: React.FC<CareerAgentRegistrationProps> = (
       address,
       joinedDate: new Date().toISOString().split('T')[0],
       totalCommissionsEarned: 0,
-      totalPlotsBooked: 0
+      totalPlotsBooked: 0,
+      seniorName: seniorName || undefined,
+      seniorId: seniorId || undefined
     };
 
     setRegisteredUser(userObj);
@@ -140,6 +144,12 @@ export const CareerAgentRegistration: React.FC<CareerAgentRegistrationProps> = (
                     <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Starting Commission Tier</span>
                     <span className="font-bold text-emerald-400">8.0% + Level Bonus</span>
                   </div>
+                  {registeredUser.seniorName && (
+                    <div className="flex justify-between items-center border-t border-indigo-900 pt-2">
+                      <span className="text-slate-400 text-[10px] uppercase font-bold tracking-wider">Senior / Upline Name</span>
+                      <span className="font-bold text-amber-300">{registeredUser.seniorName} {registeredUser.seniorId ? `(${registeredUser.seniorId})` : ''}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Referral Link Copy */}
@@ -236,6 +246,41 @@ export const CareerAgentRegistration: React.FC<CareerAgentRegistrationProps> = (
                     placeholder="e.g. Phaphamau, Prayagraj"
                     className="w-full bg-white border border-slate-300 rounded-lg p-2.5 focus:border-indigo-950 focus:outline-none font-medium text-slate-800"
                   />
+                </div>
+
+                <div className="bg-amber-50/80 border border-amber-300 rounded-xl p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-black text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
+                      <span>👑</span> Senior / Upline Mentor Mapping
+                    </span>
+                    <span className="text-[9px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded-full">MLM Override</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-bold uppercase tracking-wider text-[10px] text-slate-700 mb-1">Senior Name (Upline/Mentor)</label>
+                      <input
+                        type="text"
+                        value={seniorName}
+                        onChange={(e) => setSeniorName(e.target.value)}
+                        placeholder="e.g. Prabhat Gautam"
+                        className="w-full bg-white border border-slate-300 rounded-lg p-2.5 focus:border-amber-600 focus:outline-none font-medium text-slate-900 shadow-xs"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold uppercase tracking-wider text-[10px] text-slate-700 mb-1">Senior ID / Upline ID</label>
+                      <input
+                        type="text"
+                        value={seniorId}
+                        onChange={(e) => setSeniorId(e.target.value)}
+                        placeholder="e.g. TM-001"
+                        className="w-full bg-white border border-slate-300 rounded-lg p-2.5 focus:border-amber-600 focus:outline-none font-mono font-bold text-amber-800 shadow-xs"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-amber-800/80 leading-tight">
+                    * Your registration will be linked under this senior mentor for team commission overrides and growth tracking.
+                  </p>
                 </div>
 
                 {/* Document Upload Section */}

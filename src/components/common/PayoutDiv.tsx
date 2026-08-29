@@ -151,8 +151,8 @@ export const PayoutDiv: React.FC<PayoutDivProps> = ({
             className="w-full bg-slate-900/90 border border-slate-700 hover:border-slate-500 focus:border-amber-400 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500/20 cursor-pointer transition-all"
           >
             <option value={0}>-- Select EMI Tenure (Payout is Hidden Until Selected) --</option>
-            {PAYOUT_TENURE_OPTIONS.map((opt) => (
-              <option key={opt.months} value={opt.months}>
+            {PAYOUT_TENURE_OPTIONS.map((opt, idx) => (
+              <option key={`${opt.months}-${idx}`} value={opt.months}>
                 {opt.label} • ({opt.months} Monthly Equal Installments)
               </option>
             ))}

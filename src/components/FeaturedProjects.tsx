@@ -9,20 +9,29 @@ interface FeaturedProjectsProps {
   onSelectPlotForBooking: (project: Project, plot?: Plot) => void;
   onOpenPlotMatrix: (project: Project) => void;
   onBookSiteVisit: (project: Project) => void;
+  projects?: Project[];
+  selectedLocationFilter?: string;
 }
 
 export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
   currentLang = 'en',
   onSelectPlotForBooking,
   onOpenPlotMatrix,
-  onBookSiteVisit
+  onBookSiteVisit,
+  projects = INITIAL_PROJECTS,
+  selectedLocationFilter = 'all'
 }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'jhunsi' | 'naini' | 'phaphamau'>('all');
   const isHi = currentLang === 'hi';
   const t = TRANSLATIONS[currentLang] || TRANSLATIONS.en;
 
-  const filteredProjects = INITIAL_PROJECTS.filter(p => {
+  const sourceProjects = projects && projects.length > 0 ? projects : INITIAL_PROJECTS;
+
+  const filteredProjects = sourceProjects.filter(p => {
+    if (selectedLocationFilter && selectedLocationFilter !== 'all') {
+      if (p.location !== selectedLocationFilter) return false;
+    }
     if (activeTab === 'jhunsi') return p.city.toLowerCase().includes('jhunsi') || p.location.toLowerCase().includes('jhunsi');
     if (activeTab === 'naini') return p.location.toLowerCase().includes('naini');
     if (activeTab === 'phaphamau') return p.location.toLowerCase().includes('phaphamau');
